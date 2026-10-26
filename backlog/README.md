@@ -31,14 +31,14 @@ Le backlog complet (73 issues, 7 sprints + bonus) est dans [issues.json](issues.
 
 | Pôle       | Label             | Responsable | Issues |
 | ---------- | ----------------- | ----------- | ------ |
-| Backend    | `pole:backend`    | Martin      | 44     |
-| Front web  | `pole:web`        | Enzo        | 11     |
+| Backend    | `pole:backend`    | Martin      | 35     |
+| Front web  | `pole:web`        | Enzo        | 15     |
 | Mobile     | `pole:mobile`     | Arslan      | 6      |
-| Transverse | `pole:transverse` | Arslan      | 12     |
+| Transverse | `pole:transverse` | Arslan      | 17     |
 
-Quelques issues ont plusieurs responsables (`owners`) : authentification et rôles (Arslan + Martin), simulateur (Martin + Arslan), audit d'accessibilité (Enzo + Arslan), documentation technique (Martin + Arslan), soutenance (les 3).
+Quelques issues ont plusieurs responsables (`owners`) : authentification et rôles (Arslan + Martin), simulateur (Arslan + Martin), audit d'accessibilité (Enzo + Arslan), documentation technique (Martin + Arslan), soutenance (les 3).
 
-**Déséquilibre à traiter** : Martin porte 47 issues, Arslan 21, Enzo 12. Les issues web et mobile sont plus longues (écrans, accessibilité), mais l'écart reste important : à rééquilibrer en planification de sprint (voir AGENTS.md, section 3).
+Charge par personne (issues co-portées comprises) : Martin 39, Arslan 25, Enzo 16. Enzo porte de bout en bout les fonctionnalités sociales (répartition du public, groupes, badges), Arslan le temps réel, le journal d'audit et le simulateur. L'écart restant est assumé : le moteur et les pronostics forment le cœur du sujet, et les écrans web et mobile prennent plus de temps par issue (accessibilité). À réajuster en planification de sprint si besoin.
 
 ## Rituel de sprint (toutes les 2 semaines)
 
