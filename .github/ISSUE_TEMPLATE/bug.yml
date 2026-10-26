@@ -1,0 +1,39 @@
+name: Bug
+description: Un comportement incorrect
+title: "fix: "
+labels: ["type:bug"]
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Ce qui se passe
+      description: Le comportement observé, avec le message d'erreur éventuel.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Étapes pour reproduire
+      placeholder: |
+        1. Aller sur…
+        2. Cliquer sur…
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Comportement attendu
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Zone
+      options: [engine, api, web, mobile, simulator, infra, docs]
+    validations:
+      required: true
+  - type: input
+    id: env
+    attributes:
+      label: Environnement
+      placeholder: "dev local, staging, production, Android 14…"

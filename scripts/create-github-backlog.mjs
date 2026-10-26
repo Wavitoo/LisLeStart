@@ -10,7 +10,8 @@
  *   node scripts/create-github-backlog.mjs --repo owner/nom --project
  *
  * Relançable sans doublon : labels mis à jour, milestones et issues existants ignorés (par titre).
- * Les responsables viennent de backlog/team.json (identifiants GitHub par pôle, vides = non assigné).
+ * Les responsables viennent du champ `owners` de chaque issue, traduit en identifiants GitHub par
+ * backlog/team.json (prénom → identifiant, vide = non assigné).
  */
 import { execFileSync } from "node:child_process";
 import { readFileSync } from "node:fs";
@@ -89,9 +90,10 @@ const existingIssues = new Set(
   }).map((i) => i.title),
 );
 const poleNames = {
-  plateforme: "Plateforme et sécurité",
-  moteur: "Moteur et API",
-  front: "Web et mobile",
+  backend: "Backend",
+  web: "Front web",
+  mobile: "Mobile",
+  transverse: "Transverse (CI/CD, infra, sécurité)",
 };
 const created = [];
 
@@ -125,7 +127,8 @@ for (const issue of backlog.issues) {
     labels.join(","),
   ];
   if (milestone) createArgs.push("--milestone", milestone.title);
-  if (team[issue.pole]) createArgs.push("--assignee", team[issue.pole]);
+  const assignees = (issue.owners ?? []).map((o) => team[o]).filter(Boolean);
+  if (assignees.length > 0) createArgs.push("--assignee", assignees.join(","));
 
   const url = gh(createArgs);
   created.push(url);

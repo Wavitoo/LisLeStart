@@ -1,0 +1,31 @@
+name: Déploiement
+
+# main -> environnement « staging », prod -> environnement « production ».
+# Chaque environnement GitHub porte ses propres secrets RENDER_DEPLOY_HOOK_API et RENDER_DEPLOY_HOOK_WEB.
+on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+    branches: [main, prod]
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    name: Déployer l'API et le web
+    if: github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push'
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.workflow_run.head_branch == 'prod' && 'production' || 'staging' }}
+    steps:
+      - name: Déclencher les hooks Render
+        env:
+          HOOK_API: ${{ secrets.RENDER_DEPLOY_HOOK_API }}
+          HOOK_WEB: ${{ secrets.RENDER_DEPLOY_HOOK_WEB }}
+        run: |
+          if [ -z "$HOOK_API" ] || [ -z "$HOOK_WEB" ]; then
+            echo "::warning::Hooks de déploiement non configurés pour cet environnement (voir docs/operations.md)."
+            exit 0
+          fi
+          curl --fail --silent --show-error -X POST "$HOOK_API"
+          curl --fail --silent --show-error -X POST "$HOOK_WEB"

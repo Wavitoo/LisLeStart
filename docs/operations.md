@@ -1,28 +1,54 @@
 # Exploitation
 
+## Branches et environnements
+
+| Branche            | Rôle                                    | Environnement de déploiement |
+| ------------------ | --------------------------------------- | ---------------------------- |
+| `dev` (par défaut) | Intégration des branches de travail     | Aucun (CI seulement)         |
+| `main`             | Version stable, taguée en fin de sprint | `staging`                    |
+| `prod`             | Production, démo de soutenance          | `production`                 |
+
+Flux : `feat/*` → PR squash vers `dev` → PR `dev` → `main` (merge commit) → PR `main` → `prod` (merge commit). Détails dans [CONTRIBUTING.md](../CONTRIBUTING.md).
+
 ## Pipeline CI/CD
 
-| Workflow     | Déclencheur                              | Étapes                                                         |
-| ------------ | ---------------------------------------- | -------------------------------------------------------------- |
-| `ci.yml`     | Chaque PR et push sur `main`             | Gitleaks, lint, typecheck, tests, build, audit des dépendances |
-| `codeql.yml` | Chaque PR, push sur `main`, chaque lundi | Analyse SAST                                                   |
-| `deploy.yml` | CI réussie sur `main`                    | Déploiement de l'API et du web                                 |
-| `mobile.yml` | Push sur `main` touchant le mobile       | APK Android en artefact                                        |
+| Workflow     | Déclencheur                                          | Étapes                                                         |
+| ------------ | ---------------------------------------------------- | -------------------------------------------------------------- |
+| `ci.yml`     | Chaque PR et push sur `dev`, `main`, `prod`          | Gitleaks, lint, typecheck, tests, build, audit des dépendances |
+| `codeql.yml` | Chaque PR et push sur `dev`, `main`, `prod`, lundi   | Analyse SAST                                                   |
+| `deploy.yml` | CI réussie après un push sur `main` ou `prod`        | Déploiement de l'API et du web (staging ou production)         |
+| `mobile.yml` | Push sur `main` ou `prod` touchant le mobile, manuel | APK Android en artefact (30 jours)                             |
 
-## Protection de `main` (à régler dans Settings › Branches)
+## Protection des branches
 
-- Pull request obligatoire, 1 approbation minimum.
+Appliquée à `dev`, `main` et `prod` (Settings › Branches) :
+
+- Pull request obligatoire, 1 approbation minimum, approbations invalidées par un nouveau commit.
 - Checks requis : « Scan de secrets », « Lint, types, tests, build », « Analyse SAST ».
-- Pas de push direct, pas de force push.
+- Branche à jour avant merge, pas de push direct, pas de force push, pas de suppression.
+- « Require review from Code Owners » **désactivé** : `CODEOWNERS` sert à demander les relecteurs, pas à bloquer (sinon le seul propriétaire d'une zone ne pourrait jamais faire relire son propre code).
+
+Méthodes de merge autorisées : squash (branches de travail → `dev`) et merge commit (promotions). Rebase désactivé.
 
 ## Secrets GitHub à créer
 
-| Secret                   | Usage                                    |
-| ------------------------ | ---------------------------------------- |
-| `RENDER_DEPLOY_HOOK_API` | Déploiement de l'API                     |
-| `RENDER_DEPLOY_HOOK_WEB` | Déploiement du web                       |
-| `STARTGG_API_TOKEN`      | Synchronisation start.gg en ligne        |
-| `EXPO_TOKEN`             | Optionnel : build iOS simulateur via EAS |
+Secrets d'environnement (Settings › Environments), à définir dans `staging` **et** dans `production` avec les valeurs de chaque service Render :
+
+| Secret                   | Usage                |
+| ------------------------ | -------------------- |
+| `RENDER_DEPLOY_HOOK_API` | Déploiement de l'API |
+| `RENDER_DEPLOY_HOOK_WEB` | Déploiement du web   |
+
+Tant qu'ils sont absents, `deploy.yml` affiche un avertissement sans échouer.
+
+Secrets du dépôt (Settings › Secrets and variables › Actions) :
+
+| Secret              | Usage                                    |
+| ------------------- | ---------------------------------------- |
+| `STARTGG_API_TOKEN` | Synchronisation start.gg en ligne        |
+| `EXPO_TOKEN`        | Optionnel : build iOS simulateur via EAS |
+
+L'environnement `production` peut exiger une approbation manuelle avant déploiement (Settings › Environments › production › Required reviewers).
 
 ## Tests de charge (sprint 5)
 

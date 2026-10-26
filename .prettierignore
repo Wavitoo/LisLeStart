@@ -1,0 +1,10 @@
+pnpm-lock.yaml
+**/node_modules
+**/dist
+**/.next
+**/.turbo
+**/.expo
+**/coverage
+apps/mobile/android
+apps/mobile/ios
+apps/web/next-env.d.ts

@@ -1,0 +1,24 @@
+# Relecteurs demandés automatiquement selon la zone modifiée (voir AGENTS.md, section 3).
+# Revue obligatoire : 1 approbation de n'importe quel membre (pas de « review from code owners »).
+
+*                       @Wavitoo @EnzoDIWLK @martin-vergues
+
+# Backend — Martin
+/apps/api/              @martin-vergues
+/packages/engine/       @martin-vergues
+/apps/simulator/        @martin-vergues @Wavitoo
+
+# Contrat partagé entre les trois pôles
+/packages/shared/       @martin-vergues @EnzoDIWLK @Wavitoo
+
+# Web — Enzo
+/apps/web/              @EnzoDIWLK
+/docs/brand.md          @EnzoDIWLK
+
+# Mobile, CI/CD, infra, sécurité — Arslan
+/apps/mobile/           @Wavitoo
+/.github/               @Wavitoo
+/scripts/               @Wavitoo
+/docker-compose.yml     @Wavitoo
+**/Dockerfile           @Wavitoo
+/SECURITY.md            @Wavitoo @martin-vergues

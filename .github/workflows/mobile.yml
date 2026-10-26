@@ -1,0 +1,44 @@
+name: Mobile
+
+on:
+  push:
+    branches: [main, prod]
+    paths:
+      - "apps/mobile/**"
+      - "packages/shared/**"
+      - "pnpm-lock.yaml"
+      - ".github/workflows/mobile.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  apk:
+    name: APK Android
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - uses: gradle/actions/setup-gradle@v4
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @lislestart/shared build
+      - name: Générer le projet Android
+        working-directory: apps/mobile
+        run: pnpm exec expo prebuild --platform android --no-install
+      - name: Compiler l'APK
+        working-directory: apps/mobile/android
+        run: ./gradlew assembleRelease --no-daemon
+      - uses: actions/upload-artifact@v4
+        with:
+          name: lislestart-${{ github.ref_name }}-${{ github.sha }}
+          path: apps/mobile/android/app/build/outputs/apk/release/*.apk
+          retention-days: 30

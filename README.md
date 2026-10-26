@@ -1,17 +1,17 @@
 # LisLeStart
 
-[![CI](https://github.com/OWNER/lislestart/actions/workflows/ci.yml/badge.svg)](https://github.com/OWNER/lislestart/actions/workflows/ci.yml)
+[![CI](https://github.com/Wavitoo/LisLeStart/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/Wavitoo/LisLeStart/actions/workflows/ci.yml)
 
 > Organise tes tournois, importe ceux de la communauté et fais vibrer le public avec des pronostics en direct.
 
 LisLeStart est une plateforme de tournois (élimination simple et double, poules, ronde suisse, FFA) avec des pronostics et des Pick'em pour le public. Tout se joue en points, en badges et en titres, sans aucun argent. Projet PGE5 Epitech 2026-2027, réalisé en groupe de 3.
 
-| Lien                      |                                                                 |
-| ------------------------- | --------------------------------------------------------------- |
-| Démo en ligne             | `https://A-RENSEIGNER` (déployée automatiquement depuis `main`) |
-| Documentation             | [`/docs`](docs/README.md)                                       |
-| Tableau de bord du projet | GitHub Projects « LisLeStart »                                  |
-| Maquette                  | Figma « LisLeStart » (lien à ajouter)                           |
+| Lien                      |                                                                          |
+| ------------------------- | ------------------------------------------------------------------------ |
+| Démo en ligne             | `https://A-RENSEIGNER` (production depuis `prod`, staging depuis `main`) |
+| Documentation             | [`/docs`](docs/README.md)                                                |
+| Tableau de bord du projet | GitHub Projects « LisLeStart »                                           |
+| Maquette                  | Figma « LisLeStart » (lien à ajouter)                                    |
 
 <!-- Captures d'écran : à ajouter dans docs/assets/ au sprint 2 -->
 
@@ -40,7 +40,7 @@ Pour le mobile seulement : Android Studio (émulateur) ou l'application Expo Go 
 ## Installation en une commande
 
 ```bash
-git clone https://github.com/OWNER/lislestart.git && cd lislestart
+git clone https://github.com/Wavitoo/LisLeStart.git lislestart && cd lislestart
 ./scripts/setup.sh
 ```
 
@@ -94,30 +94,31 @@ Pour aller plus loin, lis le [guide de prise en main](docs/onboarding.md).
 pnpm --filter @lislestart/mobile start   # puis « a » pour l'émulateur Android
 ```
 
-Chaque merge sur `main` produit un APK téléchargeable dans les artefacts du workflow « Mobile ».
+Chaque merge sur `main` ou `prod` produit un APK téléchargeable dans les artefacts du workflow « Mobile ».
 
 ## Contribuer
 
-Tout passe par une issue, une branche et une pull request relue. Les détails sont dans [CONTRIBUTING.md](CONTRIBUTING.md) et le code de conduite dans [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md).
+Tout passe par une issue, une branche créée depuis `dev` et une pull request relue vers `dev`. En fin de sprint, `dev` est promue vers `main` (staging), puis `main` vers `prod` (production). Les détails sont dans [CONTRIBUTING.md](CONTRIBUTING.md) et le code de conduite dans [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md).
 
 ## Usage de l'IA
 
 Conformément à la charte IA du groupe IONIS, voici les outils utilisés et pour quoi faire. Section tenue à jour tout au long du projet.
 
-| Outil              | Usage                                                    | Parties concernées                 |
-| ------------------ | -------------------------------------------------------- | ---------------------------------- |
-| Claude (Anthropic) | Cadrage du projet, maquette, squelette du dépôt, backlog | `docs/`, configuration, `.github/` |
-| _à compléter_      |                                                          |                                    |
+| Outil              | Usage                                                                                            | Parties concernées                  |
+| ------------------ | ------------------------------------------------------------------------------------------------ | ----------------------------------- |
+| Claude (Anthropic) | Cadrage du projet, maquette, squelette du dépôt, backlog                                         | `docs/`, configuration, `.github/`  |
+| Claude Code        | `AGENTS.md`, fichiers de configuration, workflows CI/CD à trois branches, répartition du backlog | `AGENTS.md`, `.github/`, `backlog/` |
+| _à compléter_      |                                                                                                  |                                     |
 
 Tout code ou contenu généré passe par les mêmes règles que le reste : tests, revue en pull request, sécurité. Chaque membre doit pouvoir l'expliquer en soutenance.
 
 ## Équipe
 
-| Membre      | Pôle                   |
-| ----------- | ---------------------- |
-| Arslan Tetu | Plateforme et sécurité |
-| _Membre B_  | Moteur et API          |
-| _Membre C_  | Web et mobile          |
+| Membre      | GitHub                                               | Pôle                                                 |
+| ----------- | ---------------------------------------------------- | ---------------------------------------------------- |
+| Arslan Tetu | [@Wavitoo](https://github.com/Wavitoo)               | Mobile (Expo, Android) + CI/CD, infra et sécurité    |
+| Enzo        | [@EnzoDIWLK](https://github.com/EnzoDIWLK)           | Front web (Next.js), accessibilité web, charte       |
+| Martin      | [@martin-vergues](https://github.com/martin-vergues) | Backend : API, moteur, données, start.gg, simulateur |
 
 ## Licence
 

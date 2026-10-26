@@ -5,6 +5,15 @@ Format inspiré de [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/), ver
 
 ## [Non publié]
 
+### Ajouté
+
+- Flux à trois branches protégées : `dev` (intégration), `main` (staging, tags de sprint), `prod` (production).
+- Workflows CI, CodeQL, déploiement (staging et production) et APK Android sur les trois branches.
+- Fichiers de configuration : `.env.example`, `.nvmrc`, `.npmrc`, `.dockerignore`, Prettier, hooks Husky.
+- `CODEOWNERS`, Dependabot (vers `dev`), templates d'issue et de pull request.
+- `AGENTS.md` : contexte du projet pour les assistants de code.
+- Backlog réparti par personne (`owners`) et par pôle (backend, web, mobile, transverse).
+
 ## [0.1.0] - Sprint 0
 
 ### Ajouté

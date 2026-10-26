@@ -5,7 +5,7 @@ Merci de contribuer ! Ce guide décrit le déroulé d'une contribution, de l'iss
 ## Le cycle d'une contribution
 
 1. **Une issue d'abord.** Toute tâche est une issue avec un responsable, des labels, une milestone (le sprint) et un statut dans GitHub Projects.
-2. **Une branche par issue**, créée depuis `main` :
+2. **Une branche par issue**, créée depuis `dev` (jamais depuis `main` ou `prod`) :
 
    | Type           | Nom de branche                     |
    | -------------- | ---------------------------------- |
@@ -25,9 +25,21 @@ Merci de contribuer ! Ce guide décrit le déroulé d'une contribution, de l'iss
    Types acceptés : `feat`, `fix`, `docs`, `test`, `refactor`, `perf`, `chore`, `ci`, `build`, `style`, `revert`.
    Portées usuelles : `engine`, `api`, `web`, `mobile`, `simulator`, `shared`, `docs`, `ci`, `infra`.
 
-4. **Une pull request** liée à son issue (`Closes #12`), avec le template rempli.
-5. **Une relecture obligatoire** par un autre membre, et la CI verte. La branche `main` est protégée : personne ne pousse directement dessus.
-6. **Merge en squash** : le titre de la PR devient le commit sur `main`, au format conventionnel.
+4. **Une pull request vers `dev`** liée à son issue (`Closes #12`), avec le template rempli.
+5. **Une relecture obligatoire** par un autre membre, et la CI verte. Les branches `dev`, `main` et `prod` sont protégées : personne ne pousse directement dessus.
+6. **Merge en squash** : le titre de la PR devient le commit sur `dev`, au format conventionnel.
+
+## Les trois branches
+
+| Branche            | Rôle                                    | Alimentée par                             | Effet d'un merge             |
+| ------------------ | --------------------------------------- | ----------------------------------------- | ---------------------------- |
+| `dev` (par défaut) | Intégration continue du sprint          | PR des branches de travail, en **squash** | CI                           |
+| `main`             | Version stable, taguée en fin de sprint | PR `dev` → `main`, en **merge commit**    | Déploiement staging + APK    |
+| `prod`             | Production, celle de la soutenance      | PR `main` → `prod`, en **merge commit**   | Déploiement production + APK |
+
+Les promotions `dev` → `main` et `main` → `prod` se font en **merge commit**, jamais en squash : sinon les branches divergent et chaque promotion suivante crée des conflits.
+
+**Correctif urgent** : branche `hotfix/<n°>-…` depuis `main`, PR vers `main`, promotion vers `prod`, puis PR `main` → `dev` pour reporter le correctif.
 
 ## Définition de « terminé »
 
@@ -60,7 +72,7 @@ Les hooks Git (Husky) s'installent avec `pnpm install` :
 
 ## Versions
 
-Un tag SemVer (`v0.1.0`, `v0.2.0`…) est posé à la fin de chaque sprint, et le [CHANGELOG](CHANGELOG.md) est mis à jour.
+Un tag SemVer (`v0.1.0`, `v0.2.0`…) est posé sur `main` à la fin de chaque sprint, après la promotion `dev` → `main`, et le [CHANGELOG](CHANGELOG.md) est mis à jour.
 
 ## Usage de l'IA
 

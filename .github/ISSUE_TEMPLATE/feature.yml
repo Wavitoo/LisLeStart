@@ -1,0 +1,26 @@
+name: Fonctionnalité
+description: Une nouvelle fonctionnalité ou une tâche
+labels: ["type:feat"]
+body:
+  - type: textarea
+    id: need
+    attributes:
+      label: Besoin
+      description: Pour qui, et pourquoi (lien avec le cahier des charges si possible).
+    validations:
+      required: true
+  - type: textarea
+    id: criteria
+    attributes:
+      label: Critères d'acceptation
+      value: |
+        - [ ]
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Zone
+      options: [engine, api, web, mobile, simulator, infra, docs]
+    validations:
+      required: true
