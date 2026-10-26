@@ -6,12 +6,14 @@
 
 LisLeStart est une plateforme de tournois (élimination simple et double, poules, ronde suisse, FFA) avec des pronostics et des Pick'em pour le public. Tout se joue en points, en badges et en titres, sans aucun argent. Projet PGE5 Epitech 2026-2027, réalisé en groupe de 3.
 
-| Lien                      |                                                                          |
-| ------------------------- | ------------------------------------------------------------------------ |
-| Démo en ligne             | `https://A-RENSEIGNER` (production depuis `prod`, staging depuis `main`) |
-| Documentation             | [`/docs`](docs/README.md)                                                |
-| Tableau de bord du projet | GitHub Projects « LisLeStart »                                           |
-| Maquette                  | Figma « LisLeStart » (lien à ajouter)                                    |
+| Lien                                       |                                                                                                                                                                                 |
+| ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Démo en ligne (production, branche `prod`) | Web https://lislestart-web.onrender.com · API https://lislestart-api.onrender.com/docs                                                                                          |
+| Staging (branche `main`)                   | Web https://lislestart-web-staging.onrender.com · API https://lislestart-api-staging.onrender.com/docs                                                                          |
+| Documentation                              | [`/docs`](docs/README.md)                                                                                                                                                       |
+| Hébergement                                | Render (API, web) + Neon (PostgreSQL), voir [operations.md](docs/operations.md). Instances gratuites : le premier appel après une période d'inactivité peut prendre une minute. |
+| Tableau de bord du projet                  | GitHub Projects « LisLeStart »                                                                                                                                                  |
+| Maquette                                   | Figma « LisLeStart » (lien à ajouter)                                                                                                                                           |
 
 <!-- Captures d'écran : à ajouter dans docs/assets/ au sprint 2 -->
 

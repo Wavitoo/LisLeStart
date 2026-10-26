@@ -28,7 +28,7 @@ jobs:
         with:
           distribution: temurin
           java-version: "17"
-      - uses: gradle/actions/setup-gradle@v4
+      - uses: gradle/actions/setup-gradle@v6
       - run: pnpm install --frozen-lockfile
       - run: pnpm --filter @lislestart/shared build
       - name: Générer le projet Android
@@ -37,7 +37,7 @@ jobs:
       - name: Compiler l'APK
         working-directory: apps/mobile/android
         run: ./gradlew assembleRelease --no-daemon
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: lislestart-${{ github.ref_name }}-${{ github.sha }}
           path: apps/mobile/android/app/build/outputs/apk/release/*.apk
