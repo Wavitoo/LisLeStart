@@ -31,3 +31,6 @@ updates:
       day: monday
     commit-message:
       prefix: "chore(ci)"
+    groups:
+      actions:
+        patterns: ["*"]
