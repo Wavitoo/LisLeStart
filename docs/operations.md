@@ -19,6 +19,9 @@ Flux : `feat/*` → PR squash vers `dev` → PR `dev` → `main` (merge commit) 
 | `deploy.yml` | CI réussie après un push sur `main` ou `prod`        | Déploiement de l'API et du web (staging ou production)         |
 | `mobile.yml` | Push sur `main` ou `prod` touchant le mobile, manuel | APK Android en artefact (30 jours)                             |
 
+- **Audit des dépendances** : non bloquant (`continue-on-error`). Il signale les vulnérabilités sans empêcher le déploiement ; les corrections passent par Dependabot ou une PR `chore(deps)`.
+- **CodeQL** : le code scanning GitHub n'est pas disponible sur un dépôt privé sans GitHub Code Security. L'analyse tourne quand même, le rapport SARIF est publié en artefact `codeql-sarif` et le job échoue sur toute alerte de niveau « error ». Si le dépôt devient public, repasser `upload: never` à la valeur par défaut pour retrouver les alertes dans l'onglet Security.
+
 ## Protection des branches
 
 Appliquée à `dev`, `main` et `prod` (Settings › Branches) :
