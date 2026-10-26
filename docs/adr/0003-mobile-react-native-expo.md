@@ -1,11 +1,11 @@
-# 0003 — Mobile en React Native avec Expo, cible Android
+# 0003 — Mobile en React Native avec Expo, Android uniquement
 
-- Statut : accepté (cible à confirmer au sprint 2)
-- Date : 2026-10-25
+- Statut : accepté
+- Date : 2026-10-26
 
 ## Contexte
 
-Le sujet impose une application native ou multiplateforme sur une seule plateforme, sans site emballé (PWA, WebView). Le groupe n'a pas de Mac.
+Le sujet impose une application native ou multiplateforme sur une seule plateforme, sans site emballé (PWA, WebView). Le groupe n'a pas de Mac ni de compte Apple Developer.
 
 ## Options envisagées
 
@@ -17,10 +17,10 @@ iOS : la compilation est possible sans Mac (EAS Build), mais l'exécution demand
 
 ## Décision
 
-React Native avec Expo SDK 54, cible officielle Android. iOS reste un bonus si un Mac ou un compte Apple devient disponible.
+React Native avec Expo SDK 54, **Android uniquement**, décidé en équipe au sprint 0. iOS n'est pas visé, même en bonus : la configuration iOS est retirée du projet (`platforms: ["android"]` dans `app.json`).
 
 ## Conséquences
 
-- La CI produit un APK à chaque merge sur `main` (workflow « Mobile »).
-- Le code reste sans spécificité Android, pour pouvoir sortir iOS sans réécriture.
+- La CI produit un APK installable à chaque merge sur `main` et `prod` (workflow « Mobile ») ; démo sur téléphone Android ou émulateur.
 - Accessibilité testée avec TalkBack.
+- Le code reste en React Native standard : si le besoin apparaissait, une cible iOS resterait possible sans réécriture, au prix d'un nouvel ADR.

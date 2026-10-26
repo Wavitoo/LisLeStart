@@ -3,15 +3,12 @@
     "name": "LisLeStart",
     "slug": "lislestart",
     "version": "0.1.0",
+    "platforms": ["android"],
     "orientation": "portrait",
     "userInterfaceStyle": "dark",
     "backgroundColor": "#0F1222",
     "android": {
       "package": "app.lislestart.mobile"
-    },
-    "ios": {
-      "bundleIdentifier": "app.lislestart.mobile",
-      "supportsTablet": false
     }
   }
 }

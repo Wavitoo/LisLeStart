@@ -50,10 +50,9 @@ Tant qu'ils sont absents, le job `deploy` affiche un avertissement sans échouer
 
 Secrets du dépôt (Settings › Secrets and variables › Actions) :
 
-| Secret              | Usage                                    |
-| ------------------- | ---------------------------------------- |
-| `STARTGG_API_TOKEN` | Synchronisation start.gg en ligne        |
-| `EXPO_TOKEN`        | Optionnel : build iOS simulateur via EAS |
+| Secret              | Usage                             |
+| ------------------- | --------------------------------- |
+| `STARTGG_API_TOKEN` | Synchronisation start.gg en ligne |
 
 L'environnement `production` peut exiger une approbation manuelle avant déploiement (Settings › Environments › production › Required reviewers).
 

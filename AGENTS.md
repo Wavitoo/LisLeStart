@@ -52,7 +52,7 @@ Monorepo **TypeScript** partout (pnpm workspaces + Turborepo).
 | Temps réel        | Socket.IO + adaptateur Redis (rooms par tournoi et par match)                                                                           |
 | Jobs              | BullMQ sur Redis (synchro start.gg, verrouillage, recalcul en cascade, notifications)                                                   |
 | Web               | Next.js 15 (App Router, React 19), sortie `standalone`                                                                                  |
-| Mobile            | React Native 0.81 + Expo SDK 54, **cible officielle Android** (iOS en bonus seulement si Mac ou compte Apple dispo)                     |
+| Mobile            | React Native 0.81 + Expo SDK 54, **Android uniquement** (ADR 0003)                                                                      |
 | Tests             | Vitest partout ; Playwright + axe-core (web) ; k6 + simulateur (charge)                                                                 |
 | Infra             | Docker Compose en local ; Render (API, web, région Frankfurt) + Neon (PostgreSQL), ADR 0004 — staging sur `main`, production sur `prod` |
 
