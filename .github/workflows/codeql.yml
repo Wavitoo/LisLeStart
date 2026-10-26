@@ -1,8 +1,7 @@
 name: CodeQL
 
-# Le code scanning de GitHub n'est pas disponible sur ce dépôt privé (GitHub Code Security payant) :
-# l'analyse tourne sans envoi, le rapport SARIF est publié en artefact et le job échoue
-# s'il trouve une alerte de niveau « error ».
+# Les alertes sont envoyées dans l'onglet Security du dépôt (public). Le rapport SARIF est aussi
+# publié en artefact, et le job échoue s'il trouve une alerte de niveau « error ».
 on:
   pull_request:
     branches: [dev, main, prod]
@@ -14,6 +13,7 @@ on:
 permissions:
   contents: read
   actions: read
+  security-events: write
 
 jobs:
   analyze:
@@ -27,7 +27,6 @@ jobs:
           queries: security-extended
       - uses: github/codeql-action/analyze@v4
         with:
-          upload: never
           output: sarif
       - uses: actions/upload-artifact@v7
         if: always()

@@ -12,7 +12,7 @@ LisLeStart est une plateforme de tournois (élimination simple et double, poules
 | Staging (branche `main`)                   | Web https://lislestart-web-staging.onrender.com · API https://lislestart-api-staging.onrender.com/docs                                                                          |
 | Documentation                              | [`/docs`](docs/README.md)                                                                                                                                                       |
 | Hébergement                                | Render (API, web) + Neon (PostgreSQL), voir [operations.md](docs/operations.md). Instances gratuites : le premier appel après une période d'inactivité peut prendre une minute. |
-| Tableau de bord du projet                  | GitHub Projects « LisLeStart »                                                                                                                                                  |
+| Tableau de bord du projet                  | [GitHub Projects « LisLeStart »](https://github.com/users/Wavitoo/projects/1)                                                                                                   |
 | Maquette                                   | Figma « LisLeStart » (lien à ajouter)                                                                                                                                           |
 
 <!-- Captures d'écran : à ajouter dans docs/assets/ au sprint 2 -->

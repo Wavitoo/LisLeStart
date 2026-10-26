@@ -7,6 +7,7 @@ updates:
       interval: weekly
       day: monday
     open-pull-requests-limit: 5
+    labels: ["type:chore", "pole:transverse"]
     commit-message:
       prefix: "chore(deps)"
     groups:
@@ -29,6 +30,7 @@ updates:
     schedule:
       interval: weekly
       day: monday
+    labels: ["type:chore", "area:infra", "pole:transverse"]
     commit-message:
       prefix: "chore(ci)"
     groups:
