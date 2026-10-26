@@ -1,0 +1,932 @@
+{
+  "milestones": [
+    {
+      "title": "Sprint 0 — Fondations",
+      "due": "2026-11-01",
+      "description": "Dépôt, CI/CD, charte, modèle de données"
+    },
+    {
+      "title": "Sprint 1 — Tournois internes",
+      "due": "2026-11-15",
+      "description": "Auth, rôles, tournois, inscriptions, élimination simple et double"
+    },
+    {
+      "title": "Sprint 2 — Formats et résultats",
+      "due": "2026-11-29",
+      "description": "Poules, suisse, FFA, litiges, import fichier, temps réel"
+    },
+    {
+      "title": "Sprint 3 — Pronostics et start.gg",
+      "due": "2026-12-13",
+      "description": "Pronostics, verrouillage, connecteur start.gg, mobile"
+    },
+    {
+      "title": "Sprint 4 — Pick'em et classements",
+      "due": "2027-01-03",
+      "description": "Pick'em, recalcul en cascade, classements, groupes, dashboard"
+    },
+    {
+      "title": "Sprint 5 — Simulateur et audits",
+      "due": "2027-01-17",
+      "description": "Simulateur, charge, notifications, audits accessibilité et sécurité. Gel des fonctionnalités."
+    },
+    {
+      "title": "Sprint 6 — Docs et soutenance",
+      "due": "2027-01-24",
+      "description": "Documentation, déclaration d'accessibilité, répétition"
+    }
+  ],
+  "labels": [
+    { "name": "type:feat", "color": "C6F432", "description": "Nouvelle fonctionnalité" },
+    { "name": "type:bug", "color": "FF8A65", "description": "Comportement incorrect" },
+    { "name": "type:chore", "color": "A3AAC2", "description": "Outillage, configuration" },
+    { "name": "type:docs", "color": "8B7BFF", "description": "Documentation" },
+    { "name": "type:test", "color": "5EEAD4", "description": "Tests" },
+    { "name": "type:security", "color": "B91C1C", "description": "Sécurité" },
+    { "name": "type:a11y", "color": "2563EB", "description": "Accessibilité" },
+    { "name": "area:engine", "color": "1F2440", "description": "packages/engine" },
+    { "name": "area:api", "color": "1F2440", "description": "apps/api" },
+    { "name": "area:web", "color": "1F2440", "description": "apps/web" },
+    { "name": "area:mobile", "color": "1F2440", "description": "apps/mobile" },
+    { "name": "area:simulator", "color": "1F2440", "description": "apps/simulator" },
+    { "name": "area:infra", "color": "1F2440", "description": "CI/CD, Docker, hébergement" },
+    { "name": "area:docs", "color": "1F2440", "description": "docs/" },
+    { "name": "pole:plateforme", "color": "22301A", "description": "Plateforme et sécurité" },
+    { "name": "pole:moteur", "color": "2A2550", "description": "Moteur et API" },
+    { "name": "pole:front", "color": "3A2220", "description": "Web et mobile" },
+    { "name": "priority:haute", "color": "FF8A65", "description": "Bloquant pour la suite" },
+    {
+      "name": "good first issue",
+      "color": "7057FF",
+      "description": "Idéale pour une première contribution"
+    },
+    { "name": "bonus", "color": "FFD166", "description": "Valorisé, non obligatoire" }
+  ],
+  "issues": [
+    {
+      "title": "Valider le nom, le logo et la mini charte graphique",
+      "sprint": 0,
+      "area": "docs",
+      "type": "docs",
+      "pole": "front",
+      "criteria": [
+        "Nom, logo et couleurs validés par les 3 membres",
+        "docs/brand.md à jour",
+        "Mini charte de 1 à 2 pages exportée en PDF dans docs/assets"
+      ]
+    },
+    {
+      "title": "Créer le dépôt GitHub et protéger la branche main",
+      "sprint": 0,
+      "area": "infra",
+      "type": "chore",
+      "pole": "plateforme",
+      "priority": true,
+      "criteria": [
+        "Squelette poussé sur main",
+        "PR obligatoire avec 1 approbation",
+        "Checks requis : scan de secrets, lint/types/tests/build, CodeQL",
+        "Force push interdit"
+      ]
+    },
+    {
+      "title": "Configurer GitHub Projects (tableau, roadmap, vues par sprint)",
+      "sprint": 0,
+      "area": "infra",
+      "type": "chore",
+      "pole": "plateforme",
+      "criteria": [
+        "Projet lié au dépôt",
+        "Colonnes : À faire, En cours, En revue, Terminé",
+        "Vue roadmap par milestone",
+        "Toutes les issues du backlog importées"
+      ]
+    },
+    {
+      "title": "Avoir une CI verte sur main",
+      "sprint": 0,
+      "area": "infra",
+      "type": "chore",
+      "pole": "plateforme",
+      "priority": true,
+      "criteria": [
+        "Workflow CI vert sur main",
+        "CodeQL actif",
+        "Badge de CI dans le README",
+        "Une PR avec un test cassé ne peut pas être mergée"
+      ]
+    },
+    {
+      "title": "Choisir l'hébergeur et brancher le déploiement continu",
+      "sprint": 0,
+      "area": "infra",
+      "type": "chore",
+      "pole": "plateforme",
+      "criteria": [
+        "ADR 0004 passé à « accepté »",
+        "Secrets de déploiement créés dans GitHub",
+        "Un merge sur main met à jour la plateforme en ligne",
+        "URL de démo dans le README"
+      ]
+    },
+    {
+      "title": "Produire l'APK Android dans la CI",
+      "sprint": 0,
+      "area": "mobile",
+      "type": "chore",
+      "pole": "plateforme",
+      "criteria": [
+        "Workflow Mobile vert",
+        "APK téléchargeable en artefact",
+        "APK installé et lancé sur un téléphone ou un émulateur"
+      ]
+    },
+    {
+      "title": "Valider le modèle de données et la première migration",
+      "sprint": 0,
+      "area": "api",
+      "type": "feat",
+      "pole": "moteur",
+      "priority": true,
+      "criteria": [
+        "Schéma Prisma relu par les 3 membres",
+        "Première migration générée et versionnée",
+        "docs/data-model.md à jour"
+      ]
+    },
+    {
+      "title": "Décider la cible mobile (Android ou iOS)",
+      "sprint": 0,
+      "area": "docs",
+      "type": "docs",
+      "pole": "front",
+      "criteria": ["Décision prise en équipe", "ADR 0003 mis à jour"]
+    },
+    {
+      "title": "Test du nouvel arrivant n°1 (moins de 15 minutes)",
+      "sprint": 0,
+      "area": "docs",
+      "type": "docs",
+      "pole": "plateforme",
+      "goodFirst": true,
+      "criteria": [
+        "Une personne extérieure clone le dépôt et suit le README",
+        "Plateforme, tournoi simulé et tests lancés en moins de 15 minutes",
+        "Points de blocage corrigés dans le README ou docs/onboarding.md"
+      ]
+    },
+
+    {
+      "title": "Authentification : inscription, connexion, sessions sécurisées",
+      "sprint": 1,
+      "area": "api",
+      "type": "security",
+      "pole": "plateforme",
+      "priority": true,
+      "criteria": [
+        "Mots de passe hachés en Argon2id",
+        "Cookies de session HttpOnly, Secure, SameSite",
+        "Limitation de débit sur la connexion",
+        "Tests des cas d'échec"
+      ]
+    },
+    {
+      "title": "Rôles et permissions vérifiés côté serveur",
+      "sprint": 1,
+      "area": "api",
+      "type": "security",
+      "pole": "plateforme",
+      "priority": true,
+      "criteria": [
+        "Guards par rôle (admin, joueur, spectateur)",
+        "Vérification de propriété sur chaque ressource (pas d'IDOR)",
+        "Tests : un spectateur ne peut pas créer de tournoi"
+      ]
+    },
+    {
+      "title": "Jeux et statistiques relevées par manche",
+      "sprint": 1,
+      "area": "api",
+      "type": "feat",
+      "pole": "moteur",
+      "criteria": [
+        "L'admin déclare un jeu (e-sport, plateau, babyfoot…)",
+        "Il définit les statistiques : choix dans une liste, nombre, joueur",
+        "Endpoints documentés dans OpenAPI"
+      ]
+    },
+    {
+      "title": "Créer, dupliquer un tournoi ou partir d'un modèle",
+      "sprint": 1,
+      "area": "api",
+      "type": "feat",
+      "pole": "moteur",
+      "criteria": [
+        "Jeu, dates, lieu, visibilité, description, règlement",
+        "Solo ou équipe avec tailles min et max",
+        "Duplication et modèles réutilisables"
+      ]
+    },
+    {
+      "title": "Inscriptions : solo, équipe, validation, liste d'attente, champs personnalisés",
+      "sprint": 1,
+      "area": "api",
+      "type": "feat",
+      "pole": "moteur",
+      "criteria": [
+        "Inscriptions ouvertes ou sur validation",
+        "Nombre de places et liste d'attente",
+        "Champs personnalisés définis par l'admin"
+      ]
+    },
+    {
+      "title": "Équipes : capitaine, invitation par lien, effectif",
+      "sprint": 1,
+      "area": "api",
+      "type": "feat",
+      "pole": "moteur",
+      "criteria": [
+        "Le capitaine crée l'équipe",
+        "Invitation par lien à usage limité",
+        "Titulaires et remplaçants respectent les tailles"
+      ]
+    },
+    {
+      "title": "Check-in et remplacement par la liste d'attente",
+      "sprint": 1,
+      "area": "api",
+      "type": "feat",
+      "pole": "moteur",
+      "criteria": [
+        "Plage de check-in avant le début",
+        "Les absents sont remplacés automatiquement",
+        "Tests du remplacement"
+      ]
+    },
+    {
+      "title": "Moteur : élimination simple complète",
+      "sprint": 1,
+      "area": "engine",
+      "type": "feat",
+      "pole": "moteur",
+      "priority": true,
+      "criteria": [
+        "Tours suivants générés à partir des résultats",
+        "Exempts gérés",
+        "Tests de 2 à 64 participants"
+      ]
+    },
+    {
+      "title": "Moteur : élimination double",
+      "sprint": 1,
+      "area": "engine",
+      "type": "feat",
+      "pole": "moteur",
+      "priority": true,
+      "criteria": [
+        "Tableau des gagnants et des perdants",
+        "Grande finale (avec reset optionnel)",
+        "Exempts gérés et testés"
+      ]
+    },
+    {
+      "title": "Saisie des résultats par l'administrateur",
+      "sprint": 1,
+      "area": "api",
+      "type": "feat",
+      "pole": "moteur",
+      "criteria": [
+        "Score par manche et statistiques de manche",
+        "Le résultat fait avancer l'arbre",
+        "Action inscrite au journal d'audit"
+      ]
+    },
+    {
+      "title": "Web : pages publiques d'un tournoi",
+      "sprint": 1,
+      "area": "web",
+      "type": "feat",
+      "pole": "front",
+      "criteria": [
+        "Arbre, participants, planning, classement",
+        "HTML sémantique et titres hiérarchisés",
+        "Utilisable au clavier"
+      ]
+    },
+    {
+      "title": "Web : back-office de création de tournoi",
+      "sprint": 1,
+      "area": "web",
+      "type": "feat",
+      "pole": "front",
+      "criteria": [
+        "Formulaire conforme à la maquette",
+        "Erreurs explicites liées au champ avec suggestion",
+        "Étapes ajoutées et ordonnées"
+      ]
+    },
+    {
+      "title": "Mobile : navigation et liste des tournois en cours",
+      "sprint": 1,
+      "area": "mobile",
+      "type": "feat",
+      "pole": "front",
+      "criteria": [
+        "Barre d'onglets Pronos, Pick'em, Arbres, Classement",
+        "Liste des tournois en cours depuis l'API",
+        "Libellés TalkBack sur les éléments interactifs"
+      ]
+    },
+    {
+      "title": "Journal d'audit des actions sensibles",
+      "sprint": 1,
+      "area": "api",
+      "type": "security",
+      "pole": "plateforme",
+      "criteria": [
+        "Correction de score, décision de litige, création et résolution de Pick'em",
+        "Qui, quoi, avant, après, quand",
+        "Aucune modification ni suppression possible"
+      ]
+    },
+
+    {
+      "title": "Moteur : poules (round robin) et départage",
+      "sprint": 2,
+      "area": "engine",
+      "type": "feat",
+      "pole": "moteur",
+      "criteria": [
+        "Chaque participant rencontre tous ceux de sa poule",
+        "Barème victoire, nul, défaite",
+        "Départage : confrontation directe, différence de manches",
+        "Tests des égalités"
+      ]
+    },
+    {
+      "title": "Moteur : ronde suisse sans rematch",
+      "sprint": 2,
+      "area": "engine",
+      "type": "feat",
+      "pole": "moteur",
+      "priority": true,
+      "criteria": [
+        "Appariement par score, sans rematch",
+        "Exempt attribué correctement si nombre impair",
+        "Départage Buchholz",
+        "Tests sur 8, 16 et 13 participants"
+      ]
+    },
+    {
+      "title": "Moteur : FFA et points de placement",
+      "sprint": 2,
+      "area": "engine",
+      "type": "feat",
+      "pole": "moteur",
+      "criteria": [
+        "Plusieurs participants par match",
+        "Points selon le classement de la manche",
+        "Tests du cumul et des égalités"
+      ]
+    },
+    {
+      "title": "Qualifications entre étapes et seeding",
+      "sprint": 2,
+      "area": "engine",
+      "type": "feat",
+      "pole": "moteur",
+      "criteria": [
+        "Règles de placement (1er de A contre 2e de B…)",
+        "Seeding manuel ou automatique",
+        "Tests"
+      ]
+    },
+    {
+      "title": "Déclaration de score par les joueurs et litiges",
+      "sprint": 2,
+      "area": "api",
+      "type": "feat",
+      "pole": "moteur",
+      "criteria": [
+        "Double confirmation par les deux camps",
+        "Désaccord : litige avec preuve en pièce jointe",
+        "L'admin tranche, action auditée"
+      ]
+    },
+    {
+      "title": "Forfaits, disqualifications et retards",
+      "sprint": 2,
+      "area": "api",
+      "type": "feat",
+      "pole": "moteur",
+      "criteria": [
+        "Forfait et disqualification font avancer l'arbre",
+        "Tests sur l'impact dans les poules et la suisse"
+      ]
+    },
+    {
+      "title": "Planification des matchs et affectation des postes",
+      "sprint": 2,
+      "area": "api",
+      "type": "feat",
+      "pole": "moteur",
+      "criteria": [
+        "Date et heure par tour ou par match, durée estimée",
+        "Poste, table ou terrain en présentiel",
+        "Notification match appelé et changement d'horaire"
+      ]
+    },
+    {
+      "title": "Import CSV/JSON validé ligne par ligne",
+      "sprint": 2,
+      "area": "api",
+      "type": "security",
+      "pole": "plateforme",
+      "criteria": [
+        "Format documenté (participants, seeding, résultats)",
+        "Taille maximale et schéma strict",
+        "Erreurs par ligne, aperçu, annulation possible",
+        "Les résultats importés déclenchent la même mécanique qu'une saisie"
+      ]
+    },
+    {
+      "title": "Temps réel : diffusion des résultats",
+      "sprint": 2,
+      "area": "api",
+      "type": "feat",
+      "pole": "plateforme",
+      "priority": true,
+      "criteria": [
+        "Socket.IO avec rooms par tournoi et par match",
+        "Adaptateur Redis",
+        "Un résultat saisi apparaît sur un autre navigateur sans recharger"
+      ]
+    },
+    {
+      "title": "Résultats en événements et recalcul de l'arbre",
+      "sprint": 2,
+      "area": "engine",
+      "type": "feat",
+      "pole": "moteur",
+      "priority": true,
+      "criteria": [
+        "Chaque résultat est un ResultEvent horodaté avec sa source",
+        "L'état d'une étape se recalcule depuis l'historique",
+        "Tests d'une correction en cours de tournoi"
+      ]
+    },
+    {
+      "title": "Web : vue liste équivalente de l'arbre",
+      "sprint": 2,
+      "area": "web",
+      "type": "a11y",
+      "pole": "front",
+      "goodFirst": true,
+      "criteria": [
+        "Tableau des matchs par tour avec caption et en-têtes",
+        "Bascule arbre/liste accessible au clavier",
+        "Même information que la vue graphique"
+      ]
+    },
+    {
+      "title": "Tests d'accessibilité automatiques dans la CI",
+      "sprint": 2,
+      "area": "web",
+      "type": "test",
+      "pole": "plateforme",
+      "criteria": [
+        "Playwright + axe-core sur les pages principales",
+        "La CI échoue sur une violation sérieuse"
+      ]
+    },
+
+    {
+      "title": "Pronostics match par match",
+      "sprint": 3,
+      "area": "api",
+      "type": "feat",
+      "pole": "moteur",
+      "priority": true,
+      "criteria": [
+        "Vainqueur et score exact optionnel",
+        "Modifiable jusqu'au début du match",
+        "Tests"
+      ]
+    },
+    {
+      "title": "Pronostics d'arbre complet",
+      "sprint": 3,
+      "area": "api",
+      "type": "feat",
+      "pole": "moteur",
+      "criteria": [
+        "Saisie de toute une phase avant son début",
+        "Choix de mode par l'admin : match, arbre ou les deux"
+      ]
+    },
+    {
+      "title": "Verrouillage des pronostics sur l'horloge du serveur",
+      "sprint": 3,
+      "area": "api",
+      "type": "security",
+      "pole": "moteur",
+      "priority": true,
+      "criteria": [
+        "Refus côté API dès le début du match ou de la phase",
+        "Aucune confiance dans l'heure du client",
+        "Tests aux bornes (juste avant, juste après)"
+      ]
+    },
+    {
+      "title": "Barème des pronostics configurable",
+      "sprint": 3,
+      "area": "engine",
+      "type": "feat",
+      "pole": "moteur",
+      "criteria": [
+        "Points par bonne réponse, bonus score exact",
+        "Points croissants selon le tour",
+        "Tests"
+      ]
+    },
+    {
+      "title": "Connecteur start.gg : recherche et import",
+      "sprint": 3,
+      "area": "api",
+      "type": "feat",
+      "pole": "plateforme",
+      "priority": true,
+      "criteria": [
+        "Import par URL ou recherche par nom",
+        "Phases, arbres, participants, matchs, manches, personnages, cartes, seeds quand disponibles",
+        "Tournoi importé en lecture seule, lien vers la source",
+        "Respect des conditions d'utilisation de start.gg"
+      ]
+    },
+    {
+      "title": "Synchronisation start.gg : cache, limites, reprise",
+      "sprint": 3,
+      "area": "api",
+      "type": "feat",
+      "pole": "plateforme",
+      "criteria": [
+        "Synchro régulière par job pendant le tournoi",
+        "Cache et backoff exponentiel",
+        "Respect des limites de requêtes"
+      ]
+    },
+    {
+      "title": "Mocks des réponses start.gg pour les tests",
+      "sprint": 3,
+      "area": "api",
+      "type": "test",
+      "pole": "plateforme",
+      "goodFirst": true,
+      "criteria": [
+        "Réponses enregistrées versionnées",
+        "Tests du connecteur sans connexion",
+        "Aucun jeton dans les fichiers enregistrés"
+      ]
+    },
+    {
+      "title": "Web : saisie de l'arbre de pronostics au clavier",
+      "sprint": 3,
+      "area": "web",
+      "type": "a11y",
+      "pole": "front",
+      "criteria": [
+        "Tout l'arbre est saisissable sans souris",
+        "Ordre de tabulation logique, focus visible",
+        "Choix annoncés au lecteur d'écran"
+      ]
+    },
+    {
+      "title": "Mobile : écran pronostics",
+      "sprint": 3,
+      "area": "mobile",
+      "type": "feat",
+      "pole": "front",
+      "criteria": [
+        "Match en cours et prochain match",
+        "Choix du vainqueur et du score",
+        "Zones tactiles de 48 dp, état non porté par la couleur seule"
+      ]
+    },
+    {
+      "title": "Répartition du public sur chaque match",
+      "sprint": 3,
+      "area": "api",
+      "type": "feat",
+      "pole": "front",
+      "criteria": [
+        "Pourcentage par issue, visible après verrouillage",
+        "Pronostics des amis visibles après verrouillage"
+      ]
+    },
+
+    {
+      "title": "Pick'em : les 5 modèles de questions",
+      "sprint": 4,
+      "area": "engine",
+      "type": "feat",
+      "pole": "moteur",
+      "priority": true,
+      "criteria": [
+        "Le plus choisi, meilleur sur une statistique, total, classement, oui/non",
+        "Barème, date de clôture et données de résolution par question"
+      ]
+    },
+    {
+      "title": "Pick'em : ne proposer que les questions résolubles",
+      "sprint": 4,
+      "area": "engine",
+      "type": "feat",
+      "pole": "moteur",
+      "criteria": [
+        "Le constructeur filtre selon les données du tournoi",
+        "Exemple testé : pas de question sur les personnages si l'import ne les fournit pas"
+      ]
+    },
+    {
+      "title": "Pick'em : résolution automatique et annulation",
+      "sprint": 4,
+      "area": "engine",
+      "type": "feat",
+      "pole": "moteur",
+      "criteria": [
+        "Résolution dès que les résultats sont connus",
+        "Donnée manquante : question annulée et participants prévenus",
+        "Tests des deux cas"
+      ]
+    },
+    {
+      "title": "Recalcul en cascade des points",
+      "sprint": 4,
+      "area": "engine",
+      "type": "feat",
+      "pole": "moteur",
+      "priority": true,
+      "criteria": [
+        "Une correction recalcule arbre, qualifiés et points de tous",
+        "L'historique garde la trace",
+        "Tests"
+      ]
+    },
+    {
+      "title": "Classements par tournoi, saison et général",
+      "sprint": 4,
+      "area": "api",
+      "type": "feat",
+      "pole": "moteur",
+      "criteria": ["Mis à jour en temps réel", "Pagination"]
+    },
+    {
+      "title": "Groupes d'amis et classements privés",
+      "sprint": 4,
+      "area": "api",
+      "type": "feat",
+      "pole": "front",
+      "criteria": ["Créer un groupe, inviter, rejoindre", "Classement propre au groupe"]
+    },
+    {
+      "title": "Badges et titres",
+      "sprint": 4,
+      "area": "api",
+      "type": "feat",
+      "pole": "front",
+      "goodFirst": true,
+      "criteria": [
+        "Meilleur pronostiqueur du tournoi, série de bonnes réponses…",
+        "Affichés sur le profil"
+      ]
+    },
+    {
+      "title": "Dashboard en direct plein écran",
+      "sprint": 4,
+      "area": "web",
+      "type": "feat",
+      "pole": "front",
+      "priority": true,
+      "criteria": [
+        "Matchs en cours et à venir, derniers résultats",
+        "Arbre ou classement en temps réel",
+        "Classement des pronostiqueurs et statistiques du public",
+        "Lisible projeté en salle"
+      ]
+    },
+    {
+      "title": "Mobile : Pick'em, classements et groupes",
+      "sprint": 4,
+      "area": "mobile",
+      "type": "feat",
+      "pole": "front",
+      "criteria": ["Écrans conformes à la maquette", "Tailles de texte dynamiques respectées"]
+    },
+
+    {
+      "title": "Simulateur complet",
+      "sprint": 5,
+      "area": "simulator",
+      "type": "feat",
+      "pole": "plateforme",
+      "priority": true,
+      "criteria": [
+        "Joueurs, équipes, spectateurs fictifs",
+        "Matchs avec statistiques réalistes",
+        "Pronostics générés, en accéléré ou en temps réel"
+      ]
+    },
+    {
+      "title": "Données de démonstration de la soutenance",
+      "sprint": 5,
+      "area": "simulator",
+      "type": "feat",
+      "pole": "plateforme",
+      "criteria": [
+        "3 tournois internes : ronde suisse, double élimination, FFA",
+        "2 tournois importés depuis start.gg avec Pick'em résolus",
+        "Chargées par une commande"
+      ]
+    },
+    {
+      "title": "Tests de charge avec le simulateur",
+      "sprint": 5,
+      "area": "simulator",
+      "type": "test",
+      "pole": "plateforme",
+      "criteria": [
+        "Des milliers de spectateurs pronostiquent pendant un même match",
+        "Délai de mise à jour des classements mesuré",
+        "Résultats dans docs/operations.md"
+      ]
+    },
+    {
+      "title": "Notifications mobiles",
+      "sprint": 5,
+      "area": "mobile",
+      "type": "feat",
+      "pole": "front",
+      "criteria": ["Pronostic bientôt verrouillé", "Résultat d'un match suivi", "Points gagnés"]
+    },
+    {
+      "title": "Audit d'accessibilité web et mobile",
+      "sprint": 5,
+      "area": "web",
+      "type": "a11y",
+      "pole": "front",
+      "priority": true,
+      "criteria": [
+        "Lighthouse, axe, WAVE",
+        "Parcours complet au clavier et avec NVDA",
+        "Parcours TalkBack sur l'app",
+        "Corrections faites, résultats dans docs/accessibility.md"
+      ]
+    },
+    {
+      "title": "Revue OWASP Top 10 et corrections",
+      "sprint": 5,
+      "area": "api",
+      "type": "security",
+      "pole": "plateforme",
+      "priority": true,
+      "criteria": [
+        "Checklist de docs/security.md complétée",
+        "Corrections mergées",
+        "Aucune alerte CodeQL ou Dependabot critique ouverte"
+      ]
+    },
+    {
+      "title": "Résilience quand start.gg ne répond pas",
+      "sprint": 5,
+      "area": "api",
+      "type": "feat",
+      "pole": "plateforme",
+      "criteria": [
+        "Les données en cache restent affichées",
+        "La synchronisation reprend d'elle-même",
+        "Test avec une API simulée en panne"
+      ]
+    },
+
+    {
+      "title": "Documentation utilisateur avec captures",
+      "sprint": 6,
+      "area": "docs",
+      "type": "docs",
+      "pole": "front",
+      "goodFirst": true,
+      "criteria": ["Guides administrateur, joueur, spectateur complets", "Captures à jour"]
+    },
+    {
+      "title": "Documentation technique complète",
+      "sprint": 6,
+      "area": "docs",
+      "type": "docs",
+      "pole": "moteur",
+      "criteria": [
+        "Architecture, ADR, modèle de données, formats, Pick'em, temps réel, API, mobile, exploitation"
+      ]
+    },
+    {
+      "title": "Guide et tutoriel du développeur de connecteurs",
+      "sprint": 6,
+      "area": "docs",
+      "type": "docs",
+      "pole": "plateforme",
+      "criteria": [
+        "Interface, correspondance des données, synchronisation, limites d'API",
+        "Tutoriel complet d'un connecteur simple"
+      ]
+    },
+    {
+      "title": "Déclaration d'accessibilité sur la plateforme",
+      "sprint": 6,
+      "area": "web",
+      "type": "a11y",
+      "pole": "front",
+      "criteria": [
+        "Niveau atteint, limites connues, actions prévues",
+        "Page accessible depuis le pied de page"
+      ]
+    },
+    {
+      "title": "Test du nouvel arrivant final",
+      "sprint": 6,
+      "area": "docs",
+      "type": "docs",
+      "pole": "plateforme",
+      "criteria": [
+        "Moins de 15 minutes, mesuré par une personne extérieure",
+        "README et prise en main corrigés"
+      ]
+    },
+    {
+      "title": "Préparer la soutenance",
+      "sprint": 6,
+      "area": "docs",
+      "type": "docs",
+      "pole": "plateforme",
+      "priority": true,
+      "criteria": [
+        "Scénario : le jury pronostique sur mobile pendant un tournoi simulé",
+        "Plan B : démo locale Docker et import enregistré",
+        "Chacun a revu les 3 pôles pour les questions sur le code",
+        "Répétition chronométrée"
+      ]
+    },
+    {
+      "title": "Version v1.0.0 et CHANGELOG",
+      "sprint": 6,
+      "area": "infra",
+      "type": "chore",
+      "pole": "plateforme",
+      "criteria": ["Tag v1.0.0", "CHANGELOG complet", "Section Usage de l'IA du README à jour"]
+    },
+
+    {
+      "title": "Bonus : format ligue sur plusieurs semaines",
+      "sprint": null,
+      "area": "engine",
+      "type": "feat",
+      "pole": "moteur",
+      "bonus": true,
+      "criteria": ["Journées et saison"]
+    },
+    {
+      "title": "Bonus : widgets d'arbre et de classement à intégrer",
+      "sprint": null,
+      "area": "web",
+      "type": "feat",
+      "pole": "front",
+      "bonus": true,
+      "criteria": ["Intégrables sur un site externe"]
+    },
+    {
+      "title": "Bonus : second connecteur",
+      "sprint": null,
+      "area": "api",
+      "type": "feat",
+      "pole": "plateforme",
+      "bonus": true,
+      "criteria": ["Autre plateforme de tournois, sans modifier le cœur"]
+    },
+    {
+      "title": "Bonus : prédictions assistées par les statistiques",
+      "sprint": null,
+      "area": "engine",
+      "type": "feat",
+      "pole": "moteur",
+      "bonus": true,
+      "criteria": ["Suggestion basée sur les résultats passés"]
+    },
+    {
+      "title": "Bonus : Pick'em instantanés depuis un chat de stream",
+      "sprint": null,
+      "area": "api",
+      "type": "feat",
+      "pole": "plateforme",
+      "bonus": true,
+      "criteria": ["Questions lancées pendant un live"]
+    }
+  ]
+}

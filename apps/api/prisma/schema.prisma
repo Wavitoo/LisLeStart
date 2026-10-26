@@ -1,0 +1,216 @@
+// Modèle de données, première version (sprint 0). Détail : docs/data-model.md
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  PLAYER
+  SPECTATOR
+}
+
+enum StageFormat {
+  SINGLE_ELIMINATION
+  DOUBLE_ELIMINATION
+  ROUND_ROBIN
+  SWISS
+  FREE_FOR_ALL
+}
+
+enum Source {
+  INTERNAL
+  FILE_IMPORT
+  STARTGG
+}
+
+enum MatchStatus {
+  SCHEDULED
+  CALLED
+  LIVE
+  DISPUTED
+  DONE
+  FORFEIT
+}
+
+model User {
+  id           String        @id @default(cuid())
+  email        String        @unique
+  displayName  String
+  passwordHash String
+  role         Role          @default(SPECTATOR)
+  createdAt    DateTime      @default(now())
+  memberships  TeamMember[]
+  predictions  Prediction[]
+  answers      PickemAnswer[]
+  auditEntries AuditLog[]
+}
+
+model Game {
+  id         String          @id @default(cuid())
+  name       String          @unique
+  statistics StatDefinition[]
+  tournaments Tournament[]
+}
+
+/// Statistique relevée à chaque manche (personnage, carte, kills, buts, MVP…)
+model StatDefinition {
+  id      String  @id @default(cuid())
+  gameId  String
+  game    Game    @relation(fields: [gameId], references: [id])
+  key     String
+  label   String
+  kind    String  // "choice" | "number" | "player"
+  choices String[]
+
+  @@unique([gameId, key])
+}
+
+model Tournament {
+  id          String   @id @default(cuid())
+  name        String
+  gameId      String
+  game        Game     @relation(fields: [gameId], references: [id])
+  source      Source   @default(INTERNAL)
+  externalId  String?  // identifiant start.gg pour un tournoi importé
+  startsAt    DateTime
+  endsAt      DateTime
+  location    String   // "online" | "onsite" | "mixed"
+  isPublic    Boolean  @default(true)
+  teamSize    Int      @default(1)
+  maxSubs     Int      @default(0)
+  capacity    Int
+  readOnly    Boolean  @default(false)
+  stages      Stage[]
+  teams       Team[]
+  questions   PickemQuestion[]
+  createdAt   DateTime @default(now())
+
+  @@unique([source, externalId])
+}
+
+model Stage {
+  id           String      @id @default(cuid())
+  tournamentId String
+  tournament   Tournament  @relation(fields: [tournamentId], references: [id], onDelete: Cascade)
+  order        Int
+  format       StageFormat
+  settings     Json        // BO par tour, barème de points, départage, seeding
+  matches      Match[]
+
+  @@unique([tournamentId, order])
+}
+
+model Team {
+  id           String       @id @default(cuid())
+  tournamentId String
+  tournament   Tournament   @relation(fields: [tournamentId], references: [id], onDelete: Cascade)
+  name         String
+  seed         Int?
+  checkedIn    Boolean      @default(false)
+  members      TeamMember[]
+}
+
+model TeamMember {
+  teamId    String
+  team      Team    @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User    @relation(fields: [userId], references: [id])
+  isCaptain Boolean @default(false)
+  isSub     Boolean @default(false)
+
+  @@id([teamId, userId])
+}
+
+model Match {
+  id          String       @id @default(cuid())
+  stageId     String
+  stage       Stage        @relation(fields: [stageId], references: [id], onDelete: Cascade)
+  round       Int
+  number      Int
+  bestOf      Int          @default(1)
+  status      MatchStatus  @default(SCHEDULED)
+  scheduledAt DateTime?
+  startedAt   DateTime?    // verrouillage des pronostics sur cette date (horloge serveur)
+  slots       Json         // participants par emplacement (2 en duel, N en FFA)
+  games       MatchGame[]
+  predictions Prediction[]
+  events      ResultEvent[]
+}
+
+/// Une manche d'un match, avec ses statistiques
+model MatchGame {
+  id      String @id @default(cuid())
+  matchId String
+  match   Match  @relation(fields: [matchId], references: [id], onDelete: Cascade)
+  number  Int
+  result  Json
+  stats   Json
+}
+
+/// Historique des résultats : base du recalcul en cascade
+model ResultEvent {
+  id        String   @id @default(cuid())
+  matchId   String
+  match     Match    @relation(fields: [matchId], references: [id], onDelete: Cascade)
+  source    Source
+  payload   Json
+  createdAt DateTime @default(now())
+}
+
+model Prediction {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  matchId   String
+  match     Match    @relation(fields: [matchId], references: [id], onDelete: Cascade)
+  winner    String
+  score     String?
+  points    Int?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, matchId])
+}
+
+model PickemQuestion {
+  id           String         @id @default(cuid())
+  tournamentId String
+  tournament   Tournament     @relation(fields: [tournamentId], references: [id], onDelete: Cascade)
+  template     String         // most_picked | best_on_stat | total | ranking | yes_no
+  config       Json
+  points       Int
+  closesAt     DateTime
+  status       String         @default("open") // open | locked | resolved | cancelled
+  answer       Json?
+  answers      PickemAnswer[]
+}
+
+model PickemAnswer {
+  id         String         @id @default(cuid())
+  questionId String
+  question   PickemQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  userId     String
+  user       User           @relation(fields: [userId], references: [id])
+  value      Json
+  points     Int?
+
+  @@unique([questionId, userId])
+}
+
+/// Journal d'audit en ajout seul
+model AuditLog {
+  id        String   @id @default(cuid())
+  actorId   String
+  actor     User     @relation(fields: [actorId], references: [id])
+  action    String   // score.corrected | dispute.decided | pickem.created | pickem.resolved…
+  target    String
+  before    Json?
+  after     Json?
+  createdAt DateTime @default(now())
+}
