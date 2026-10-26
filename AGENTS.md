@@ -72,7 +72,7 @@ packages/
 docs/          architecture, ADR, data-model, formats, pronostics, sécurité, accessibilité, connecteurs, exploitation, brand, guides utilisateur
 backlog/       issues.json (73 issues, 7 sprints + bonus), team.json, README
 scripts/       setup.sh (installation complète), create-github-backlog.mjs
-.github/       workflows ci, codeql, deploy, mobile ; templates ; dependabot ; CODEOWNERS
+.github/       workflows ci (dont déploiement), codeql, mobile ; templates ; dependabot ; CODEOWNERS
 ```
 
 Noms de packages : `@lislestart/api`, `@lislestart/web`, `@lislestart/mobile`, `@lislestart/simulator`, `@lislestart/engine`, `@lislestart/shared`.
@@ -215,7 +215,7 @@ Génération des arbres pour chaque format (avec exempts), appariement suisse, p
 ### CI/CD (obligatoire)
 
 CI à chaque PR (lint, tests web/serveur/mobile, build) ; PR non mergeable si la CI échoue ; déploiement continu à chaque merge sur `main` ; **build mobile installable** en artefact (APK) ; secrets dans GitHub Secrets ; pipeline documenté + badge dans le README.
-Workflows en place : `ci.yml` (Gitleaks, lint, typecheck, test, build, `pnpm audit` — sur `dev`, `main`, `prod`), `codeql.yml`, `deploy.yml` (hooks Render : `main` → environnement GitHub `staging`, `prod` → `production`), `mobile.yml` (APK via `expo prebuild` + Gradle sur `main` et `prod`).
+Workflows en place : `ci.yml` (Gitleaks, lint, typecheck, test, build, `pnpm audit` — sur `dev`, `main`, `prod`), `codeql.yml`, job `deploy` de `ci.yml` (hooks Render après les checks : `main` → environnement GitHub `staging`, `prod` → `production`), `mobile.yml` (APK via `expo prebuild` + Gradle sur `main` et `prod`).
 
 ## 10. Documentation à produire (dans `/docs`, en Markdown)
 
