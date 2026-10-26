@@ -27,13 +27,13 @@ Ce fichier donne à un assistant de code (Copilot, Claude Code, Cursor…) tout 
 
 ## 3. Équipe et répartition
 
-| Pôle      | Responsable (GitHub)          | Périmètre                                                                                                                                                                                        |
-| --------- | ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Backend   | **Martin** (`martin-vergues`) | API NestJS, PostgreSQL/Prisma, moteur `packages/engine` (arbres, suisse, FFA, qualifications, départage), pronostics, Pick'em, recalcul en cascade, classements, temps réel, connecteur start.gg |
-| Front web | **Enzo** (`EnzoDIWLK`)        | Next.js (React) : pages publiques, espace joueur, back-office admin, dashboard plein écran, vue liste des arbres, tests axe-core                                                                 |
-| Mobile    | **Arslan** (`Wavitoo`)        | App React Native (Expo) : suivi en direct, pronostics, Pick'em, classements, groupes, notifications, TalkBack, APK en CI                                                                         |
+| Pôle      | Responsable (GitHub)          | Périmètre                                                                                                                                                                                                                                       |
+| --------- | ----------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Backend   | **Martin** (`martin-vergues`) | API NestJS, PostgreSQL/Prisma, moteur `packages/engine` (arbres, suisse, FFA, qualifications, départage), tournois et résultats, pronostics, Pick'em, recalcul en cascade, classements, connecteur start.gg                                     |
+| Front web | **Enzo** (`EnzoDIWLK`)        | Next.js (React) : pages publiques, espace joueur, back-office admin, dashboard plein écran, vue liste des arbres, tests axe-core ; fonctionnalités sociales de bout en bout (endpoints compris) : répartition du public, groupes d'amis, badges |
+| Mobile    | **Arslan** (`Wavitoo`)        | App React Native (Expo) : suivi en direct, pronostics, Pick'em, classements, groupes, notifications, TalkBack, APK en CI ; transverse : CI/CD, hébergement, sécurité, temps réel (Socket.IO), journal d'audit, simulateur                       |
 
-Transversal (proposition) : CI/CD, Docker, déploiement et sécurité → Arslan (avec Martin pour auth/permissions) ; simulateur → Martin (génération) + Arslan (charge) ; charte et maquette Figma → Enzo ; démo, README, usage IA → les 3.
+Transversal : CI/CD, Docker, hébergement, sécurité, temps réel, journal d'audit et simulateur → Arslan (avec Martin pour auth/permissions et la génération du simulateur) ; charte et maquette Figma → Enzo ; démo, README, usage IA → les 3. Un endpoint dont un seul front a besoin peut être codé par le responsable de ce front, relu par Martin.
 
 Dans `backlog/issues.json`, chaque issue porte un `pole` (`backend`, `web`, `mobile`, `transverse`) et des `owners` (prénoms traduits en identifiants GitHub par `backlog/team.json`). Les relecteurs sont demandés automatiquement via `.github/CODEOWNERS`.
 
