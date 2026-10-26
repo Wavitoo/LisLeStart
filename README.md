@@ -124,4 +124,4 @@ Tout code ou contenu généré passe par les mêmes règles que le reste : tests
 
 ## Licence
 
-[MIT](LICENSE). Projet pédagogique, non destiné à être diffusé hors du cadre du projet.
+[MIT](LICENSE). Projet pédagogique réalisé dans le cadre du PGE5 Epitech 2026-2027. Le dépôt est public pour le déploiement continu et la consultation du jury ; les contributions extérieures ne sont pas acceptées pendant la durée du projet.
