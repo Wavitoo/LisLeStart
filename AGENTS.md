@@ -43,18 +43,18 @@ Dans `backlog/issues.json`, chaque issue porte un `pole` (`backend`, `web`, `mob
 
 Monorepo **TypeScript** partout (pnpm workspaces + Turborepo).
 
-| Brique            | Choix                                                                                                               |
-| ----------------- | ------------------------------------------------------------------------------------------------------------------- |
-| Moteur de tournoi | `packages/engine` en TypeScript **pur** (aucune dépendance base/réseau), testé avec Vitest                          |
-| Types partagés    | `packages/shared`                                                                                                   |
-| API               | NestJS 11 + adaptateur Fastify, OpenAPI via `@nestjs/swagger` (servi sur `/docs`)                                   |
-| Base de données   | PostgreSQL 16 + Prisma 6 (`apps/api/prisma/schema.prisma`)                                                          |
-| Temps réel        | Socket.IO + adaptateur Redis (rooms par tournoi et par match)                                                       |
-| Jobs              | BullMQ sur Redis (synchro start.gg, verrouillage, recalcul en cascade, notifications)                               |
-| Web               | Next.js 15 (App Router, React 19), sortie `standalone`                                                              |
-| Mobile            | React Native 0.81 + Expo SDK 54, **cible officielle Android** (iOS en bonus seulement si Mac ou compte Apple dispo) |
-| Tests             | Vitest partout ; Playwright + axe-core (web) ; k6 + simulateur (charge)                                             |
-| Infra             | Docker Compose en local ; hébergement prévu sur Render (à valider, ADR 0004)                                        |
+| Brique            | Choix                                                                                                                                   |
+| ----------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| Moteur de tournoi | `packages/engine` en TypeScript **pur** (aucune dépendance base/réseau), testé avec Vitest                                              |
+| Types partagés    | `packages/shared`                                                                                                                       |
+| API               | NestJS 11 + adaptateur Fastify, OpenAPI via `@nestjs/swagger` (servi sur `/docs`)                                                       |
+| Base de données   | PostgreSQL 18 + Prisma 6 (`apps/api/prisma/schema.prisma`)                                                                              |
+| Temps réel        | Socket.IO + adaptateur Redis (rooms par tournoi et par match)                                                                           |
+| Jobs              | BullMQ sur Redis (synchro start.gg, verrouillage, recalcul en cascade, notifications)                                                   |
+| Web               | Next.js 15 (App Router, React 19), sortie `standalone`                                                                                  |
+| Mobile            | React Native 0.81 + Expo SDK 54, **cible officielle Android** (iOS en bonus seulement si Mac ou compte Apple dispo)                     |
+| Tests             | Vitest partout ; Playwright + axe-core (web) ; k6 + simulateur (charge)                                                                 |
+| Infra             | Docker Compose en local ; Render (API, web, région Frankfurt) + Neon (PostgreSQL), ADR 0004 — staging sur `main`, production sur `prod` |
 
 Décisions justifiées dans `docs/adr/` (0001 monorepo, 0002 API, 0003 mobile, 0004 hébergement, 0005 recalcul par événements).
 

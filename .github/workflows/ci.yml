@@ -68,7 +68,10 @@ jobs:
     needs: [secrets, quality]
     if: github.event_name == 'push' && (github.ref_name == 'main' || github.ref_name == 'prod')
     runs-on: ubuntu-latest
-    environment: ${{ github.ref_name == 'prod' && 'production' || 'staging' }}
+    environment:
+      name: ${{ github.ref_name == 'prod' && 'production' || 'staging' }}
+      # Lien affiché dans GitHub (section Deployments du dépôt, et sur chaque run)
+      url: ${{ github.ref_name == 'prod' && 'https://lislestart-web.onrender.com' || 'https://lislestart-web-staging.onrender.com' }}
     steps:
       - name: Déclencher les hooks Render
         env:

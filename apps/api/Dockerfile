@@ -1,4 +1,5 @@
 FROM node:22-alpine AS base
+ENV CI=true
 RUN corepack enable
 WORKDIR /repo
 
@@ -14,4 +15,6 @@ COPY --from=build /repo /repo
 WORKDIR /repo/apps/api
 USER node
 EXPOSE 4000
-CMD ["sh", "-c", "pnpm db:deploy && node dist/main.js"]
+# Prisma appelé directement (sans pnpm) : pas de téléchargement de pnpm par corepack à chaque
+# démarrage, ce qui raccourcit le réveil d'une instance gratuite en veille.
+CMD ["sh", "-c", "/repo/node_modules/.bin/prisma migrate deploy && node dist/main.js"]
