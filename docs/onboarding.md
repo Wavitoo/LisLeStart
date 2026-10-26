@@ -4,10 +4,27 @@ Objectif : un nouveau contributeur lance la plateforme, un tournoi simulé et le
 
 ## 1. Installer (5 min)
 
+Prérequis : Node 22, Docker, Git. **Sous Windows, tout se fait dans WSL (Ubuntu)** :
+
+- Node via nvm : `nvm install 22` (pas le Node d'`apt`, trop ancien et sans droits pour `corepack enable`) ;
+- Docker Desktop › Settings › Resources › WSL integration activée pour la distribution ;
+- dépôt cloné dans le dossier personnel WSL (`~/lislestart`), **jamais** dans `/mnt/c` ou `/mnt/g` : lent, et les `node_modules` Windows y sont incompatibles avec Linux.
+
 ```bash
-git clone https://github.com/OWNER/lislestart.git && cd lislestart
+git clone https://github.com/Wavitoo/LisLeStart.git ~/lislestart && cd ~/lislestart
 ./scripts/setup.sh
 ```
+
+Le script applique les migrations commitées (`prisma migrate deploy`). Tant qu'il n'y en a aucune, il synchronise le schéma avec `prisma db push`, sans créer de fichier de migration.
+
+En cas de souci :
+
+| Symptôme                                               | Solution                                                                           |
+| ------------------------------------------------------ | ---------------------------------------------------------------------------------- |
+| « Docker ne répond pas »                               | Lancer Docker Desktop, vérifier l'intégration WSL                                  |
+| « corepack enable a échoué »                           | Node installé par `apt` : le remplacer par nvm                                     |
+| `P3005` (base non vide) après l'arrivée des migrations | Base locale créée avant elles : `docker compose down -v` puis `./scripts/setup.sh` |
+| Ports 3000, 4000 ou 5432 déjà pris                     | Arrêter l'autre service, ou un ancien `docker compose` lancé depuis Windows        |
 
 ## 2. Où se trouve quoi
 
