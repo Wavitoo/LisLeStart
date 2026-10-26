@@ -21,7 +21,7 @@ Ce fichier donne à un assistant de code (Copilot, Claude Code, Cursor…) tout 
 2. **Aucun jeu d'argent** : aucune mise, aucun achat, aucun lot de valeur. Uniquement des **points, badges et titres**.
 3. **API externes dans les règles** : start.gg selon ses conditions, données publiques uniquement, avec un lien vers la source.
 4. **Aucune donnée personnelle réelle** sur la démo : comptes joueurs et spectateurs générés par le simulateur.
-5. **Aucun secret** dans le dépôt ni dans l'historique (jeton start.gg compris).
+5. **Aucun secret** dans le dépôt ni dans l'historique (jeton start.gg compris). Le dépôt est **public** : code, issues, PR et commentaires sont visibles par tous (scan de secrets et blocage au push actifs).
 6. **Mobile** : natif ou multiplateforme, **jamais** de site emballé (PWA, Ionic/Capacitor, Cordova, WebView).
 7. **IA autorisée mais déclarée** : section « Usage de l'IA » du README à tenir à jour. Chaque membre doit pouvoir expliquer n'importe quelle partie du code en soutenance. Le code généré suit les mêmes règles (tests, revue, sécurité).
 
