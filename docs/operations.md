@@ -12,12 +12,12 @@ Flux : `feat/*` → PR squash vers `dev` → PR `dev` → `main` (merge commit) 
 
 ## Pipeline CI/CD
 
-| Workflow     | Déclencheur                                          | Étapes                                                         |
-| ------------ | ---------------------------------------------------- | -------------------------------------------------------------- |
-| `ci.yml`     | Chaque PR et push sur `dev`, `main`, `prod`          | Gitleaks, lint, typecheck, tests, build, audit des dépendances |
-| `codeql.yml` | Chaque PR et push sur `dev`, `main`, `prod`, lundi   | Analyse SAST                                                   |
-| `deploy.yml` | CI réussie après un push sur `main` ou `prod`        | Déploiement de l'API et du web (staging ou production)         |
-| `mobile.yml` | Push sur `main` ou `prod` touchant le mobile, manuel | APK Android en artefact (30 jours)                             |
+| Workflow            | Déclencheur                                          | Étapes                                                         |
+| ------------------- | ---------------------------------------------------- | -------------------------------------------------------------- |
+| `ci.yml`            | Chaque PR et push sur `dev`, `main`, `prod`          | Gitleaks, lint, typecheck, tests, build, audit des dépendances |
+| `codeql.yml`        | Chaque PR et push sur `dev`, `main`, `prod`, lundi   | Analyse SAST                                                   |
+| `ci.yml` › `deploy` | Push sur `main` ou `prod`, après les checks          | Déploiement de l'API et du web (staging ou production)         |
+| `mobile.yml`        | Push sur `main` ou `prod` touchant le mobile, manuel | APK Android en artefact (30 jours)                             |
 
 - **Audit des dépendances** : non bloquant (`continue-on-error`). Il signale les vulnérabilités sans empêcher le déploiement ; les corrections passent par Dependabot ou une PR `chore(deps)`.
 - **CodeQL** : le code scanning GitHub n'est pas disponible sur un dépôt privé sans GitHub Code Security. L'analyse tourne quand même, le rapport SARIF est publié en artefact `codeql-sarif` et le job échoue sur toute alerte de niveau « error ». Si le dépôt devient public, repasser `upload: never` à la valeur par défaut pour retrouver les alertes dans l'onglet Security.
@@ -42,7 +42,7 @@ Secrets d'environnement (Settings › Environments), à définir dans `staging` 
 | `RENDER_DEPLOY_HOOK_API` | Déploiement de l'API |
 | `RENDER_DEPLOY_HOOK_WEB` | Déploiement du web   |
 
-Tant qu'ils sont absents, `deploy.yml` affiche un avertissement sans échouer.
+Tant qu'ils sont absents, le job `deploy` affiche un avertissement sans échouer.
 
 Secrets du dépôt (Settings › Secrets and variables › Actions) :
 
