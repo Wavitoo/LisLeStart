@@ -8,7 +8,8 @@ on:
 
 concurrency:
   group: ci-${{ github.ref }}
-  cancel-in-progress: true
+  # Ne jamais interrompre un déploiement en cours sur main ou prod
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 permissions:
   contents: read
@@ -59,3 +60,24 @@ jobs:
         with:
           node-version-file: .nvmrc
       - run: pnpm audit --prod --audit-level high
+
+  # Le déploiement vit dans ce workflow (et non dans un workflow_run) pour s'exécuter sur la
+  # branche poussée : les environnements GitHub n'acceptent que main (staging) et prod (production).
+  deploy:
+    name: Déployer l'API et le web
+    needs: [secrets, quality]
+    if: github.event_name == 'push' && (github.ref_name == 'main' || github.ref_name == 'prod')
+    runs-on: ubuntu-latest
+    environment: ${{ github.ref_name == 'prod' && 'production' || 'staging' }}
+    steps:
+      - name: Déclencher les hooks Render
+        env:
+          HOOK_API: ${{ secrets.RENDER_DEPLOY_HOOK_API }}
+          HOOK_WEB: ${{ secrets.RENDER_DEPLOY_HOOK_WEB }}
+        run: |
+          if [ -z "$HOOK_API" ] || [ -z "$HOOK_WEB" ]; then
+            echo "::warning::Hooks de déploiement non configurés pour cet environnement (voir docs/operations.md)."
+            exit 0
+          fi
+          curl --fail --silent --show-error -X POST "$HOOK_API"
+          curl --fail --silent --show-error -X POST "$HOOK_WEB"
