@@ -53,6 +53,54 @@ Secrets du dépôt (Settings › Secrets and variables › Actions) :
 
 L'environnement `production` peut exiger une approbation manuelle avant déploiement (Settings › Environments › production › Required reviewers).
 
+## Hébergement (Render + Neon)
+
+Choix justifié dans l'[ADR 0004](adr/0004-hebergement.md). Les URLs sont aussi listées dans la section **Deployments** de la page d'accueil du dépôt GitHub.
+
+| Environnement | Web                                         | API                                         |
+| ------------- | ------------------------------------------- | ------------------------------------------- |
+| staging       | https://lislestart-web-staging.onrender.com | https://lislestart-api-staging.onrender.com |
+| production    | https://lislestart-web.onrender.com         | https://lislestart-api.onrender.com         |
+
+### Créer un service Render
+
+New › Web Service › dépôt `Wavitoo/LisLeStart`, puis :
+
+| Réglage              | API                                         | Web                                         |
+| -------------------- | ------------------------------------------- | ------------------------------------------- |
+| Name                 | `lislestart-api-staging` / `lislestart-api` | `lislestart-web-staging` / `lislestart-web` |
+| Language             | Docker                                      | Docker                                      |
+| Branch               | `main` (staging) / `prod` (production)      | idem                                        |
+| Region               | Frankfurt (EU Central)                      | Frankfurt (EU Central)                      |
+| Dockerfile Path      | `apps/api/Dockerfile`                       | `apps/web/Dockerfile`                       |
+| Docker Build Context | `.`                                         | `.`                                         |
+| Instance             | Free                                        | Free                                        |
+| Health Check Path    | `/health`                                   | `/`                                         |
+| Auto-Deploy          | **Off** (seule la CI déploie)               | **Off**                                     |
+
+Variables d'environnement :
+
+| Service | Variable         | Valeur                                                                                     |
+| ------- | ---------------- | ------------------------------------------------------------------------------------------ |
+| API     | `DATABASE_URL`   | Chaîne Neon de la branche de l'environnement, **sans `-pooler`** et sans `channel_binding` |
+| API     | `SESSION_SECRET` | Bouton « Generate » de Render, différent par environnement                                 |
+| API     | `API_PORT`       | `10000` (port attendu par Render)                                                          |
+| API     | `CORS_ORIGIN`    | URL du web du même environnement, sans `/` final                                           |
+| Web     | `HOSTNAME`       | `0.0.0.0` (sinon Next.js n'écoute que sur le nom interne du conteneur)                     |
+
+Enfin : Settings › Deploy Hook du service → secret `RENDER_DEPLOY_HOOK_API` ou `RENDER_DEPLOY_HOOK_WEB` de l'environnement GitHub correspondant.
+
+### Base Neon
+
+- Projet `lislestart`, région AWS Europe Central (Frankfurt), Postgres 18.
+- Branches `production` (par défaut) et `staging`, **sans expiration** (Auto-delete désactivé).
+- Accès de l'équipe : console Neon › Settings › Collaborators, par e-mail. En production, on lit, on n'écrit jamais à la main : tout changement de schéma passe par une migration Prisma dans une PR.
+- En local, chacun utilise le PostgreSQL de Docker Compose, jamais une base Neon.
+
+### Secrets
+
+Ne jamais coller une chaîne de connexion, un hook ou un `SESSION_SECRET` dans un ticket, une PR ou une conversation. En cas de fuite : Neon › Roles › Reset password, Render › Environment › Generate, Render › Settings › Deploy Hook › Regenerate, puis mise à jour du secret GitHub.
+
 ## Tests de charge (sprint 5)
 
 À documenter : nombre de spectateurs simulés pendant un même match, délai de mise à jour des classements, limites observées.

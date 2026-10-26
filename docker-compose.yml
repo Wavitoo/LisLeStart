@@ -2,7 +2,7 @@ name: lislestart
 
 services:
   db:
-    image: postgres:16-alpine
+    image: postgres:18-alpine
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-lislestart}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-change-me-local-only}
@@ -10,7 +10,8 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - db-data:/var/lib/postgresql/data
+      # Postgres 18 range ses données sous /var/lib/postgresql/18 : le volume vise le dossier parent
+      - pg18-data:/var/lib/postgresql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-lislestart}"]
       interval: 5s
@@ -53,4 +54,4 @@ services:
       - api
 
 volumes:
-  db-data:
+  pg18-data:
