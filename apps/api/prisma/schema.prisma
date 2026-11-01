@@ -38,6 +38,41 @@ enum MatchStatus {
   FORFEIT
 }
 
+enum PickemTemplate {
+  MOST_PICKED
+  BEST_ON_STAT
+  TOTAL RANKING
+  YES_NO
+}
+
+enum PickemStatus   {
+  OPEN
+  LOCKED
+  RESOLVED
+  CANCELLED
+}
+
+enum StatKind       {
+  CHOICE
+  NUMBER
+  PLAYER
+}
+
+enum LocationType   {
+  ONLINE
+  ONSITE
+  MIXED
+}
+
+enum ResultEventType {
+  ENTERED
+  DECLARED
+  CONFIRMED
+  CORRECTED
+  IMPORTED
+  SYNCED
+}
+
 model User {
   id           String        @id @default(cuid())
   email        String        @unique
@@ -65,7 +100,7 @@ model StatDefinition {
   game    Game    @relation(fields: [gameId], references: [id])
   key     String
   label   String
-  kind    String  // "choice" | "number" | "player"
+  kind    StatKind  // "choice" | "number" | "player"
   choices String[]
 
   @@unique([gameId, key])
@@ -80,11 +115,13 @@ model Tournament {
   externalId  String?  // identifiant start.gg pour un tournoi importé
   startsAt    DateTime
   endsAt      DateTime
-  location    String   // "online" | "onsite" | "mixed"
+  location    LocationType   // "online" | "onsite" | "mixed"
   isPublic    Boolean  @default(true)
   teamSize    Int      @default(1)
   maxSubs     Int      @default(0)
   capacity    Int
+  description String?
+  rules       String?
   readOnly    Boolean  @default(false)
   stages      Stage[]
   teams       Team[]
@@ -161,6 +198,8 @@ model ResultEvent {
   source    Source
   payload   Json
   createdAt DateTime @default(now())
+  type      ResultEventType
+  actordId  String?
 }
 
 model Prediction {
@@ -182,11 +221,11 @@ model PickemQuestion {
   id           String         @id @default(cuid())
   tournamentId String
   tournament   Tournament     @relation(fields: [tournamentId], references: [id], onDelete: Cascade)
-  template     String         // most_picked | best_on_stat | total | ranking | yes_no
+  template     PickemTemplate
   config       Json
   points       Int
   closesAt     DateTime
-  status       String         @default("open") // open | locked | resolved | cancelled
+  status       PickemStatus         @default("open") // open | locked | resolved | cancelled
   answer       Json?
   answers      PickemAnswer[]
 }
@@ -206,11 +245,32 @@ model PickemAnswer {
 /// Journal d'audit en ajout seul
 model AuditLog {
   id        String   @id @default(cuid())
-  actorId   String
-  actor     User     @relation(fields: [actorId], references: [id])
+  actorId   String?
+  actor     User?     @relation(fields: [actorId], references: [id])
   action    String   // score.corrected | dispute.decided | pickem.created | pickem.resolved…
   target    String
   before    Json?
   after     Json?
   createdAt DateTime @default(now())
 }
+
+// Tournament
+@@index([gameId])
+// Team
+@@index([tournamentId])
+// TeamMember
+@@index([userId])
+// Match
+@@unique([stageId, round, number])
+// MatchGame
+@@unique([matchId, number])
+// ResultEvent
+@@index([matchId, createdAt])
+// Prediction
+@@index([matchId])
+// PickemQuestion
+@@index([tournamentId])
+// AuditLog
+@@index([actorId])
+@@index([target])
+@@index([createdAt])
