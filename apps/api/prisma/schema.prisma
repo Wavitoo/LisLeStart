@@ -41,7 +41,8 @@ enum MatchStatus {
 enum PickemTemplate {
   MOST_PICKED
   BEST_ON_STAT
-  TOTAL RANKING
+  TOTAL
+  RANKING
   YES_NO
 }
 
@@ -129,6 +130,7 @@ model Tournament {
   createdAt   DateTime @default(now())
 
   @@unique([source, externalId])
+  @@index([gameId])
 }
 
 model Stage {
@@ -151,6 +153,8 @@ model Team {
   seed         Int?
   checkedIn    Boolean      @default(false)
   members      TeamMember[]
+
+  @@index([tournamentId])
 }
 
 model TeamMember {
@@ -162,6 +166,7 @@ model TeamMember {
   isSub     Boolean @default(false)
 
   @@id([teamId, userId])
+  @@index([userId])
 }
 
 model Match {
@@ -178,6 +183,8 @@ model Match {
   games       MatchGame[]
   predictions Prediction[]
   events      ResultEvent[]
+
+  @@unique([stageId, round, number])
 }
 
 /// Une manche d'un match, avec ses statistiques
@@ -188,6 +195,8 @@ model MatchGame {
   number  Int
   result  Json
   stats   Json
+
+  @@unique([matchId, number])
 }
 
 /// Historique des résultats : base du recalcul en cascade
@@ -200,6 +209,8 @@ model ResultEvent {
   createdAt DateTime @default(now())
   type      ResultEventType
   actordId  String?
+
+  @@index([matchId, createdAt])
 }
 
 model Prediction {
@@ -215,6 +226,7 @@ model Prediction {
   updatedAt DateTime @updatedAt
 
   @@unique([userId, matchId])
+  @@index([matchId])
 }
 
 model PickemQuestion {
@@ -225,9 +237,11 @@ model PickemQuestion {
   config       Json
   points       Int
   closesAt     DateTime
-  status       PickemStatus         @default("open") // open | locked | resolved | cancelled
+  status       PickemStatus
   answer       Json?
   answers      PickemAnswer[]
+
+  @@index([tournamentId])
 }
 
 model PickemAnswer {
@@ -252,25 +266,8 @@ model AuditLog {
   before    Json?
   after     Json?
   createdAt DateTime @default(now())
-}
 
-// Tournament
-@@index([gameId])
-// Team
-@@index([tournamentId])
-// TeamMember
-@@index([userId])
-// Match
-@@unique([stageId, round, number])
-// MatchGame
-@@unique([matchId, number])
-// ResultEvent
-@@index([matchId, createdAt])
-// Prediction
-@@index([matchId])
-// PickemQuestion
-@@index([tournamentId])
-// AuditLog
-@@index([actorId])
-@@index([target])
-@@index([createdAt])
+  @@index([actorId])
+  @@index([target])
+  @@index([createdAt])
+}
