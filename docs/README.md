@@ -20,6 +20,7 @@ La documentation fait partie du produit : elle s'écrit au fil du projet, dans l
 | Modèle de données                         | [data-model.md](data-model.md)                 |
 | Formats de tournoi                        | [tournament-formats.md](tournament-formats.md) |
 | Pronostics et Pick'em                     | [predictions.md](predictions.md)               |
+| Temps réel (Socket.IO)                    | [realtime.md](realtime.md)                     |
 | Sécurité                                  | [security.md](security.md)                     |
 | Accessibilité                             | [accessibility.md](accessibility.md)           |
 | Application mobile                        | [mobile.md](mobile.md)                         |

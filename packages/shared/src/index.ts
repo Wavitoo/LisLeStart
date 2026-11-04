@@ -42,6 +42,57 @@ export interface TournamentListResponse {
   tournaments: TournamentSummary[];
 }
 
+/** État d'un match. */
+export type MatchStatus = "scheduled" | "called" | "live" | "disputed" | "done" | "forfeit";
+
+/** Un emplacement de match : 2 en duel, N en FFA. */
+export interface MatchSlotState {
+  participantId: string | null;
+  /** Manches gagnées (duel) ou points (FFA) ; null tant que rien n'est joué. */
+  score: number | null;
+}
+
+/** Diffusé à chaque changement d'un match : résultat, correction, litige, synchro start.gg. */
+export interface MatchUpdatedEvent {
+  tournamentId: string;
+  matchId: string;
+  status: MatchStatus;
+  slots: MatchSlotState[];
+  winnerId: string | null;
+  /** Date ISO 8601 du changement (horloge du serveur). */
+  updatedAt: string;
+}
+
+/**
+ * Diffusé quand un classement change (tournoi, pronostiqueurs). Volontairement léger : le client
+ * recharge le classement par HTTP, ce qui évite d'envoyer un gros tableau à des milliers de sockets.
+ */
+export interface StandingsUpdatedEvent {
+  tournamentId: string;
+  updatedAt: string;
+}
+
+/** Ce qu'un client peut suivre : un tournoi entier ou un seul match. */
+export interface RealtimeSubscription {
+  type: "tournament" | "match";
+  id: string;
+}
+
+/** Réponse du serveur à `subscribe` et `unsubscribe`. */
+export type RealtimeAck = { ok: true } | { ok: false; error: string };
+
+/** Événements envoyés par le serveur (Socket.IO). */
+export interface ServerToClientEvents {
+  "match:updated": (event: MatchUpdatedEvent) => void;
+  "standings:updated": (event: StandingsUpdatedEvent) => void;
+}
+
+/** Événements envoyés par le client (Socket.IO). */
+export interface ClientToServerEvents {
+  subscribe: (subscription: RealtimeSubscription, ack: (result: RealtimeAck) => void) => void;
+  unsubscribe: (subscription: RealtimeSubscription, ack: (result: RealtimeAck) => void) => void;
+}
+
 export interface Participant {
   id: string;
   name: string;
