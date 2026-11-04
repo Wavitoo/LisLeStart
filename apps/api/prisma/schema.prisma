@@ -263,7 +263,8 @@ model PickemAnswer {
 model AuditLog {
   id        String   @id @default(cuid())
   actorId   String?
-  actor     User?    @relation(fields: [actorId], references: [id])
+  // Restrict : supprimer un compte ne doit jamais réécrire le journal (ajout seul)
+  actor     User?    @relation(fields: [actorId], references: [id], onDelete: Restrict)
   action    String // score.corrected | dispute.decided | pickem.created | pickem.resolved…
   target    String
   before    Json?
