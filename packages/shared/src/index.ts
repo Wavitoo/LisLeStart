@@ -138,6 +138,81 @@ export interface PredictionFeedResponse {
   matches: PredictionMatch[];
 }
 
+/** Cycle de vie d'une question Pick'em. */
+export type PickemStatus = "open" | "locked" | "resolved" | "cancelled";
+
+export interface PickemOption {
+  id: string;
+  label: string;
+}
+
+/** Question Pick'em vue par l'utilisateur (contrat API, voir docs/mobile.md). */
+export interface PickemQuestionView {
+  id: string;
+  tournamentId: string;
+  tournamentName: string;
+  template: PickemTemplate;
+  title: string;
+  status: PickemStatus;
+  /** Clôture des réponses (ISO 8601, horloge du serveur). */
+  closesAt: string;
+  /** Points gagnés avec la bonne réponse. */
+  points: number;
+  options: PickemOption[];
+  /** Option choisie par l'utilisateur, null sans réponse ou sans session. */
+  myAnswer: string | null;
+  /** Bonne réponse, connue une fois la question résolue. */
+  correctOptionId: string | null;
+  /** Raison de l'annulation (donnée manquante), affichée aux participants. */
+  cancelReason: string | null;
+  /** Répartition des réponses : visible seulement après la clôture, null avant. */
+  distribution: { optionId: string; percent: number }[] | null;
+  answerCount: number;
+}
+
+/** Réponse de `GET /pickem/feed`. */
+export interface PickemFeedResponse {
+  serverTime: string;
+  questions: PickemQuestionView[];
+}
+
+/** Portée d'un classement de pronostiqueurs. */
+export type LeaderboardScope = "global" | "tournament" | "group";
+
+export interface LeaderboardEntry {
+  rank: number;
+  userId: string;
+  displayName: string;
+  points: number;
+}
+
+/** Réponse de `GET /leaderboards` : le haut du classement et la ligne de l'utilisateur. */
+export interface LeaderboardResponse {
+  scope: LeaderboardScope;
+  title: string;
+  entries: LeaderboardEntry[];
+  /** Ligne de l'utilisateur connecté, même hors du haut du classement ; null sans session. */
+  me: LeaderboardEntry | null;
+  participantCount: number;
+}
+
+/** Groupe d'amis de l'utilisateur (`GET /me/groups`). */
+export interface FriendGroup {
+  id: string;
+  name: string;
+  memberCount: number;
+  /** Code à partager pour inviter des amis. */
+  inviteCode: string;
+}
+
+/** Badge gagné par l'utilisateur (`GET /me/badges`). */
+export interface Badge {
+  id: string;
+  name: string;
+  description: string;
+  earnedAt: string;
+}
+
 export interface Participant {
   id: string;
   name: string;

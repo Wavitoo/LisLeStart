@@ -116,6 +116,89 @@ describe("authentification", () => {
   });
 });
 
+describe("Pick'em et classements", () => {
+  it("répond à une question en PUT et construit l'URL du classement", async () => {
+    const fetchImpl = vi.fn(async () => json({ optionId: "oui" }, 200));
+    const api = createHttpApi("http://api", fetchImpl);
+    await api.answerPickem("q 1", "oui");
+    expect(fetchImpl).toHaveBeenLastCalledWith(
+      "http://api/pickem/questions/q%201/answer",
+      expect.objectContaining({ method: "PUT", body: JSON.stringify({ optionId: "oui" }) }),
+    );
+    await api.leaderboard("tournament", "t1");
+    expect(fetchImpl).toHaveBeenLastCalledWith(
+      "http://api/leaderboards?scope=tournament&id=t1",
+      expect.anything(),
+    );
+    await api.leaderboard("global");
+    expect(fetchImpl).toHaveBeenLastCalledWith(
+      "http://api/leaderboards?scope=global",
+      expect.anything(),
+    );
+  });
+});
+
+describe("createMockApi : Pick'em, classements, groupes", () => {
+  const now = new Date("2026-11-14T15:00:00Z");
+
+  it("garde les réponses Pick'em de chaque compte et refuse après la clôture", async () => {
+    let clock = now;
+    const api = createMockApi(() => clock);
+    await expect(api.answerPickem("q-finale-3-0", "oui")).rejects.toMatchObject({ status: 401 });
+
+    await api.login(DEMO_ACCOUNT);
+    const feed = (await api.pickemFeed()).questions;
+    expect(feed.find((q) => q.id === "q-manches")?.myAnswer).toBe("o-1");
+    await api.answerPickem("q-finale-3-0", "oui");
+    expect((await api.pickemFeed()).questions.find((q) => q.id === "q-finale-3-0")?.myAnswer).toBe(
+      "oui",
+    );
+    await expect(api.answerPickem("q-finale-3-0", "peut-etre")).rejects.toMatchObject({
+      status: 400,
+    });
+
+    clock = new Date(now.getTime() + 91 * 60_000);
+    await expect(api.answerPickem("q-finale-3-0", "non")).rejects.toMatchObject({ status: 409 });
+    expect((await api.pickemFeed()).questions.find((q) => q.id === "q-finale-3-0")?.status).toBe(
+      "locked",
+    );
+  });
+
+  it("classe l'utilisateur, même hors du haut du classement", async () => {
+    const api = createMockApi(() => now);
+    expect((await api.leaderboard("global")).me).toBeNull();
+
+    await api.login(DEMO_ACCOUNT);
+    const global = await api.leaderboard("global");
+    expect(global.me).toMatchObject({ rank: 3, displayName: DEMO_ACCOUNT.displayName });
+    expect(global.entries).toHaveLength(10);
+
+    await api.logout();
+    await api.register({
+      email: "nouveau@example.test",
+      password: "phrase de passe neuve",
+      displayName: "nouveau",
+      role: "spectator",
+    });
+    const fresh = await api.leaderboard("global");
+    expect(fresh.me).toMatchObject({ rank: fresh.participantCount, points: 0 });
+    expect(fresh.entries.some((e) => e.userId === fresh.me?.userId)).toBe(false);
+  });
+
+  it("groupes et badges : réservés aux comptes, vides pour un nouveau", async () => {
+    const api = createMockApi(() => now);
+    await expect(api.myGroups()).rejects.toMatchObject({ status: 401 });
+    await api.login(DEMO_ACCOUNT);
+    const groups = await api.myGroups();
+    expect(groups.length).toBeGreaterThan(0);
+    const board = await api.leaderboard("group", groups[0]?.id);
+    expect(board.title).toBe(groups[0]?.name);
+    expect(board.me).not.toBeNull();
+    expect((await api.myBadges()).length).toBeGreaterThan(0);
+    await expect(api.leaderboard("tournament", "inconnu")).rejects.toMatchObject({ status: 404 });
+  });
+});
+
 describe("createMockApi", () => {
   it("exige un compte pour pronostiquer et garde les pronos de chaque compte", async () => {
     const api = createMockApi(() => new Date("2026-11-14T15:00:00Z"));

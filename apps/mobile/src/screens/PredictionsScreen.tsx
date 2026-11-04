@@ -1,26 +1,18 @@
 import type { PredictionInput, PredictionMatch } from "@lislestart/shared";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import {
-  ActivityIndicator,
-  Pressable,
-  RefreshControl,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+import { ActivityIndicator, RefreshControl, ScrollView, StyleSheet, Text } from "react-native";
 import { ApiError, api, usingMockData } from "../api";
 import { LiveMatchCard } from "../components/LiveMatchCard";
 import { MyPredictionRow } from "../components/MyPredictionRow";
 import { PredictionCard } from "../components/PredictionCard";
+import { ErrorBox } from "../components/ErrorBox";
 import { Screen } from "../components/Screen";
 import { serverClock } from "../lib/lock";
 import { applyMatchUpdate, featuredMatches, myPredictions } from "../lib/predictions";
 import { useAuth } from "../auth/AuthContext";
 import { useRootNavigation } from "../navigation";
 import { realtime } from "../realtime";
-import { colors, radius, space, touchTarget, type } from "../theme";
+import { colors, space, type } from "../theme";
 
 type State =
   | { kind: "loading" }
@@ -122,27 +114,13 @@ export function PredictionsScreen() {
       )}
 
       {state.kind === "error" && (
-        <View style={styles.error} accessibilityLiveRegion="polite">
-          <View style={styles.errorRow}>
-            <MaterialCommunityIcons
-              name="close"
-              size={18}
-              color={colors.corail}
-              importantForAccessibility="no"
-            />
-            <Text style={styles.errorText}>{state.message}</Text>
-          </View>
-          <Pressable
-            accessibilityRole="button"
-            onPress={() => {
-              setState({ kind: "loading" });
-              void load();
-            }}
-            style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
-          >
-            <Text style={styles.buttonText}>Réessayer</Text>
-          </Pressable>
-        </View>
+        <ErrorBox
+          message={state.message}
+          onRetry={() => {
+            setState({ kind: "loading" });
+            void load();
+          }}
+        />
       )}
 
       {featured && (
@@ -215,23 +193,4 @@ const styles = StyleSheet.create({
   section: { ...type.section, color: colors.craie },
   empty: { ...type.body, color: colors.muted },
   footnote: { ...type.caption, color: colors.muted },
-  error: {
-    margin: space[4],
-    padding: space[4],
-    gap: space[4],
-    borderRadius: radius.lg,
-    backgroundColor: colors.corailSoft,
-  },
-  errorRow: { flexDirection: "row", gap: space[2], alignItems: "flex-start" },
-  errorText: { ...type.body, color: colors.craie, flex: 1 },
-  button: {
-    minHeight: touchTarget,
-    borderRadius: radius.md,
-    backgroundColor: colors.lime,
-    alignItems: "center",
-    justifyContent: "center",
-    paddingHorizontal: space[5],
-  },
-  buttonPressed: { opacity: 0.85 },
-  buttonText: { ...type.label, color: colors.nuit },
 });

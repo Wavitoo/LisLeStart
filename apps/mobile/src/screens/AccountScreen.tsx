@@ -3,7 +3,6 @@ import { useState } from "react";
 import {
   ActivityIndicator,
   KeyboardAvoidingView,
-  Pressable,
   ScrollView,
   StyleSheet,
   Text,
@@ -14,10 +13,11 @@ import { useAuth } from "../auth/AuthContext";
 import { Button } from "../components/Button";
 import { Choice } from "../components/Choice";
 import { StatusChip } from "../components/StatusChip";
+import { SegmentedTabs } from "../components/SegmentedTabs";
 import { TextField } from "../components/TextField";
 import { errorsByField, roleLabel } from "../lib/account";
 import { useRootNavigation } from "../navigation";
-import { colors, radius, space, touchTarget, type } from "../theme";
+import { colors, radius, space, type } from "../theme";
 
 type Mode = "login" | "register";
 
@@ -115,21 +115,14 @@ function SignInForm() {
   return (
     <KeyboardAvoidingView behavior="height" style={styles.page}>
       <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
-        <View accessibilityRole="tablist" style={styles.tabs}>
-          {(["login", "register"] as const).map((tab) => (
-            <Pressable
-              key={tab}
-              accessibilityRole="tab"
-              accessibilityState={{ selected: mode === tab }}
-              onPress={() => switchMode(tab)}
-              style={[styles.tab, mode === tab && styles.tabSelected]}
-            >
-              <Text style={[styles.tabLabel, mode === tab && styles.tabLabelSelected]}>
-                {tab === "login" ? "Se connecter" : "Créer un compte"}
-              </Text>
-            </Pressable>
-          ))}
-        </View>
+        <SegmentedTabs
+          options={[
+            { value: "login", label: "Se connecter" },
+            { value: "register", label: "Créer un compte" },
+          ]}
+          value={mode}
+          onChange={switchMode}
+        />
 
         <Text style={styles.body}>
           {mode === "login"
@@ -251,26 +244,6 @@ const styles = StyleSheet.create({
   body: { ...type.body, color: colors.muted },
   label: { ...type.label, color: colors.craie },
   group: { gap: space[2] },
-  tabs: {
-    flexDirection: "row",
-    backgroundColor: colors.surface,
-    borderRadius: radius.md,
-    padding: space[1],
-    gap: space[1],
-  },
-  tab: {
-    flex: 1,
-    minHeight: touchTarget,
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: radius.sm,
-    borderWidth: 2,
-    borderColor: "transparent",
-  },
-  // Onglet choisi : fond, bordure et graisse, pas seulement la couleur
-  tabSelected: { backgroundColor: colors.surfaceRaised, borderColor: colors.lime },
-  tabLabel: { ...type.label, color: colors.muted },
-  tabLabelSelected: { color: colors.craie, textDecorationLine: "underline" },
   fieldError: { ...type.caption, color: colors.craie },
   error: {
     flexDirection: "row",
