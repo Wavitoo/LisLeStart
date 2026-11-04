@@ -30,6 +30,10 @@ Synthèse dans [SECURITY.md](../SECURITY.md). Ce document détaille les choix et
 
 En ligne, le web et l'API sont sur deux sous-domaines de `onrender.com`, que les navigateurs traitent comme deux sites distincts : un cookie `Lax` n'y est pas envoyé par `fetch`. Deux options : faire passer les appels du web par un proxy (réécriture `/api` vers l'API dans Next.js, recommandé), ou `COOKIE_SAME_SITE=none`.
 
+## Temps réel
+
+Socket.IO est en lecture seule pour le client : il ne peut que s'abonner à un tournoi ou à un match. Un tournoi privé est réservé aux administrateurs et répond comme un tournoi inexistant. Les identifiants sont validés et chaque connexion est limitée à 20 abonnements. La limitation de débit HTTP ne s'applique pas aux sockets. Détail dans [realtime.md](realtime.md).
+
 ## Journal d'audit
 
 `AuditService.record()` (module global) enregistre l'auteur, l'action, la cible, l'état avant, l'état après et la date, de préférence dans la transaction de l'action décrite. Actions : `score.corrected`, `dispute.decided`, `pickem.created`, `pickem.resolved`, `pickem.cancelled`. Lecture réservée aux administrateurs : `GET /audit` (filtres `target` et `action`, pagination par curseur).

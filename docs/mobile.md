@@ -56,6 +56,10 @@ Tournois publics en cours (début ≤ heure serveur < fin), du plus récemment c
 
 Erreurs : réseau injoignable ou réponse non 2xx → message en français et bouton « Réessayer ». Délai maximal d'une requête : 10 s.
 
+### Temps réel
+
+Les résultats en direct arrivent par Socket.IO (`match:updated`, `standings:updated`) après abonnement à un tournoi ou à un match : voir [realtime.md](realtime.md). Les écrans de suivi s'y brancheront avec les pronostics (sprint 3).
+
 ## Accessibilité
 
 - Chaque carte de tournoi est un seul élément TalkBack, avec une phrase complète (nom, jeu, « en direct », lieu, participants, origine).

@@ -12,6 +12,7 @@ import {
 } from "../src/auth/users.repository";
 import { APP_CONFIG, type AppConfig } from "../src/config";
 import { PrismaService } from "../src/prisma/prisma.service";
+import { RealtimeAccess, type TournamentVisibility } from "../src/realtime/realtime.access";
 
 export class MemorySessionStore extends SessionStore {
   readonly sessions = new Map<string, string>();
@@ -88,6 +89,21 @@ export class MemoryPrisma {
   };
 }
 
+/** Tournois connus du temps réel : identifiant → public ou non ; un match pointe vers son tournoi. */
+export class MemoryRealtimeAccess extends RealtimeAccess {
+  readonly tournaments = new Map<string, TournamentVisibility>();
+  readonly matches = new Map<string, string>();
+
+  async tournament(id: string): Promise<TournamentVisibility | null> {
+    return this.tournaments.get(id) ?? null;
+  }
+
+  async tournamentOfMatch(matchId: string): Promise<TournamentVisibility | null> {
+    const tournamentId = this.matches.get(matchId);
+    return tournamentId ? this.tournament(tournamentId) : null;
+  }
+}
+
 export const testConfig: AppConfig = {
   sessionSecret: "secret-de-test-uniquement-pas-un-vrai-secret",
   redisUrl: "redis://test.invalid:6379",
@@ -100,9 +116,10 @@ export interface TestApp {
   users: MemoryUsersRepository;
   sessions: MemorySessionStore;
   prisma: MemoryPrisma;
+  realtime: MemoryRealtimeAccess;
 }
 
-/** API complète (gardes, validation, cookies) sans Redis ni PostgreSQL. */
+/** API complète (gardes, validation, cookies, Socket.IO) sans Redis ni PostgreSQL. */
 export async function createTestApp(
   controllers: Type[] = [],
   config: Partial<AppConfig> = {},
@@ -110,6 +127,7 @@ export async function createTestApp(
   const users = new MemoryUsersRepository();
   const sessions = new MemorySessionStore();
   const prisma = new MemoryPrisma();
+  const realtime = new MemoryRealtimeAccess();
   const moduleRef = await Test.createTestingModule({ imports: [AppModule], controllers })
     .overrideProvider(APP_CONFIG)
     .useValue({ ...testConfig, ...config })
@@ -119,13 +137,15 @@ export async function createTestApp(
     .useValue(users)
     .overrideProvider(SessionStore)
     .useValue(sessions)
+    .overrideProvider(RealtimeAccess)
+    .useValue(realtime)
     .compile();
 
   const app = moduleRef.createNestApplication<NestFastifyApplication>(new FastifyAdapter());
   await configureApp(app);
   await app.init();
   await app.getHttpAdapter().getInstance().ready();
-  return { app, users, sessions, prisma };
+  return { app, users, sessions, prisma, realtime };
 }
 
 /** Valeur du cookie de session posé par une réponse. */

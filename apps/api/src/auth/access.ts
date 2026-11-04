@@ -51,6 +51,9 @@ export class AccessGuard implements CanActivate {
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
+    // Socket.IO : l'utilisateur est identifié à la connexion par RealtimeGateway
+    if (context.getType() !== "http") return true;
+
     const targets = [context.getHandler(), context.getClass()];
     if (this.reflector.getAllAndOverride<boolean>(IS_PUBLIC, targets)) return true;
 
