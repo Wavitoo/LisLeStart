@@ -18,7 +18,9 @@ Le sujet demande un déploiement automatique à chaque merge, sur une offre grat
 
 - **Render** pour l'API et le web : 4 web services gratuits, en Docker, région Frankfurt (EU Central).
 - **Neon** pour PostgreSQL : un projet `lislestart`, une branche de base par environnement, région AWS Frankfurt.
-- **Redis** : pas encore utilisé par le code ; à choisir quand le temps réel arrivera (sprint 2), entre Render Key Value et Upstash, sur offre gratuite.
+- **Redis** : requis depuis le sprint 1 (sessions de connexion), puis pour le temps réel et les jobs. Render n'offre qu'une instance Key Value gratuite par compte :
+  - staging : Render Key Value `lislestart-redis-staging` (Free, Frankfurt, `noeviction`), joignable par son URL interne, sans exposition publique ;
+  - production : Upstash `lislestart-redis` (Free, AWS eu-central-1), connexion chiffrée `rediss://`. Limite de 500 000 commandes par mois, à surveiller quand BullMQ arrivera.
 
 | Environnement | Branche Git | API                                         | Web                                         | Base Neon    |
 | ------------- | ----------- | ------------------------------------------- | ------------------------------------------- | ------------ |
