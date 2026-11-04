@@ -102,7 +102,7 @@ URL locales : web http://localhost:3000 · API http://localhost:4000 · santé `
 
 Points d'attention connus :
 
-- Le `.env` est **à la racine**. Les scripts Prisma de l'API le chargent via `dotenv -e ../../.env --` ; le dev de l'API via `tsx --env-file=../../.env`. Ne pas créer de `.env` dans `apps/api`.
+- Le `.env` est **à la racine**. Les scripts Prisma de l'API le chargent via `dotenv -e ../../.env --` ; le dev de l'API via `node --env-file=../../.env -r @swc-node/register` (SWC émet les métadonnées de décorateurs dont NestJS a besoin, pas `tsx`). Ne pas créer de `.env` dans `apps/api`.
 - `.dockerignore` exclut `node_modules` : ne pas le retirer. Les Dockerfiles ont `ENV CI=true`.
 - Toujours commiter `apps/api/prisma/migrations/`.
 

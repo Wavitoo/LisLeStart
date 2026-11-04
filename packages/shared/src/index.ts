@@ -1,6 +1,14 @@
 /** Rôles de la plateforme (voir docs/architecture.md). */
 export type Role = "admin" | "player" | "spectator";
 
+/** Utilisateur connecté, tel que renvoyé par `GET /auth/me`. */
+export interface AuthUser {
+  id: string;
+  email: string;
+  displayName: string;
+  role: Role;
+}
+
 /** Formats d'étape pris en charge par le moteur. */
 export type StageFormat =
   "single_elimination" | "double_elimination" | "round_robin" | "swiss" | "free_for_all";
