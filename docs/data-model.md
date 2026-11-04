@@ -65,7 +65,7 @@ erDiagram
 
 - Les résultats sont stockés comme `ResultEvent` ; l'état est recalculé depuis cet historique (ADR 0005).
 - Le verrouillage des pronostics s'appuie sur `Match.startedAt`, comparé à l'horloge du serveur.
-- `AuditLog` et `ResultEvent` sont en ajout seul : aucune mise à jour ni suppression applicative.
+- `AuditLog` est en ajout seul, garanti par un trigger PostgreSQL (`UPDATE`, `DELETE` et `TRUNCATE` refusés) ; supprimer un utilisateur qui a des entrées est refusé (`ON DELETE RESTRICT`). `ResultEvent` est en ajout seul côté application.
 
 ## Migrations
 

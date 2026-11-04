@@ -4,18 +4,18 @@ Synthèse dans [SECURITY.md](../SECURITY.md). Ce document détaille les choix et
 
 ## Checklist Top 10 OWASP (2021)
 
-| Risque                     | Mesure prévue                                                                                                  | Statut                        |
-| -------------------------- | -------------------------------------------------------------------------------------------------------------- | ----------------------------- |
-| A01 Contrôle d'accès       | Garde globale (toute route exige une session sauf `@Public()`), `@Roles()`, `assertOwnerOrAdmin` contre l'IDOR | Fait                          |
-| A02 Cryptographie          | Argon2id (19 Mio, t=2, p=1), HTTPS en ligne, cookies `Secure` en production                                    | Fait                          |
-| A03 Injection              | Prisma (requêtes paramétrées), validation des entrées, import CSV/JSON au schéma strict                        | À faire                       |
-| A04 Conception             | Verrouillage serveur des pronostics, journal d'audit                                                           | Partiel (journal)             |
-| A05 Configuration          | En-têtes de sécurité, CORS restreint, pas de stack trace en production                                         | Partiel (web)                 |
-| A06 Composants vulnérables | Dependabot, `pnpm audit` en CI                                                                                 | Fait                          |
-| A07 Authentification       | Sessions Redis révocables, cookie `HttpOnly` `SameSite`, 5 tentatives/min, pas de fixation de session          | Fait                          |
-| A08 Intégrité              | Lockfile, CI obligatoire avant merge, secrets dans GitHub                                                      | Fait                          |
-| A09 Journalisation         | Journal d'audit en ajout seul, logs sans données sensibles                                                     | Partiel (trigger SQL à venir) |
-| A10 SSRF                   | Connecteurs limités à des URL autorisées (start.gg)                                                            | À faire                       |
+| Risque                     | Mesure prévue                                                                                                  | Statut             |
+| -------------------------- | -------------------------------------------------------------------------------------------------------------- | ------------------ |
+| A01 Contrôle d'accès       | Garde globale (toute route exige une session sauf `@Public()`), `@Roles()`, `assertOwnerOrAdmin` contre l'IDOR | Fait               |
+| A02 Cryptographie          | Argon2id (19 Mio, t=2, p=1), HTTPS en ligne, cookies `Secure` en production                                    | Fait               |
+| A03 Injection              | Prisma (requêtes paramétrées), validation des entrées, import CSV/JSON au schéma strict                        | À faire            |
+| A04 Conception             | Verrouillage serveur des pronostics, journal d'audit                                                           | Partiel (journal)  |
+| A05 Configuration          | En-têtes de sécurité, CORS restreint, pas de stack trace en production                                         | Partiel (web)      |
+| A06 Composants vulnérables | Dependabot, `pnpm audit` en CI                                                                                 | Fait               |
+| A07 Authentification       | Sessions Redis révocables, cookie `HttpOnly` `SameSite`, 5 tentatives/min, pas de fixation de session          | Fait               |
+| A08 Intégrité              | Lockfile, CI obligatoire avant merge, secrets dans GitHub                                                      | Fait               |
+| A09 Journalisation         | Journal d'audit en ajout seul, logs sans données sensibles                                                     | Fait (trigger SQL) |
+| A10 SSRF                   | Connecteurs limités à des URL autorisées (start.gg)                                                            | À faire            |
 
 ## Authentification et sessions
 
@@ -34,7 +34,7 @@ En ligne, le web et l'API sont sur deux sous-domaines de `onrender.com`, que les
 
 `AuditService.record()` (module global) enregistre l'auteur, l'action, la cible, l'état avant, l'état après et la date, de préférence dans la transaction de l'action décrite. Actions : `score.corrected`, `dispute.decided`, `pickem.created`, `pickem.resolved`, `pickem.cancelled`. Lecture réservée aux administrateurs : `GET /audit` (filtres `target` et `action`, pagination par curseur).
 
-Ajout seul : le service n'expose ni modification ni suppression. Un trigger PostgreSQL qui refuse `UPDATE` et `DELETE` sur `AuditLog` arrive avec la première migration après l'`init`.
+Ajout seul, garanti à deux niveaux : le service n'expose ni modification ni suppression, et un trigger PostgreSQL (migration `audit_log_append_only`) refuse `UPDATE`, `DELETE` et `TRUNCATE` sur `AuditLog`, quel que soit le code qui les tente. Un compte qui a des entrées ne peut pas être supprimé (clé étrangère `RESTRICT`).
 
 ## Secrets
 
