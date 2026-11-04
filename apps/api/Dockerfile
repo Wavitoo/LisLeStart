@@ -5,9 +5,10 @@ WORKDIR /repo
 
 FROM base AS build
 COPY . .
+# Client Prisma généré avant la compilation : le code de l'API importe ses types
 RUN pnpm install --frozen-lockfile \
- && pnpm --filter @lislestart/api... build \
- && pnpm --filter @lislestart/api db:generate
+ && pnpm --filter @lislestart/api db:generate \
+ && pnpm --filter @lislestart/api... build
 
 FROM base AS run
 ENV NODE_ENV=production
