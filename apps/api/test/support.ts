@@ -92,6 +92,7 @@ export const testConfig: AppConfig = {
   sessionSecret: "secret-de-test-uniquement-pas-un-vrai-secret",
   redisUrl: "redis://test.invalid:6379",
   cookie: { secure: false, sameSite: "lax" },
+  initialAdmin: null,
 };
 
 export interface TestApp {
@@ -102,13 +103,16 @@ export interface TestApp {
 }
 
 /** API complète (gardes, validation, cookies) sans Redis ni PostgreSQL. */
-export async function createTestApp(controllers: Type[] = []): Promise<TestApp> {
+export async function createTestApp(
+  controllers: Type[] = [],
+  config: Partial<AppConfig> = {},
+): Promise<TestApp> {
   const users = new MemoryUsersRepository();
   const sessions = new MemorySessionStore();
   const prisma = new MemoryPrisma();
   const moduleRef = await Test.createTestingModule({ imports: [AppModule], controllers })
     .overrideProvider(APP_CONFIG)
-    .useValue(testConfig)
+    .useValue({ ...testConfig, ...config })
     .overrideProvider(PrismaService)
     .useValue(prisma)
     .overrideProvider(UsersRepository)

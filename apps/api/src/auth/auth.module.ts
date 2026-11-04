@@ -1,6 +1,7 @@
 import { Module } from "@nestjs/common";
 import { AuthController } from "./auth.controller";
 import { AuthService } from "./auth.service";
+import { InitialAdmin } from "./initial-admin";
 import { RedisSessionStore, SessionStore } from "./session.store";
 import { PrismaUsersRepository, UsersRepository } from "./users.repository";
 
@@ -8,6 +9,7 @@ import { PrismaUsersRepository, UsersRepository } from "./users.repository";
   controllers: [AuthController],
   providers: [
     AuthService,
+    InitialAdmin,
     { provide: SessionStore, useClass: RedisSessionStore },
     { provide: UsersRepository, useClass: PrismaUsersRepository },
   ],

@@ -27,6 +27,46 @@ describe("loadConfig", () => {
     });
   });
 
+  it("pas d'administrateur initial sans ADMIN_EMAIL", () => {
+    expect(loadConfig({ SESSION_SECRET: secret }).initialAdmin).toBeNull();
+  });
+
+  it("lit l'administrateur initial et normalise son email", () => {
+    const config = loadConfig({
+      SESSION_SECRET: secret,
+      ADMIN_EMAIL: " Admin@Example.TEST ",
+      ADMIN_PASSWORD: "phrase de passe admin",
+    });
+    expect(config.initialAdmin).toEqual({
+      email: "admin@example.test",
+      displayName: "admin",
+      password: "phrase de passe admin",
+    });
+  });
+
+  it("exige un mot de passe d'au moins 12 caractères avec ADMIN_EMAIL", () => {
+    expect(() => loadConfig({ SESSION_SECRET: secret, ADMIN_EMAIL: "admin@example.test" })).toThrow(
+      /ADMIN_PASSWORD/,
+    );
+    expect(() =>
+      loadConfig({
+        SESSION_SECRET: secret,
+        ADMIN_EMAIL: "admin@example.test",
+        ADMIN_PASSWORD: "court",
+      }),
+    ).toThrow(/ADMIN_PASSWORD/);
+  });
+
+  it("rejette un ADMIN_EMAIL invalide", () => {
+    expect(() =>
+      loadConfig({
+        SESSION_SECRET: secret,
+        ADMIN_EMAIL: "pas-un-email",
+        ADMIN_PASSWORD: "x".repeat(12),
+      }),
+    ).toThrow(/ADMIN_EMAIL/);
+  });
+
   it("rejette une valeur SameSite inconnue", () => {
     expect(() => loadConfig({ SESSION_SECRET: secret, COOKIE_SAME_SITE: "parfois" })).toThrow(
       /COOKIE_SAME_SITE/,
