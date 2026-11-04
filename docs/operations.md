@@ -83,16 +83,17 @@ New › Web Service › dépôt `Wavitoo/LisLeStart`, puis :
 
 Variables d'environnement :
 
-| Service | Variable           | Valeur                                                                                                                          |
-| ------- | ------------------ | ------------------------------------------------------------------------------------------------------------------------------- |
-| API     | `DATABASE_URL`     | Chaîne Neon de la branche de l'environnement, **sans `-pooler`** et sans `channel_binding`                                      |
-| API     | `SESSION_SECRET`   | Bouton « Generate » de Render, différent par environnement                                                                      |
-| API     | `API_PORT`         | `10000` (port attendu par Render)                                                                                               |
-| API     | `CORS_ORIGIN`      | URL du web du même environnement, sans `/` final                                                                                |
-| API     | `REDIS_URL`        | Staging : URL interne de Render Key Value `lislestart-redis-staging`. Production : URL `rediss://` d'Upstash `lislestart-redis` |
-| API     | `TRUST_PROXY`      | `true` (Render est un proxy : vraie IP pour la limitation de débit)                                                             |
-| API     | `COOKIE_SAME_SITE` | `none` tant que le web appelle l'API sur un autre domaine, `lax` avec un proxy `/api` (voir [security.md](security.md))         |
-| Web     | `HOSTNAME`         | `0.0.0.0` (sinon Next.js n'écoute que sur le nom interne du conteneur)                                                          |
+| Service | Variable                        | Valeur                                                                                                                                                                            |
+| ------- | ------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| API     | `DATABASE_URL`                  | Chaîne Neon de la branche de l'environnement, **sans `-pooler`** et sans `channel_binding`                                                                                        |
+| API     | `SESSION_SECRET`                | Bouton « Generate » de Render, différent par environnement                                                                                                                        |
+| API     | `API_PORT`                      | `10000` (port attendu par Render)                                                                                                                                                 |
+| API     | `CORS_ORIGIN`                   | URL du web du même environnement, sans `/` final                                                                                                                                  |
+| API     | `REDIS_URL`                     | Staging : URL interne de Render Key Value `lislestart-redis-staging`. Production : URL `rediss://` d'Upstash `lislestart-redis`                                                   |
+| API     | `TRUST_PROXY`                   | `true` (Render est un proxy : vraie IP pour la limitation de débit)                                                                                                               |
+| API     | `COOKIE_SAME_SITE`              | `none` tant que le web appelle l'API sur un autre domaine, `lax` avec un proxy `/api` (voir [security.md](security.md))                                                           |
+| API     | `ADMIN_EMAIL`, `ADMIN_PASSWORD` | Premier administrateur, créé au démarrage s'il n'existe pas. Mot de passe généré, gardé dans un gestionnaire de mots de passe, puis variable retirée après le premier déploiement |
+| Web     | `HOSTNAME`                      | `0.0.0.0` (sinon Next.js n'écoute que sur le nom interne du conteneur)                                                                                                            |
 
 Enfin : Settings › Deploy Hook du service → secret `RENDER_DEPLOY_HOOK_API` ou `RENDER_DEPLOY_HOOK_WEB` de l'environnement GitHub correspondant.
 

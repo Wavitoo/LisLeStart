@@ -6,9 +6,26 @@ export interface AppConfig {
     secure: boolean;
     sameSite: "lax" | "strict" | "none";
   };
+  /** Premier administrateur à créer au démarrage, si ADMIN_EMAIL est défini. */
+  initialAdmin: { email: string; displayName: string; password: string } | null;
 }
 
 const SAME_SITE = ["lax", "strict", "none"] as const;
+
+function loadInitialAdmin(env: NodeJS.ProcessEnv): AppConfig["initialAdmin"] {
+  const email = env.ADMIN_EMAIL?.trim().toLowerCase();
+  if (!email) return null;
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    throw new Error(`ADMIN_EMAIL invalide : « ${email} ».`);
+  }
+  const password = env.ADMIN_PASSWORD ?? "";
+  if (password.length < 12 || password.length > 128) {
+    throw new Error(
+      "ADMIN_PASSWORD doit faire entre 12 et 128 caractères quand ADMIN_EMAIL est défini.",
+    );
+  }
+  return { email, displayName: env.ADMIN_DISPLAY_NAME?.trim() || "admin", password };
+}
 
 export function loadConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
   const sessionSecret = env.SESSION_SECRET ?? "";
@@ -31,6 +48,7 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
       secure: env.NODE_ENV === "production" || sameSite === "none",
       sameSite: sameSite as AppConfig["cookie"]["sameSite"],
     },
+    initialAdmin: loadInitialAdmin(env),
   };
 }
 
