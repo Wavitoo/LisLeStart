@@ -138,6 +138,27 @@ describe("Pick'em et classements", () => {
   });
 });
 
+describe("arbre d'un tournoi", () => {
+  it("appelle la route de l'arbre avec l'identifiant encodé", async () => {
+    const fetchImpl = vi.fn(async () => json({ serverTime: "", stages: [] }, 200));
+    await createHttpApi("http://api", fetchImpl).tournamentBracket("t 1");
+    expect(fetchImpl).toHaveBeenCalledWith(
+      "http://api/tournaments/t%201/bracket",
+      expect.anything(),
+    );
+  });
+
+  it("le faux serveur fait avancer l'arbre avec le direct et refuse un tournoi inconnu", async () => {
+    const api = createMockApi(() => new Date("2026-11-14T15:00:00Z"));
+    api.applyMatchUpdate(MOCK_FINAL_SCORE);
+    const { stages, tournament } = await api.tournamentBracket("mock-coupe-hiver");
+    expect(tournament.name).toBe("Coupe d'hiver");
+    expect(stages[0]?.rounds[2]?.matches[0]?.slots[0]?.name).toBe("Les Hiboux");
+    expect((await api.tournamentBracket("mock-open-echecs")).stages).toEqual([]);
+    await expect(api.tournamentBracket("inconnu")).rejects.toMatchObject({ status: 404 });
+  });
+});
+
 describe("createMockApi : Pick'em, classements, groupes", () => {
   const now = new Date("2026-11-14T15:00:00Z");
 

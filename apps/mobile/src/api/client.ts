@@ -7,6 +7,7 @@ import type {
   PickemFeedResponse,
   PredictionFeedResponse,
   PredictionInput,
+  TournamentBracketResponse,
   TournamentListResponse,
 } from "@lislestart/shared";
 
@@ -23,6 +24,8 @@ export interface Registration extends Credentials {
 
 export interface Api {
   liveTournaments(): Promise<TournamentListResponse>;
+  /** Étapes d'un tournoi, tour par tour (vue liste de l'arbre). */
+  tournamentBracket(tournamentId: string): Promise<TournamentBracketResponse>;
   predictionFeed(): Promise<PredictionFeedResponse>;
   /** Enregistre ou remplace le pronostic ; refusé par le serveur une fois le match commencé. */
   savePrediction(matchId: string, prediction: PredictionInput): Promise<PredictionInput>;
@@ -116,6 +119,10 @@ export function createHttpApi(baseUrl: string, fetchImpl: typeof fetch = fetch):
 
   return {
     liveTournaments: () => request<TournamentListResponse>("/tournaments?status=live"),
+    tournamentBracket: (tournamentId) =>
+      request<TournamentBracketResponse>(
+        `/tournaments/${encodeURIComponent(tournamentId)}/bracket`,
+      ),
     predictionFeed: () => request<PredictionFeedResponse>("/predictions/feed"),
     savePrediction: (matchId, prediction) =>
       request<PredictionInput>(`/matches/${encodeURIComponent(matchId)}/prediction`, {

@@ -1,5 +1,6 @@
 import type { TournamentSummary } from "@lislestart/shared";
-import { StyleSheet, Text, View } from "react-native";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 import {
   locationLabel,
   participantsLabel,
@@ -9,14 +10,34 @@ import {
 import { colors, radius, space, type } from "../theme";
 import { LiveBadge } from "./LiveBadge";
 
-export function TournamentCard({ tournament }: { tournament: TournamentSummary }) {
+/** Carte d'un tournoi en cours ; la toucher ouvre son arbre. */
+export function TournamentCard({
+  tournament,
+  onPress,
+}: {
+  tournament: TournamentSummary;
+  onPress: () => void;
+}) {
   return (
-    <View
-      accessible
+    <Pressable
+      accessibilityRole="button"
       accessibilityLabel={tournamentAccessibilityLabel(tournament)}
-      style={styles.card}
+      accessibilityHint="Ouvre l'arbre et les matchs du tournoi"
+      onPress={onPress}
+      style={({ pressed }) => [styles.card, pressed && styles.pressed]}
     >
-      <LiveBadge />
+      <View style={styles.top}>
+        <LiveBadge />
+        <View style={styles.open}>
+          <Text style={styles.openText}>Voir l'arbre</Text>
+          <MaterialCommunityIcons
+            name="chevron-right"
+            size={20}
+            color={colors.craie}
+            importantForAccessibility="no"
+          />
+        </View>
+      </View>
       <Text style={styles.name}>{tournament.name}</Text>
       <Text style={styles.game}>{tournament.game}</Text>
       <Text style={styles.meta}>
@@ -26,7 +47,7 @@ export function TournamentCard({ tournament }: { tournament: TournamentSummary }
           sourceLabel(tournament.source),
         ].join(" · ")}
       </Text>
-    </View>
+    </Pressable>
   );
 }
 
@@ -39,6 +60,16 @@ const styles = StyleSheet.create({
     padding: space[4],
     gap: space[2],
   },
+  pressed: { opacity: 0.85 },
+  top: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: space[2],
+  },
+  open: { flexDirection: "row", alignItems: "center" },
+  openText: { ...type.label, color: colors.craie },
   name: { ...type.heading, color: colors.craie },
   game: { ...type.bodyStrong, color: colors.craie },
   meta: { ...type.caption, color: colors.muted },

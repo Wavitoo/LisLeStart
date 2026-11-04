@@ -21,6 +21,7 @@ import { AccountScreen } from "./src/screens/AccountScreen";
 import { LeaderboardScreen } from "./src/screens/LeaderboardScreen";
 import { PickemScreen } from "./src/screens/PickemScreen";
 import { PredictionsScreen } from "./src/screens/PredictionsScreen";
+import { TournamentScreen } from "./src/screens/TournamentScreen";
 import { TournamentsScreen } from "./src/screens/TournamentsScreen";
 import { colors, fonts, touchTarget } from "./src/theme";
 
@@ -116,6 +117,11 @@ export default function App() {
               name="Compte"
               component={AccountScreen}
               options={{ title: "MON COMPTE" }}
+            />
+            <Stack.Screen
+              name="Tournoi"
+              component={TournamentScreen}
+              options={({ route }) => ({ title: route.params.name.toUpperCase() })}
             />
           </Stack.Navigator>
         </NavigationContainer>

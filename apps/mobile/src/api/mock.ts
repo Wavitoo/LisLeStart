@@ -9,6 +9,7 @@ import { effectiveStatus } from "../lib/pickem";
 import { applyMatchUpdate, isLocked } from "../lib/predictions";
 import { liveTournaments } from "../lib/tournaments";
 import { ApiError, type Api, type FieldError, type Registration } from "./client";
+import { advanceBracket, mockBrackets } from "./mockBracket";
 import {
   DEMO_BADGES,
   DEMO_GROUPS,
@@ -190,6 +191,7 @@ export function createMockApi(clock: () => Date = () => new Date()): MockApi {
   const origin = clock();
   let matches = mockPredictionMatches(origin);
   const questions = mockPickemQuestions(origin);
+  let brackets = mockBrackets();
   /** Réponses Pick'em par compte, puis par question. */
   const answers = new Map<string, Map<string, string>>();
   const accounts = new Map<string, { user: AuthUser; password: string }>();
@@ -219,6 +221,15 @@ export function createMockApi(clock: () => Date = () => new Date()): MockApi {
         serverTime: now.toISOString(),
         tournaments: liveTournaments(mockTournaments(now), now),
       };
+    },
+
+    async tournamentBracket(tournamentId) {
+      const now = clock();
+      const tournament = mockTournaments(now).find((t) => t.id === tournamentId);
+      const stages = brackets[tournamentId];
+      if (!tournament || !stages) throw new ApiError("Tournoi introuvable.", 404);
+      const copy = JSON.parse(JSON.stringify(stages)) as typeof stages;
+      return { serverTime: now.toISOString(), tournament, stages: copy };
     },
 
     async predictionFeed() {
@@ -331,6 +342,9 @@ export function createMockApi(clock: () => Date = () => new Date()): MockApi {
 
     applyMatchUpdate(event) {
       matches = applyMatchUpdate(matches, event);
+      brackets = Object.fromEntries(
+        Object.entries(brackets).map(([id, stages]) => [id, advanceBracket(stages, event)]),
+      );
     },
 
     locksAt(matchId) {
