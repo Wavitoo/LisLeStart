@@ -93,6 +93,51 @@ export interface ClientToServerEvents {
   unsubscribe: (subscription: RealtimeSubscription, ack: (result: RealtimeAck) => void) => void;
 }
 
+/** Un emplacement de match vu par le pronostiqueur ; `name` est null tant qu'il est à déterminer. */
+export interface PredictionSlot {
+  participantId: string | null;
+  name: string | null;
+  /** Manches gagnées ; null tant que le match n'a pas commencé. */
+  score: number | null;
+}
+
+/** Pronostic d'un utilisateur sur un match en duel. */
+export interface PredictionInput {
+  winnerId: string;
+  /** Score exact facultatif, dans l'ordre des emplacements ; null en BO1 ou sans score. */
+  score: [number, number] | null;
+}
+
+/** Part du public pour un participant, en pourcentage entier. */
+export interface DistributionShare {
+  participantId: string;
+  percent: number;
+}
+
+/** Match ouvert ou fermé aux pronostics (contrat API, voir docs/mobile.md). */
+export interface PredictionMatch {
+  id: string;
+  tournamentId: string;
+  tournamentName: string;
+  /** Nom du tour, par exemple « Demi 1 ». */
+  roundLabel: string;
+  bestOf: number;
+  status: MatchStatus;
+  /** Verrouillage du pronostic (ISO 8601, horloge du serveur) ; null si pas encore planifié. */
+  locksAt: string | null;
+  slots: PredictionSlot[];
+  myPrediction: PredictionInput | null;
+  /** Répartition du public : visible seulement après verrouillage, null avant. */
+  distribution: DistributionShare[] | null;
+  predictionCount: number;
+}
+
+/** Réponse de `GET /predictions/feed` : matchs en cours et à venir des tournois suivis. */
+export interface PredictionFeedResponse {
+  serverTime: string;
+  matches: PredictionMatch[];
+}
+
 export interface Participant {
   id: string;
   name: string;

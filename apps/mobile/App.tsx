@@ -10,17 +10,23 @@ import { Manrope_400Regular, Manrope_600SemiBold } from "@expo-google-fonts/manr
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { DarkTheme, NavigationContainer, type Theme } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useFonts } from "expo-font";
 import { StatusBar } from "expo-status-bar";
 import type { ComponentProps } from "react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import { AuthProvider } from "./src/auth/AuthContext";
+import type { RootStackParamList } from "./src/navigation";
+import { AccountScreen } from "./src/screens/AccountScreen";
 import { ComingSoonScreen } from "./src/screens/ComingSoonScreen";
+import { PredictionsScreen } from "./src/screens/PredictionsScreen";
 import { TournamentsScreen } from "./src/screens/TournamentsScreen";
 import { colors, fonts, touchTarget } from "./src/theme";
 
 type IconName = ComponentProps<typeof MaterialCommunityIcons>["name"];
 
 const Tab = createBottomTabNavigator();
+const Stack = createNativeStackNavigator<RootStackParamList>();
 
 const theme: Theme = {
   ...DarkTheme,
@@ -42,6 +48,53 @@ function tabIcon(active: IconName, inactive: IconName) {
   );
 }
 
+/** Barre d'onglets de la maquette : Pronos · Pick'em · Arbres · Classement. */
+function Tabs() {
+  return (
+    <Tab.Navigator
+      initialRouteName="Arbres"
+      screenOptions={{
+        headerShown: false,
+        tabBarActiveTintColor: colors.lime,
+        tabBarInactiveTintColor: colors.muted,
+        tabBarLabelStyle: { fontFamily: fonts.bodyStrong, fontSize: 12 },
+        tabBarItemStyle: { minHeight: touchTarget },
+        tabBarStyle: { backgroundColor: colors.tabbar, borderTopColor: colors.line },
+      }}
+    >
+      <Tab.Screen
+        name="Pronos"
+        component={PredictionsScreen}
+        options={{ tabBarIcon: tabIcon("bullseye-arrow", "bullseye") }}
+      />
+      <Tab.Screen
+        name="Pick'em"
+        options={{ tabBarIcon: tabIcon("checkbox-marked", "checkbox-marked-outline") }}
+      >
+        {() => (
+          <ComingSoonScreen
+            title="Pick'em"
+            description="Bientôt : réponds aux questions Pick'em de chaque tournoi."
+          />
+        )}
+      </Tab.Screen>
+      <Tab.Screen
+        name="Arbres"
+        component={TournamentsScreen}
+        options={{ tabBarIcon: tabIcon("tournament", "tournament") }}
+      />
+      <Tab.Screen name="Classement" options={{ tabBarIcon: tabIcon("chart-bar", "chart-bar") }}>
+        {() => (
+          <ComingSoonScreen
+            title="Classement"
+            description="Bientôt : ta position, celle de tes amis et tes badges."
+          />
+        )}
+      </Tab.Screen>
+    </Tab.Navigator>
+  );
+}
+
 export default function App() {
   const [fontsLoaded] = useFonts({
     BarlowCondensed_700Bold,
@@ -56,52 +109,25 @@ export default function App() {
 
   return (
     <SafeAreaProvider>
-      <NavigationContainer theme={theme}>
-        <Tab.Navigator
-          initialRouteName="Arbres"
-          screenOptions={{
-            headerShown: false,
-            tabBarActiveTintColor: colors.lime,
-            tabBarInactiveTintColor: colors.muted,
-            tabBarLabelStyle: { fontFamily: fonts.bodyStrong, fontSize: 12 },
-            tabBarItemStyle: { minHeight: touchTarget },
-            tabBarStyle: { backgroundColor: colors.tabbar, borderTopColor: colors.line },
-          }}
-        >
-          <Tab.Screen name="Pronos" options={{ tabBarIcon: tabIcon("bullseye-arrow", "bullseye") }}>
-            {() => (
-              <ComingSoonScreen
-                title="Pronos"
-                description="Bientôt : pronostique le vainqueur et le score des matchs en direct."
-              />
-            )}
-          </Tab.Screen>
-          <Tab.Screen
-            name="Pick'em"
-            options={{ tabBarIcon: tabIcon("checkbox-marked", "checkbox-marked-outline") }}
+      <AuthProvider>
+        <NavigationContainer theme={theme}>
+          <Stack.Navigator
+            screenOptions={{
+              headerStyle: { backgroundColor: colors.tabbar },
+              headerTintColor: colors.craie,
+              headerTitleStyle: { fontFamily: fonts.heading },
+              contentStyle: { backgroundColor: colors.nuit },
+            }}
           >
-            {() => (
-              <ComingSoonScreen
-                title="Pick'em"
-                description="Bientôt : réponds aux questions Pick'em de chaque tournoi."
-              />
-            )}
-          </Tab.Screen>
-          <Tab.Screen
-            name="Arbres"
-            component={TournamentsScreen}
-            options={{ tabBarIcon: tabIcon("tournament", "tournament") }}
-          />
-          <Tab.Screen name="Classement" options={{ tabBarIcon: tabIcon("chart-bar", "chart-bar") }}>
-            {() => (
-              <ComingSoonScreen
-                title="Classement"
-                description="Bientôt : ta position, celle de tes amis et tes badges."
-              />
-            )}
-          </Tab.Screen>
-        </Tab.Navigator>
-      </NavigationContainer>
+            <Stack.Screen name="Onglets" component={Tabs} options={{ headerShown: false }} />
+            <Stack.Screen
+              name="Compte"
+              component={AccountScreen}
+              options={{ title: "MON COMPTE" }}
+            />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </AuthProvider>
       <StatusBar style="light" />
     </SafeAreaProvider>
   );
