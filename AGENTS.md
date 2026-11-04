@@ -228,9 +228,10 @@ Workflows en place : `ci.yml` (Gitleaks, lint, typecheck, test, build, `pnpm aud
 `User` (role ADMIN/PLAYER/SPECTATOR) · `Game` → `StatDefinition` · `Tournament` (source INTERNAL/FILE_IMPORT/STARTGG, externalId, readOnly) → `Stage` (format, settings JSON) → `Match` (round, bestOf, status, `startedAt` = verrouillage, slots JSON) → `MatchGame` (stats) · `ResultEvent` (historique des résultats) · `Team` → `TeamMember` · `Prediction` (unique user+match) · `PickemQuestion` (template, config, points, closesAt, status open/locked/resolved/cancelled) → `PickemAnswer` · `AuditLog` (actor, action, target, before, after).
 À ajouter : groupes d'amis, badges, litiges, inscriptions et champs personnalisés, classements.
 
-## 12. Identité visuelle (maquettes Claude + Figma)
+## 12. Identité visuelle : Seedline (charte dans `docs/brand/`, résumé dans `docs/brand.md`)
 
-- Couleurs : Nuit `#0F1222` (fond), Surface `#181C30`, Raised `#1F2440`, Bordure `#2A3050`/`#3A4168`, Craie `#F2F4FA` (texte), texte secondaire `#C9CEE0`, muted `#A3AAC2`, **Lime `#C6F432`** (actions, direct, focus), **Violet `#8B7BFF`** (pronostics), **Corail `#FF8A65`** (alertes).
+- Nom du produit : **Seedline** (le dépôt et les packages gardent le nom technique `lislestart`). Logos dans `docs/brand/logos/` ; en React Native, utiliser les PNG.
+- Couleurs : Nuit `#0F1222` (fond), Tabbar `#12162A`, Surface `#181C30`, Raised `#1F2440`, Bordure `#292F4D`, Craie `#F2F4FA` (texte), muted `#9BA0B3`, **Lime `#C6F432`** (actions, direct, focus), **Violet `#8B7BFF`** (pronostics), **Corail `#FF8A65`** (alertes), fonds `*-soft` : lime `#2C3625`, violet `#25254A`, corail `#3A282E`.
 - Polices : Barlow Condensed gras capitales (titres, scores), Manrope (texte), JetBrains Mono (chiffres, points, horaires).
 - Composants : boutons primaire (lime, texte nuit) / secondaire (bordure), chips d'état avec **icône + mot** (Prono juste ✓, Prono faux ✕, Verrouillé, En direct), cases d'équipe (défaut, sélectionnée, désactivée).
 - Thème sombre, coins arrondis 10–20 px, cibles ≥ 48 px.
