@@ -5,6 +5,7 @@ import { ApiError, api, usingMockData } from "../api";
 import { ErrorBox } from "../components/ErrorBox";
 import { Screen } from "../components/Screen";
 import { TournamentCard } from "../components/TournamentCard";
+import { useRootNavigation } from "../navigation";
 import { colors, space, type } from "../theme";
 
 type State =
@@ -14,6 +15,7 @@ type State =
 
 /** Onglet Arbres : tournois en cours, point d'entrée vers les arbres en direct. */
 export function TournamentsScreen() {
+  const navigation = useRootNavigation();
   const [state, setState] = useState<State>({ kind: "loading" });
   const [refreshing, setRefreshing] = useState(false);
 
@@ -66,7 +68,14 @@ export function TournamentsScreen() {
         <FlatList
           data={state.tournaments}
           keyExtractor={(t) => t.id}
-          renderItem={({ item }) => <TournamentCard tournament={item} />}
+          renderItem={({ item }) => (
+            <TournamentCard
+              tournament={item}
+              onPress={() =>
+                navigation.navigate("Tournoi", { tournamentId: item.id, name: item.name })
+              }
+            />
+          )}
           contentContainerStyle={styles.list}
           ItemSeparatorComponent={() => <View style={styles.separator} />}
           ListEmptyComponent={

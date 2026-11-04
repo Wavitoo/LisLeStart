@@ -28,7 +28,7 @@ EXPO_PUBLIC_API_URL=http://10.0.2.2:4000 pnpm --filter @lislestart/mobile start
 | `src/components/` | Composants d'interface réutilisables                                                       |
 | `src/screens/`    | Un écran par onglet                                                                        |
 
-Onglets : **Pronos · Pick'em · Arbres · Classement**. L'app s'ouvre sur Arbres, qui liste les tournois en cours. Pronos montre le match en cours et le prochain match à pronostiquer. L'icône en haut à droite de chaque onglet ouvre **Compte** : connexion, inscription (joueur ou spectateur) ou profil et déconnexion. Pick'em montre la progression puis les questions de chaque tournoi. Classement présente le classement général, par tournoi ou par groupe, ta position, tes badges et l'invitation d'amis dans un groupe.
+Onglets : **Pronos · Pick'em · Arbres · Classement**. L'app s'ouvre sur Arbres, qui liste les tournois en cours ; toucher un tournoi ouvre son arbre en vue liste (étapes, tours, matchs en direct). Pronos montre le match en cours et le prochain match à pronostiquer. L'icône en haut à droite de chaque onglet ouvre **Compte** : connexion, inscription (joueur ou spectateur) ou profil et déconnexion. Pick'em montre la progression puis les questions de chaque tournoi. Classement présente le classement général, par tournoi ou par groupe, ta position, tes badges et l'invitation d'amis dans un groupe.
 
 ## Échanges avec l'API
 
@@ -108,6 +108,12 @@ Crée ou remplace le pronostic. Corps et réponse : `{ "winnerId": "clx…", "sc
 | 401  | Pas de session                              | « Connecte-toi pour pronostiquer. »        |
 | 409  | Match commencé (horloge du serveur)         | « Prono fermé : le match a commencé. »     |
 
+### `GET /tournaments/:id/bracket`
+
+Étapes d'un tournoi tour par tour (`TournamentBracketResponse`) : le tournoi (`TournamentSummary`), puis pour chaque étape son nom, son format et ses tours (`label` : « Quarts de finale », « Tour 1 »…). Chaque match donne son numéro, son BO, son statut, son vainqueur et ses emplacements : participant, tête de série, score, et `isBye` pour un exempt. Un participant à déterminer a `participantId` et `name` à `null`. 404 si le tournoi n'existe pas ou n'est pas public ; `stages` vide tant que l'arbre n'est pas publié.
+
+Sur mobile, l'arbre est affiché **en liste** (tours en titres, un bloc par match), plus lisible qu'un arbre graphique sur un téléphone et équivalent pour TalkBack. Les scores changent en direct (`match:updated`) ; à la fin d'un match, l'arbre est rechargé pour que le vainqueur apparaisse au tour suivant, puisque c'est le serveur qui fait avancer l'arbre. Le vainqueur porte une coche **et** « Qualifié ».
+
 ### `GET /pickem/feed` et `PUT /pickem/questions/:id/answer`
 
 Questions Pick'em des tournois en cours (`PickemFeedResponse`, `PickemQuestionView`) : modèle, titre, statut (`open`, `locked`, `resolved`, `cancelled`), clôture, points, options et `myAnswer` (`null` sans session). `distribution` reste `null` avant la clôture ; `correctOptionId` est rempli à la résolution ; `cancelReason` explique une annulation pour donnée manquante.
@@ -138,6 +144,7 @@ Le téléphone peut avoir une horloge fausse. L'écart avec `serverTime` est mes
 - Badge « En direct » : point lime **et** mot. Onglet actif : icône pleine **et** couleur, état « sélectionné » annoncé par la navigation.
 - Messages de chargement, d'erreur et de liste vide annoncés (`accessibilityLiveRegion="polite"`).
 - Pronos : choix du vainqueur et du score en boutons radio (`accessibilityRole="radio"`, état « sélectionné »), avec bordure, coche **et** « Mon choix ». Score du match en cours annoncé à chaque changement, sans voler le focus. Le bouton désactivé dit pourquoi (« Choisis un vainqueur », « Prono fermé », « Prono enregistré »).
+- Arbre : tours en titres, chaque match lu en une phrase (« Demi-finales, match 1. Les Hiboux contre Kraken Club. Score 1 – 1. En direct »), exempt et « À déterminer » en toutes lettres, score annoncé quand il change.
 - Pick'em : options en boutons radio, chips d'état avec icône et mot (« Résolue · +15 », « Résolue · ratée », « Annulée : données absentes »), progression annoncée « 2 questions répondues sur 4 ».
 - Classement : chaque ligne lue « 3e, zero_tilt (toi), 1 120 points » ; vues Général, Tournoi et Groupe en onglets, choix du tournoi ou du groupe en boutons radio.
 - Répartition du public lue comme une phrase (« 72 % voient Les Hiboux gagner, 28 % Kraken Club »), pourcentages écrits à côté des barres.

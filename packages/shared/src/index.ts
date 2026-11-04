@@ -213,6 +213,49 @@ export interface Badge {
   earnedAt: string;
 }
 
+/** Emplacement d'un match de l'arbre. */
+export interface BracketSlot {
+  /** null tant que le participant est à déterminer, ou pour un exempt. */
+  participantId: string | null;
+  name: string | null;
+  seed: number | null;
+  score: number | null;
+  /** Exempt : pas d'adversaire, l'autre participant passe au tour suivant. */
+  isBye: boolean;
+}
+
+export interface BracketMatch {
+  id: string;
+  /** Numéro du match dans son tour, à partir de 1. */
+  number: number;
+  bestOf: number;
+  status: MatchStatus;
+  scheduledAt: string | null;
+  slots: BracketSlot[];
+  winnerId: string | null;
+}
+
+export interface BracketRound {
+  round: number;
+  /** « Quarts de finale », « Demi-finales », « Finale », « Tour 1 »… */
+  label: string;
+  matches: BracketMatch[];
+}
+
+export interface BracketStage {
+  id: string;
+  name: string;
+  format: StageFormat;
+  rounds: BracketRound[];
+}
+
+/** Réponse de `GET /tournaments/:id/bracket` : les étapes d'un tournoi, tour par tour. */
+export interface TournamentBracketResponse {
+  serverTime: string;
+  tournament: TournamentSummary;
+  stages: BracketStage[];
+}
+
 export interface Participant {
   id: string;
   name: string;
