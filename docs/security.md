@@ -55,3 +55,11 @@ Exceptions acceptées (`pnpm.auditConfig.ignoreGhsas`), toutes limitées aux **o
 | `GHSA-ggr8-5vv4-36mx` | `deepmerge-ts` | `prisma` › `@prisma/config` | Correctif en version majeure 8 ; lecture de config du CLI | Montée vers Prisma 7 |
 
 Toute nouvelle exception doit être ajoutée à ce tableau dans la même PR.
+
+Alertes Dependabot de gravité moyenne ou basse, hors du seuil de la CI, tolérées pour la même raison (outils de développement ou de build, aucun correctif compatible) et fermées sur GitHub avec le motif « Risk is tolerable » :
+
+| Avis                  | Paquet      | Tiré par                                            | Raison                                                             | À revoir                       |
+| --------------------- | ----------- | --------------------------------------------------- | ------------------------------------------------------------------ | ------------------------------ |
+| `GHSA-g3hv-75wg-m249` | `minimatch` | `eslint`, `typescript-eslint`, `expo` › `@expo/cli` | Correctif en version majeure 11, pas encore accepté par ces outils | Montée d'ESLint et du SDK Expo |
+| `GHSA-3g3m-2fjr-6pw4` | `glob`      | `expo` › `@expo/cli`                                | Correctif en version majeure 14 ; CLI de développement             | Montée du SDK Expo             |
+| `GHSA-gcqx-w48m-w2h4` | `deepmerge` | `expo` › `@expo/config`                             | Aucun correctif publié ; lecture de la config de l'app au build    | Montée du SDK Expo             |
