@@ -22,6 +22,7 @@ La documentation fait partie du produit : elle s'écrit au fil du projet, dans l
 | Pronostics et Pick'em                     | [predictions.md](predictions.md)               |
 | Sécurité                                  | [security.md](security.md)                     |
 | Accessibilité                             | [accessibility.md](accessibility.md)           |
+| Application mobile                        | [mobile.md](mobile.md)                         |
 | Écrire un connecteur                      | [connectors/guide.md](connectors/guide.md)     |
 | Exploitation (déploiement, CI/CD, charge) | [operations.md](operations.md)                 |
 | Identité du produit                       | [brand.md](brand.md)                           |
