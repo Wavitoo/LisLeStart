@@ -18,7 +18,8 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import { AuthProvider } from "./src/auth/AuthContext";
 import type { RootStackParamList } from "./src/navigation";
 import { AccountScreen } from "./src/screens/AccountScreen";
-import { ComingSoonScreen } from "./src/screens/ComingSoonScreen";
+import { LeaderboardScreen } from "./src/screens/LeaderboardScreen";
+import { PickemScreen } from "./src/screens/PickemScreen";
 import { PredictionsScreen } from "./src/screens/PredictionsScreen";
 import { TournamentsScreen } from "./src/screens/TournamentsScreen";
 import { colors, fonts, touchTarget } from "./src/theme";
@@ -69,28 +70,19 @@ function Tabs() {
       />
       <Tab.Screen
         name="Pick'em"
+        component={PickemScreen}
         options={{ tabBarIcon: tabIcon("checkbox-marked", "checkbox-marked-outline") }}
-      >
-        {() => (
-          <ComingSoonScreen
-            title="Pick'em"
-            description="Bientôt : réponds aux questions Pick'em de chaque tournoi."
-          />
-        )}
-      </Tab.Screen>
+      />
       <Tab.Screen
         name="Arbres"
         component={TournamentsScreen}
         options={{ tabBarIcon: tabIcon("tournament", "tournament") }}
       />
-      <Tab.Screen name="Classement" options={{ tabBarIcon: tabIcon("chart-bar", "chart-bar") }}>
-        {() => (
-          <ComingSoonScreen
-            title="Classement"
-            description="Bientôt : ta position, celle de tes amis et tes badges."
-          />
-        )}
-      </Tab.Screen>
+      <Tab.Screen
+        name="Classement"
+        component={LeaderboardScreen}
+        options={{ tabBarIcon: tabIcon("chart-bar", "chart-bar") }}
+      />
     </Tab.Navigator>
   );
 }

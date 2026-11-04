@@ -28,7 +28,7 @@ EXPO_PUBLIC_API_URL=http://10.0.2.2:4000 pnpm --filter @lislestart/mobile start
 | `src/components/` | Composants d'interface réutilisables                                                       |
 | `src/screens/`    | Un écran par onglet                                                                        |
 
-Onglets : **Pronos · Pick'em · Arbres · Classement**. L'app s'ouvre sur Arbres, qui liste les tournois en cours. Pronos montre le match en cours et le prochain match à pronostiquer. L'icône en haut à droite de chaque onglet ouvre **Compte** : connexion, inscription (joueur ou spectateur) ou profil et déconnexion. Pick'em et Classement arrivent au sprint 4.
+Onglets : **Pronos · Pick'em · Arbres · Classement**. L'app s'ouvre sur Arbres, qui liste les tournois en cours. Pronos montre le match en cours et le prochain match à pronostiquer. L'icône en haut à droite de chaque onglet ouvre **Compte** : connexion, inscription (joueur ou spectateur) ou profil et déconnexion. Pick'em montre la progression puis les questions de chaque tournoi. Classement présente le classement général, par tournoi ou par groupe, ta position, tes badges et l'invitation d'amis dans un groupe.
 
 ## Échanges avec l'API
 
@@ -108,6 +108,22 @@ Crée ou remplace le pronostic. Corps et réponse : `{ "winnerId": "clx…", "sc
 | 401  | Pas de session                              | « Connecte-toi pour pronostiquer. »        |
 | 409  | Match commencé (horloge du serveur)         | « Prono fermé : le match a commencé. »     |
 
+### `GET /pickem/feed` et `PUT /pickem/questions/:id/answer`
+
+Questions Pick'em des tournois en cours (`PickemFeedResponse`, `PickemQuestionView`) : modèle, titre, statut (`open`, `locked`, `resolved`, `cancelled`), clôture, points, options et `myAnswer` (`null` sans session). `distribution` reste `null` avant la clôture ; `correctOptionId` est rempli à la résolution ; `cancelReason` explique une annulation pour donnée manquante.
+
+Réponse : `PUT` avec `{ "optionId": "…" }`, remplaçable jusqu'à la clôture. Refus : 401 sans session, 400 option inconnue, 409 après la clôture (« Pick'em fermé : les réponses sont closes. »). Toucher une option l'enregistre aussitôt ; le résultat est annoncé par TalkBack.
+
+À l'écran : progression (questions ouvertes répondues), points gagnés, puis les questions, ouvertes d'abord. Une question fermée montre la part du public par option, « Ta réponse » et « Bonne réponse » en mots ; une question annulée affiche « Annulée : données absentes » et sa raison.
+
+### `GET /leaderboards`, `GET /me/groups`, `GET /me/badges`
+
+- `GET /leaderboards?scope=global|tournament|group&id=…` (`LeaderboardResponse`) : les 10 premiers, `me` (la ligne de l'utilisateur, même hors du top ; `null` sans session) et `participantCount`. 404 si le tournoi ou le groupe n'existe pas, 403 attendu pour un groupe dont on n'est pas membre.
+- `GET /me/groups` (`FriendGroup[]`, connecté) : nom, nombre de membres, code d'invitation. Le bouton « Inviter des amis » partage ce code via le partage d'Android. Les groupes sont créés côté web (pôle d'Enzo), l'app ne fait que les afficher et inviter.
+- `GET /me/badges` (`Badge[]`, connecté) : nom, description, date.
+
+Le classement est rechargé à chaque retour sur l'onglet et en tirant vers le bas. La ligne de l'utilisateur passe sur surface-raised et porte « (toi) » (charte).
+
 ### Temps réel
 
 L'écran Pronos suit en Socket.IO les tournois des matchs affichés (`match:updated`, voir [realtime.md](realtime.md)) : le score du match en cours change sans recharger, puis la carte passe à « Dernier résultat » avec « Score exact » (vainqueur et score), « Prono juste » (vainqueur seulement, avec le score exact manqué) ou « Prono faux ». Une seule connexion est partagée par l'app ; les abonnements sont refaits à chaque reconnexion. En données de démonstration, la Demi 1 se termine 20 s après l'ouverture de Pronos ; la Demi 2 se ferme 2 min après le lancement de l'app, passe en direct, puis se termine 30 s plus tard. La section « Mes pronos » liste tous les pronos de l'utilisateur avec leur état (modifiable, verrouillé, score exact, juste, faux) : un prono ne disparaît jamais de l'écran.
@@ -122,5 +138,7 @@ Le téléphone peut avoir une horloge fausse. L'écart avec `serverTime` est mes
 - Badge « En direct » : point lime **et** mot. Onglet actif : icône pleine **et** couleur, état « sélectionné » annoncé par la navigation.
 - Messages de chargement, d'erreur et de liste vide annoncés (`accessibilityLiveRegion="polite"`).
 - Pronos : choix du vainqueur et du score en boutons radio (`accessibilityRole="radio"`, état « sélectionné »), avec bordure, coche **et** « Mon choix ». Score du match en cours annoncé à chaque changement, sans voler le focus. Le bouton désactivé dit pourquoi (« Choisis un vainqueur », « Prono fermé », « Prono enregistré »).
+- Pick'em : options en boutons radio, chips d'état avec icône et mot (« Résolue · +15 », « Résolue · ratée », « Annulée : données absentes »), progression annoncée « 2 questions répondues sur 4 ».
+- Classement : chaque ligne lue « 3e, zero_tilt (toi), 1 120 points » ; vues Général, Tournoi et Groupe en onglets, choix du tournoi ou du groupe en boutons radio.
 - Répartition du public lue comme une phrase (« 72 % voient Les Hiboux gagner, 28 % Kraken Club »), pourcentages écrits à côté des barres.
 - Cibles de 48 dp minimum, tailles de texte système respectées (pas de `maxFontSizeMultiplier`).

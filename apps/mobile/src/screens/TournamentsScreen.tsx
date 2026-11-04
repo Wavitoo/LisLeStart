@@ -1,19 +1,11 @@
 import type { TournamentSummary } from "@lislestart/shared";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useCallback, useEffect, useState } from "react";
-import {
-  ActivityIndicator,
-  FlatList,
-  Pressable,
-  RefreshControl,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+import { ActivityIndicator, FlatList, RefreshControl, StyleSheet, Text, View } from "react-native";
 import { ApiError, api, usingMockData } from "../api";
+import { ErrorBox } from "../components/ErrorBox";
 import { Screen } from "../components/Screen";
 import { TournamentCard } from "../components/TournamentCard";
-import { colors, radius, space, touchTarget, type } from "../theme";
+import { colors, space, type } from "../theme";
 
 type State =
   | { kind: "loading" }
@@ -68,26 +60,7 @@ export function TournamentsScreen() {
         />
       )}
 
-      {state.kind === "error" && (
-        <View style={styles.error} accessibilityLiveRegion="polite">
-          <View style={styles.errorRow}>
-            <MaterialCommunityIcons
-              name="close"
-              size={18}
-              color={colors.corail}
-              importantForAccessibility="no"
-            />
-            <Text style={styles.errorText}>{state.message}</Text>
-          </View>
-          <Pressable
-            accessibilityRole="button"
-            onPress={retry}
-            style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
-          >
-            <Text style={styles.buttonText}>Réessayer</Text>
-          </Pressable>
-        </View>
-      )}
+      {state.kind === "error" && <ErrorBox message={state.message} onRetry={retry} />}
 
       {state.kind === "ready" && (
         <FlatList
@@ -127,23 +100,4 @@ const styles = StyleSheet.create({
   list: { padding: space[4], paddingBottom: space[6] },
   separator: { height: space[4] },
   empty: { ...type.body, color: colors.muted },
-  error: {
-    margin: space[4],
-    padding: space[4],
-    gap: space[4],
-    borderRadius: radius.lg,
-    backgroundColor: colors.corailSoft,
-  },
-  errorRow: { flexDirection: "row", gap: space[2], alignItems: "flex-start" },
-  errorText: { ...type.body, color: colors.craie, flex: 1 },
-  button: {
-    minHeight: touchTarget,
-    borderRadius: radius.md,
-    backgroundColor: colors.lime,
-    alignItems: "center",
-    justifyContent: "center",
-    paddingHorizontal: space[5],
-  },
-  buttonPressed: { opacity: 0.85 },
-  buttonText: { ...type.label, color: colors.nuit },
 });

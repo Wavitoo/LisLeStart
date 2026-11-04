@@ -1,5 +1,10 @@
 import type {
   AuthUser,
+  Badge,
+  FriendGroup,
+  LeaderboardResponse,
+  LeaderboardScope,
+  PickemFeedResponse,
   PredictionFeedResponse,
   PredictionInput,
   TournamentListResponse,
@@ -26,6 +31,13 @@ export interface Api {
   login(credentials: Credentials): Promise<AuthUser>;
   register(registration: Registration): Promise<AuthUser>;
   logout(): Promise<void>;
+  pickemFeed(): Promise<PickemFeedResponse>;
+  /** Enregistre ou remplace la réponse ; refusé par le serveur après la clôture. */
+  answerPickem(questionId: string, optionId: string): Promise<{ optionId: string }>;
+  /** Classement des pronostiqueurs ; `id` désigne le tournoi ou le groupe. */
+  leaderboard(scope: LeaderboardScope, id?: string): Promise<LeaderboardResponse>;
+  myGroups(): Promise<FriendGroup[]>;
+  myBadges(): Promise<Badge[]>;
 }
 
 /** Erreur d'un champ de formulaire, renvoyée par l'API avec un 400. */
@@ -122,5 +134,17 @@ export function createHttpApi(baseUrl: string, fetchImpl: typeof fetch = fetch):
     register: (registration) =>
       request<AuthUser>("/auth/register", { method: "POST", body: registration }),
     logout: () => request<void>("/auth/logout", { method: "POST" }),
+    pickemFeed: () => request<PickemFeedResponse>("/pickem/feed"),
+    answerPickem: (questionId, optionId) =>
+      request<{ optionId: string }>(`/pickem/questions/${encodeURIComponent(questionId)}/answer`, {
+        method: "PUT",
+        body: { optionId },
+      }),
+    leaderboard: (scope, id) => {
+      const query = new URLSearchParams({ scope, ...(id ? { id } : {}) });
+      return request<LeaderboardResponse>(`/leaderboards?${query.toString()}`);
+    },
+    myGroups: () => request<FriendGroup[]>("/me/groups"),
+    myBadges: () => request<Badge[]>("/me/badges"),
   };
 }

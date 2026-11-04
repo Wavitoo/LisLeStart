@@ -5,9 +5,18 @@ import type {
   PredictionMatch,
   TournamentSummary,
 } from "@lislestart/shared";
+import { effectiveStatus } from "../lib/pickem";
 import { applyMatchUpdate, isLocked } from "../lib/predictions";
 import { liveTournaments } from "../lib/tournaments";
 import { ApiError, type Api, type FieldError, type Registration } from "./client";
+import {
+  DEMO_BADGES,
+  DEMO_GROUPS,
+  DEMO_PICKEM_ANSWERS,
+  DEMO_POINTS,
+  mockLeaderboard,
+  mockPickemQuestions,
+} from "./mockSocial";
 
 const HOUR = 3_600_000;
 
@@ -178,7 +187,11 @@ export interface MockApi extends Api {
 }
 
 export function createMockApi(clock: () => Date = () => new Date()): MockApi {
-  let matches = mockPredictionMatches(clock());
+  const origin = clock();
+  let matches = mockPredictionMatches(origin);
+  const questions = mockPickemQuestions(origin);
+  /** Réponses Pick'em par compte, puis par question. */
+  const answers = new Map<string, Map<string, string>>();
   const accounts = new Map<string, { user: AuthUser; password: string }>();
   /** Pronostics par compte, puis par match. */
   const predictions = new Map<string, Map<string, PredictionInput>>();
@@ -192,6 +205,12 @@ export function createMockApi(clock: () => Date = () => new Date()): MockApi {
   };
   accounts.set(demo.email, { user: demo, password: DEMO_ACCOUNT.password });
   predictions.set(demo.id, new Map([["mock-demi-1", { winnerId: "hiboux", score: [2, 1] }]]));
+  answers.set(demo.id, new Map(DEMO_PICKEM_ANSWERS));
+
+  const requireUser = (message: string): AuthUser => {
+    if (!current) throw new ApiError(message, 401);
+    return current;
+  };
 
   return {
     async liveTournaments() {
@@ -257,6 +276,57 @@ export function createMockApi(clock: () => Date = () => new Date()): MockApi {
 
     async logout() {
       current = null;
+    },
+
+    async pickemFeed() {
+      const now = clock();
+      const mine = current ? answers.get(current.id) : undefined;
+      return {
+        serverTime: now.toISOString(),
+        questions: questions.map((q) => ({
+          ...q,
+          options: [...q.options],
+          status: effectiveStatus(q, now),
+          myAnswer: mine?.get(q.id) ?? null,
+        })),
+      };
+    },
+
+    async answerPickem(questionId, optionId) {
+      const user = requireUser("Connecte-toi pour répondre aux Pick'em.");
+      const question = questions.find((q) => q.id === questionId);
+      if (!question) throw new ApiError("Question introuvable.", 404);
+      if (effectiveStatus(question, clock()) !== "open") {
+        throw new ApiError("Pick'em fermé : les réponses sont closes.", 409);
+      }
+      if (!question.options.some((o) => o.id === optionId)) {
+        throw new ApiError("Cette réponse ne fait pas partie des choix.", 400);
+      }
+      const mine = answers.get(user.id) ?? new Map<string, string>();
+      mine.set(questionId, optionId);
+      answers.set(user.id, mine);
+      return { optionId };
+    },
+
+    async leaderboard(scope, id) {
+      const me = current && {
+        userId: current.id,
+        displayName: current.displayName,
+        points: current.id === demo.id ? DEMO_POINTS : 0,
+      };
+      const board = mockLeaderboard(scope, id, me);
+      if (!board) throw new ApiError("Classement introuvable.", 404);
+      return board;
+    },
+
+    async myGroups() {
+      const user = requireUser("Connecte-toi pour voir tes groupes.");
+      return user.id === demo.id ? DEMO_GROUPS.map((g) => ({ ...g })) : [];
+    },
+
+    async myBadges() {
+      const user = requireUser("Connecte-toi pour voir tes badges.");
+      return user.id === demo.id ? DEMO_BADGES.map((b) => ({ ...b })) : [];
     },
 
     applyMatchUpdate(event) {
