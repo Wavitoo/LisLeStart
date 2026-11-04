@@ -19,7 +19,7 @@ Synthèse dans [SECURITY.md](../SECURITY.md). Ce document détaille les choix et
 
 ## Authentification et sessions
 
-- **Endpoints** : `POST /auth/register`, `POST /auth/login`, `POST /auth/logout`, `GET /auth/me` (détail dans OpenAPI, `/docs`). L'inscription ne propose que joueur ou spectateur ; un administrateur est créé par le seed ou par un autre administrateur.
+- **Endpoints** : `POST /auth/register`, `POST /auth/login`, `POST /auth/logout`, `GET /auth/me` (détail dans OpenAPI, `/docs`). L'inscription ne propose que joueur ou spectateur : aucune route ne permet de devenir administrateur. La création du premier administrateur (commande ou seed, sans mot de passe dans le dépôt) reste à faire.
 - **Mots de passe** : Argon2id aux paramètres minimaux de l'OWASP. Un email inconnu coûte le même temps qu'un mauvais mot de passe, avec le même message (« Email ou mot de passe incorrect. »).
 - **Sessions** : identifiant aléatoire de 256 bits dans le cookie `sid`. Redis ne stocke qu'un HMAC de cet identifiant (clé `SESSION_SECRET`) : une copie de Redis ne donne aucun cookie valide. Durée de vie glissante de 7 jours, nouvelle session à chaque connexion, suppression à la déconnexion.
 - **Cookie** : `HttpOnly`, `SameSite=Lax` par défaut (`COOKIE_SAME_SITE`), `Secure` en production ou avec `SameSite=None`.

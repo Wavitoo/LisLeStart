@@ -24,7 +24,8 @@ export interface AuditEntryInput {
 
 export interface AuditEntry {
   id: string;
-  actorId: string;
+  /** Null pour une action automatique (résolution de Pick'em, synchro start.gg). */
+  actorId: string | null;
   action: string;
   target: string;
   before: Prisma.JsonValue;

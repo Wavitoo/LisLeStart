@@ -40,7 +40,7 @@ export class AuditQueryDto {
 
 class AuditEntryDto implements AuditEntry {
   @ApiProperty() id!: string;
-  @ApiProperty() actorId!: string;
+  @ApiProperty({ nullable: true, type: String }) actorId!: string | null;
   @ApiProperty({ enum: AUDIT_ACTIONS }) action!: string;
   @ApiProperty() target!: string;
   @ApiProperty({ nullable: true, type: Object }) before!: AuditEntry["before"];
