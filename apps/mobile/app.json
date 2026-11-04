@@ -1,14 +1,20 @@
 {
   "expo": {
-    "name": "LisLeStart",
+    "name": "Seedline",
     "slug": "lislestart",
     "version": "0.1.0",
     "platforms": ["android"],
     "orientation": "portrait",
     "userInterfaceStyle": "dark",
     "backgroundColor": "#0F1222",
+    "icon": "./assets/icon.png",
     "android": {
-      "package": "app.lislestart.mobile"
-    }
+      "package": "app.lislestart.mobile",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#0F1222"
+      }
+    },
+    "plugins": ["expo-font"]
   }
 }
