@@ -1,3 +1,6 @@
+-- CreateSchema
+CREATE SCHEMA IF NOT EXISTS "public";
+
 -- CreateEnum
 CREATE TYPE "Role" AS ENUM ('ADMIN', 'PLAYER', 'SPECTATOR');
 
@@ -145,7 +148,7 @@ CREATE TABLE "ResultEvent" (
     "payload" JSONB NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "type" "ResultEventType" NOT NULL,
-    "actordId" TEXT,
+    "actorId" TEXT,
 
     CONSTRAINT "ResultEvent_pkey" PRIMARY KEY ("id")
 );
@@ -172,7 +175,7 @@ CREATE TABLE "PickemQuestion" (
     "config" JSONB NOT NULL,
     "points" INTEGER NOT NULL,
     "closesAt" TIMESTAMP(3) NOT NULL,
-    "status" "PickemStatus" NOT NULL,
+    "status" "PickemStatus" NOT NULL DEFAULT 'OPEN',
     "answer" JSONB,
 
     CONSTRAINT "PickemQuestion_pkey" PRIMARY KEY ("id")
@@ -236,6 +239,9 @@ CREATE UNIQUE INDEX "MatchGame_matchId_number_key" ON "MatchGame"("matchId", "nu
 CREATE INDEX "ResultEvent_matchId_createdAt_idx" ON "ResultEvent"("matchId", "createdAt");
 
 -- CreateIndex
+CREATE INDEX "ResultEvent_actorId_idx" ON "ResultEvent"("actorId");
+
+-- CreateIndex
 CREATE INDEX "Prediction_matchId_idx" ON "Prediction"("matchId");
 
 -- CreateIndex
@@ -284,6 +290,9 @@ ALTER TABLE "MatchGame" ADD CONSTRAINT "MatchGame_matchId_fkey" FOREIGN KEY ("ma
 ALTER TABLE "ResultEvent" ADD CONSTRAINT "ResultEvent_matchId_fkey" FOREIGN KEY ("matchId") REFERENCES "Match"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "ResultEvent" ADD CONSTRAINT "ResultEvent_actorId_fkey" FOREIGN KEY ("actorId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "Prediction" ADD CONSTRAINT "Prediction_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
@@ -300,3 +309,4 @@ ALTER TABLE "PickemAnswer" ADD CONSTRAINT "PickemAnswer_userId_fkey" FOREIGN KEY
 
 -- AddForeignKey
 ALTER TABLE "AuditLog" ADD CONSTRAINT "AuditLog_actorId_fkey" FOREIGN KEY ("actorId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
