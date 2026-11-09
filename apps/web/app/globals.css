@@ -1,29 +1,121 @@
-:root {
-  --night: #0f1222;
-  --surface: #181c30;
-  --text: #f2f4fa;
-  --muted: #a3aac2;
-  --lime: #c6f432;
-  --violet: #8b7bff;
-  --coral: #ff8a65;
-  color-scheme: dark;
+@import "tailwindcss";
+
+/*
+ * Jetons de la maquette Figma « Seedline » (variables bg/*, border/*, text/*, accent/*, alert/*).
+ * Les classes Tailwind en découlent : bg-night, border-line-strong, text-fg-muted, bg-lime…
+ */
+@theme {
+  --color-night: #0f1222;
+  --color-surface: #181c30;
+  --color-raised: #1f2440;
+  --color-line: #2a3050;
+  --color-line-strong: #3a4168;
+  /*
+   * Hors maquette : bordure des champs de saisie. border/strong (#3a4168) n'atteint que 1,7:1
+   * sur la surface, sous le 3:1 exigé pour un composant d'interface (WCAG 1.4.11).
+   */
+  --color-line-control: #646c94;
+  --color-fg: #f2f4fa;
+  --color-fg-secondary: #c9cee0;
+  --color-fg-muted: #a3aac2;
+  --color-on-accent: #0f1222;
+  --color-lime: #c6f432;
+  --color-lime-soft: #22301a;
+  --color-lime-text: #d9f78a;
+  --color-violet-soft: #2a2550;
+  --color-violet-text: #c9c1ff;
+  --color-alert: #ff8a65;
+  --color-alert-soft: #3a2220;
+  --color-alert-text: #ffb59e;
+
+  --font-display: var(--font-barlow-condensed), "Barlow Condensed", system-ui, sans-serif;
+  --font-sans: var(--font-manrope), Manrope, system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains-mono), "JetBrains Mono", ui-monospace, monospace;
+
+  --radius-field: 10px;
+  --radius-control: 12px;
+  --radius-panel: 16px;
+
+  --breakpoint-xs: 30rem;
 }
 
-* {
-  box-sizing: border-box;
+/* Styles de texte de la maquette (Display/L, Display/S, Body/M, Body/M Strong, Body/S, Label, Mono/S). */
+@utility type-display-l {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 2.75rem;
+  line-height: 1;
+  letter-spacing: 1px;
+  text-transform: uppercase;
 }
-
-body {
-  margin: 0;
-  background: var(--night);
-  color: var(--text);
-  font-family: Manrope, system-ui, sans-serif;
+@utility type-display-s {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.5rem;
+  line-height: 1.1;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+/* Titres de section et de carte d'étape : Manrope SemiBold 20 et 17, sans style nommé dans Figma. */
+@utility type-heading {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 1.25rem;
+  line-height: 1.4;
+}
+@utility type-title {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 1.0625rem;
+  line-height: 1.4;
+}
+@utility type-body-m {
+  font-family: var(--font-sans);
+  font-weight: 400;
+  font-size: 0.9375rem;
   line-height: 1.5;
 }
+@utility type-body-m-strong {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+}
+@utility type-body-s {
+  font-family: var(--font-sans);
+  font-weight: 400;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+}
+@utility type-label {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 0.875rem;
+  line-height: 1.4;
+}
+@utility type-mono-s {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: 0.9375rem;
+  line-height: 1.4;
+}
 
-:focus-visible {
-  outline: 3px solid var(--lime);
-  outline-offset: 2px;
+@layer base {
+  :root {
+    color-scheme: dark;
+  }
+
+  body {
+    background: var(--color-night);
+    color: var(--color-fg);
+    font-family: var(--font-sans);
+    line-height: 1.5;
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--color-lime);
+    outline-offset: 2px;
+  }
 }
 
 .skip-link {
@@ -33,8 +125,9 @@ body {
 .skip-link:focus {
   left: 16px;
   top: 16px;
-  background: var(--lime);
-  color: var(--night);
+  z-index: 50;
+  background: var(--color-lime);
+  color: var(--color-night);
   padding: 8px 12px;
 }
 
@@ -44,12 +137,15 @@ body {
   padding: 32px 24px;
 }
 .muted {
-  color: var(--muted);
+  color: var(--color-fg-muted);
 }
 
 @media (prefers-reduced-motion: reduce) {
-  * {
+  *,
+  *::before,
+  *::after {
     animation: none !important;
     transition: none !important;
+    scroll-behavior: auto !important;
   }
 }
