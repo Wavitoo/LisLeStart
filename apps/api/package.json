@@ -16,7 +16,7 @@
   },
   "dependencies": {
     "@fastify/cookie": "^11.1.5",
-    "@fastify/static": "^10.1.9",
+    "@fastify/static": "^10.1.10",
     "@lislestart/engine": "workspace:*",
     "@lislestart/shared": "workspace:*",
     "@nestjs/common": "^11.1.3",
