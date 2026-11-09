@@ -1,0 +1,45 @@
+# Application web
+
+Next.js 15 (App Router), rendu côté serveur. Styles : Tailwind v4 avec les jetons de la maquette Figma dans `apps/web/app/globals.css` (couleurs, polices, rayons, styles de texte `type-*`).
+
+## Pages
+
+| Route                     | Accès          | Contenu                                                       |
+| ------------------------- | -------------- | ------------------------------------------------------------- |
+| `/tournois`               | public         | Liste des tournois publics                                    |
+| `/tournois/[id]`          | public         | Page d'un tournoi : arbre, participants, planning, classement |
+| `/admin/tournois/nouveau` | administrateur | Création de tournoi                                           |
+
+## Page publique d'un tournoi
+
+- L'en-tête du tournoi est chargé avant tout envoi : un tournoi inconnu ou privé répond **404**. Les quatre sections arrivent ensuite en streaming, chacune avec son état de chargement (`<Suspense>`), son état vide et son état d'erreur : une section en panne n'empêche pas d'afficher les autres.
+- Navigation interne par ancres (`#arbre`, `#participants`, `#planning`, `#classement`) : toutes les sections sont dans la page, l'adresse reflète la section.
+- Arbre : bascule « Vue arbre / Vue liste (équivalente) » en onglets Radix. La vue liste est un tableau par tour avec les mêmes informations (participants, score, vainqueur, état). Chaque match de l'arbre a un nom accessible complet, par exemple « Quart de finale 1 : Les Hiboux 2, Brise-Glace 0, Les Hiboux gagne ».
+- Titres : un `h1` (le tournoi), un `h2` par section, puis `h3` par tour (élimination simple) ou par partie d'arbre (tableau principal, repêchage, grande finale) avec `h4` par tour.
+- La colonne latérale « Mon pronostic » et le Pick'em de la maquette sont prévus (`TournamentLayout`, prop `aside`) mais pas encore livrés.
+
+## Contrat d'API (lecture publique, sans session)
+
+Types dans `packages/shared`. Tant que ces routes n'existent pas côté API, le web les simule : `API_MOCK=true` (ignoré en production) branche `createMockPublicApi()` sur trois tournois fictifs (`coupe-hiver`, `open-echecs`, `ligue-babyfoot`).
+
+| Route                               | Réponse                          | Notes                                                   |
+| ----------------------------------- | -------------------------------- | ------------------------------------------------------- |
+| `GET /tournaments`                  | `TournamentListResponse`         | Déjà décrit dans [mobile.md](mobile.md)                 |
+| `GET /tournaments/:id`              | `TournamentDetail`               | 404 si inconnu ou non public                            |
+| `GET /tournaments/:id/bracket`      | `TournamentBracketResponse`      | Voir [mobile.md](mobile.md), avec les ajouts ci-dessous |
+| `GET /tournaments/:id/participants` | `TournamentParticipantsResponse` | Tête de série, joueurs inscrits (équipes), check-in     |
+| `GET /tournaments/:id/schedule`     | `{ matches: ScheduledMatch[] }`  | Tous formats ; heure, tour, poste, état, score          |
+| `GET /tournaments/:id/standings`    | `{ stages: StageStandings[] }`   | Par étape, puis par poule ; `points` null pour un arbre |
+
+Ajouts au contrat de l'arbre, tous facultatifs (le mobile n'est pas touché) :
+
+- `BracketRound.side` : `winners`, `losers` ou `grand_final` en élimination double ; absent en élimination simple. Les tours d'une même partie se suivent.
+- `BracketSlot.placeholder` (et le même champ dans les emplacements de `ScheduledMatch`) : origine d'un emplacement à déterminer, par exemple « Vainqueur demie 1 », « Perdant demie 2 ».
+- `BracketMatch.station` : poste, table ou terrain.
+
+Exempt : `isBye: true`, le match est `done` et `winnerId` désigne l'autre participant.
+
+## Tests
+
+- `pnpm --filter @lislestart/web test` : Vitest (schémas, formats, composants avec Testing Library).
+- `pnpm --filter @lislestart/web test:e2e` : Playwright + axe-core (WCAG 2.2 A/AA), avec l'API simulée. Installer le navigateur une fois : `pnpm --filter @lislestart/web exec playwright install chromium`.

@@ -1,6 +1,7 @@
 import type { AuthUser } from "@lislestart/shared";
 import { cookies } from "next/headers";
 import { createHttpAdminApi, createMockAdminApi, type AdminApi } from "./admin-api";
+import { createHttpPublicApi, createMockPublicApi, type PublicApi } from "./public-api";
 
 /*
  * Accès à l'API depuis le serveur Next (composants serveur, actions). Le cookie de session sid
@@ -56,4 +57,12 @@ let mockApi: AdminApi | null = null;
 export async function getAdminApi(): Promise<AdminApi> {
   if (isMockApi()) return (mockApi ??= createMockAdminApi());
   return createHttpAdminApi(apiUrl(), await sessionCookie());
+}
+
+let mockPublicApi: PublicApi | null = null;
+
+/** Lecture publique des tournois : aucune session relayée. */
+export function getPublicApi(): PublicApi {
+  if (isMockApi()) return (mockPublicApi ??= createMockPublicApi());
+  return createHttpPublicApi(apiUrl());
 }

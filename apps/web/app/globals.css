@@ -35,16 +35,41 @@
   --radius-field: 10px;
   --radius-control: 12px;
   --radius-panel: 16px;
+  --radius-card: 20px;
 
   --breakpoint-xs: 30rem;
 }
 
-/* Styles de texte de la maquette (Display/L, Display/S, Body/M, Body/M Strong, Body/S, Label, Mono/S). */
+/* Styles de texte de la maquette (Display/XL, L, M, S, Overline, Body/M, Body/M Strong, Body/S, Label, Mono/S). */
+@utility type-display-xl {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 3.5rem;
+  line-height: 1;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
 @utility type-display-l {
   font-family: var(--font-display);
   font-weight: 700;
   font-size: 2.75rem;
   line-height: 1;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+@utility type-display-m {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.875rem;
+  line-height: 1.1;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+@utility type-overline {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 0.8125rem;
+  line-height: 1.4;
   letter-spacing: 1px;
   text-transform: uppercase;
 }

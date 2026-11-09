@@ -23,7 +23,7 @@ function isCurrent(pathname: string, href: string) {
 function Brand() {
   return (
     <span className="flex items-center gap-2.5">
-      <img src="/brand/seedline-mark.svg" alt="" width={28} height={28} className="size-7" />
+      <img src="/brand/seedline-icon.svg" alt="" width={36} height={36} className="size-9" />
       <span className="type-display-s whitespace-nowrap text-fg">Seedline admin</span>
     </span>
   );
