@@ -39,7 +39,7 @@
   "devDependencies": {
     "@nestjs/testing": "^11.2.8",
     "@swc-node/register": "^1.12.1",
-    "@swc/core": "^1.16.21",
+    "@swc/core": "^1.16.22",
     "@types/node": "^22.16.0",
     "dotenv-cli": "^8.0.0",
     "prisma": "^6.12.0",
