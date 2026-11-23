@@ -222,6 +222,8 @@ export interface BracketSlot {
   score: number | null;
   /** Exempt : pas d'adversaire, l'autre participant passe au tour suivant. */
   isBye: boolean;
+  /** Origine d'un emplacement à déterminer, par exemple « Vainqueur demie 1 ». */
+  placeholder?: string | null;
 }
 
 export interface BracketMatch {
@@ -233,13 +235,19 @@ export interface BracketMatch {
   scheduledAt: string | null;
   slots: BracketSlot[];
   winnerId: string | null;
+  /** Poste, table ou terrain. */
+  station?: string | null;
 }
+
+/** Partie d'un arbre à élimination double ; absent en élimination simple. */
+export type BracketSide = "winners" | "losers" | "grand_final";
 
 export interface BracketRound {
   round: number;
   /** « Quarts de finale », « Demi-finales », « Finale », « Tour 1 »… */
   label: string;
   matches: BracketMatch[];
+  side?: BracketSide;
 }
 
 export interface BracketStage {
@@ -344,6 +352,79 @@ export interface CreateTournamentInput {
 export interface CreatedTournament {
   id: string;
   name: string;
+}
+
+/** Tournoi tel qu'affiché sur sa page publique (`GET /tournaments/:id`). */
+export interface TournamentDetail extends TournamentSummary {
+  participantMode: ParticipantMode;
+  capacity: number;
+  description: string | null;
+  /** Étapes dans l'ordre, sans leurs matchs. */
+  stages: { id: string; name: string; format: StageFormat }[];
+  /** BO de la finale du tournoi, si elle est connue. */
+  finalBestOf: number | null;
+}
+
+export type CheckInStatus = "checked_in" | "pending" | "absent";
+
+export interface TournamentParticipant {
+  id: string;
+  name: string;
+  seed: number | null;
+  /** Joueurs inscrits dans l'équipe ; null en solo. */
+  rosterSize: number | null;
+  checkIn: CheckInStatus;
+}
+
+/** Réponse de `GET /tournaments/:id/participants`. */
+export interface TournamentParticipantsResponse {
+  participantMode: ParticipantMode;
+  participants: TournamentParticipant[];
+}
+
+/** Match planifié (`GET /tournaments/:id/schedule`), tous formats confondus. */
+export interface ScheduledMatch {
+  id: string;
+  stageName: string;
+  /** « Demie 2 », « Repêchage tour 1 », « Poule A · tour 3 »… */
+  roundLabel: string;
+  scheduledAt: string;
+  station: string | null;
+  status: MatchStatus;
+  slots: {
+    participantId: string | null;
+    name: string | null;
+    score: number | null;
+    /** Origine d'un emplacement à déterminer (« Vainqueur demie 1 »). */
+    placeholder?: string | null;
+  }[];
+  winnerId: string | null;
+}
+
+/** Ligne d'un classement ; `points` est null pour un classement final d'arbre. */
+export interface StandingRow {
+  rank: number;
+  participantId: string;
+  name: string;
+  wins: number;
+  losses: number;
+  draws: number | null;
+  points: number | null;
+}
+
+export interface StandingsGroup {
+  id: string;
+  /** « Poule A » ; null quand l'étape n'a qu'un seul classement. */
+  name: string | null;
+  rows: StandingRow[];
+}
+
+/** Classement d'une étape (`GET /tournaments/:id/standings`). */
+export interface StageStandings {
+  stageId: string;
+  stageName: string;
+  format: StageFormat;
+  groups: StandingsGroup[];
 }
 
 export interface Participant {

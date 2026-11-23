@@ -117,7 +117,3 @@ export function formatShortDay(value: string): string {
   const month = MONTHS[Number(match[2]) - 1];
   return month ? `${Number(match[3])} ${month}` : "";
 }
-
-export function plural(count: number, singular: string, pluralForm = `${singular}s`): string {
-  return `${count} ${Math.abs(count) >= 2 ? pluralForm : singular}`;
-}

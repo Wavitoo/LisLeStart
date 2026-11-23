@@ -1,5 +1,6 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Page } from "@playwright/test";
+import { loginAsAdmin } from "./helpers";
 
 const URL = "/admin/tournois/nouveau";
 /** Règles WCAG 2.0, 2.1 et 2.2, niveaux A et AA. */
@@ -14,7 +15,7 @@ async function expectNoAxeViolations(page: Page) {
 }
 
 async function openPage(page: Page) {
-  await page.goto(URL);
+  await loginAsAdmin(page, URL);
   await expect(page.getByRole("heading", { level: 1, name: "Nouveau tournoi" })).toBeVisible();
 }
 
