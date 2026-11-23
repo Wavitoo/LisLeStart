@@ -256,6 +256,96 @@ export interface TournamentBracketResponse {
   stages: BracketStage[];
 }
 
+/** Jeu déclaré par l'administrateur (`GET /games`). */
+export interface GameSummary {
+  id: string;
+  name: string;
+}
+
+export type Visibility = "public" | "invite_only";
+export type ParticipantMode = "solo" | "team";
+export type RegistrationMode = "open" | "approval";
+export type SeedingMode = "auto" | "manual";
+/** Critère de départage, appliqué dans l'ordre de la liste. */
+export type Tiebreaker = "head_to_head" | "game_difference" | "buchholz" | "points_scored";
+
+export interface EliminationSettings {
+  /** BO des tours, puis de la finale. */
+  bestOf: number;
+  finalBestOf: number;
+  seeding: SeedingMode;
+  /** Postes, tables ou terrains, en texte libre (« 1 à 8 »). */
+  stations: string | null;
+}
+
+export interface RoundRobinSettings {
+  groupCount: number;
+  groupSize: number;
+  bestOf: number;
+  points: { win: number; draw: number; loss: number };
+  tiebreakers: Tiebreaker[];
+  /** Qualifiés par poule pour l'étape suivante ; null sur la dernière étape. */
+  qualifiersPerGroup: number | null;
+}
+
+export interface SwissSettings {
+  rounds: number;
+  bestOf: number;
+  tiebreakers: Tiebreaker[];
+  qualifiers: number | null;
+}
+
+export interface FreeForAllSettings {
+  playersPerMatch: number;
+  matchCount: number;
+  /** Points par place : index 0 = 1re place. */
+  placementPoints: number[];
+  qualifiers: number | null;
+}
+
+/** Étape d'un tournoi à créer ; l'ordre de la liste donne l'ordre des étapes. */
+export type StageInput = { startsOn: string | null } & (
+  | { format: "single_elimination" | "double_elimination"; settings: EliminationSettings }
+  | { format: "round_robin"; settings: RoundRobinSettings }
+  | { format: "swiss"; settings: SwissSettings }
+  | { format: "free_for_all"; settings: FreeForAllSettings }
+);
+
+export interface CustomFieldInput {
+  label: string;
+  required: boolean;
+}
+
+/** Corps de `POST /tournaments` (réservé aux administrateurs). */
+export interface CreateTournamentInput {
+  name: string;
+  gameId: string;
+  /** Dates ISO 8601. */
+  startsAt: string;
+  endsAt: string;
+  location: LocationType;
+  visibility: Visibility;
+  description: string | null;
+  rules: string | null;
+  participantMode: ParticipantMode;
+  /** Titulaires (min) et taille max de l'équipe ; null en solo. */
+  teamSize: { min: number; max: number } | null;
+  registrationMode: RegistrationMode;
+  /** Places : équipes ou joueurs. */
+  capacity: number;
+  waitlist: boolean;
+  /** Ouverture du check-in en minutes avant le début ; null sans check-in. */
+  checkInMinutes: number | null;
+  customFields: CustomFieldInput[];
+  stages: StageInput[];
+}
+
+/** Réponse 201 de `POST /tournaments`. */
+export interface CreatedTournament {
+  id: string;
+  name: string;
+}
+
 export interface Participant {
   id: string;
   name: string;
