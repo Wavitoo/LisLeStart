@@ -6,6 +6,7 @@ import { useFieldArray, useFormContext } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/choice";
 import { controlClass, Field, FieldError } from "@/components/ui/field";
+import { Icon } from "@/components/ui/icon";
 import { cx } from "@/lib/cx";
 import { LIMITS, type TournamentFormValues } from "@/lib/tournament-form/schema";
 
@@ -61,29 +62,28 @@ export function CustomFields() {
   };
 
   return (
-    <div className="flex flex-col gap-1.5">
+    <div className="flex flex-col gap-2.5">
+      <p id="custom-fields-label" className="type-label text-fg-secondary">
+        Champs demandés à l&apos;inscription
+      </p>
       <div className="flex flex-wrap items-center gap-2">
-        <p id="custom-fields-label" className="type-body-m text-fg-secondary">
-          Champs personnalisés :
-        </p>
         {fields.length === 0 ? (
-          <p className="type-body-m text-fg-muted">aucun</p>
+          <p className="type-body-s text-fg-muted">Aucun pour l&apos;instant.</p>
         ) : (
           <ul aria-labelledby="custom-fields-label" className="flex flex-wrap items-center gap-2">
             {fields.map((field, index) => (
               <li
                 key={field.id}
-                className="flex items-center gap-1 rounded-full bg-raised py-0.5 pr-0.5 pl-2.5 type-body-s text-fg"
+                className="flex items-center gap-1 rounded-full border border-line bg-raised py-1 pr-1 pl-3 type-body-s text-fg"
               >
-                {field.label}
-                {field.required && <span className="text-fg-secondary"> · obligatoire</span>}
+                {field.label} · {field.required ? "obligatoire" : "facultatif"}
                 <button
                   type="button"
                   onClick={() => remove(index)}
                   aria-label={`Retirer le champ « ${field.label} »`}
-                  className="flex size-6 items-center justify-center rounded-full text-fg-secondary hover:bg-line-strong"
+                  className="flex size-6 items-center justify-center rounded-full hover:bg-line-strong"
                 >
-                  <span aria-hidden="true">✕</span>
+                  <Icon name="x" size={14} />
                 </button>
               </li>
             ))}
@@ -98,14 +98,16 @@ export function CustomFields() {
           }}
         >
           <Dialog.Trigger asChild>
-            <Button
+            <button
+              type="button"
               id="add-custom-field"
-              variant="link"
               disabled={full}
               aria-describedby={listMessage ? "add-custom-field-error" : undefined}
+              className="flex min-h-9 items-center gap-1.5 rounded-full border border-dashed border-line-strong py-1.5 pr-3 pl-2.5 type-body-s text-lime-text disabled:cursor-not-allowed disabled:text-fg-muted"
             >
-              + Ajouter un champ
-            </Button>
+              <Icon name="plus" size={14} />
+              Ajouter un champ
+            </button>
           </Dialog.Trigger>
           <Dialog.Portal>
             <Dialog.Overlay className="fixed inset-0 z-40 bg-night/80" />

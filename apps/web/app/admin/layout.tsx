@@ -31,5 +31,5 @@ export default async function AdminLayout({ children }: { children: ReactNode })
     );
   }
 
-  return <AdminShell>{children}</AdminShell>;
+  return <AdminShell user={user}>{children}</AdminShell>;
 }

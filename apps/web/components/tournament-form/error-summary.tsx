@@ -90,9 +90,7 @@ export function ErrorSummary({ errors, focusKey }: ErrorSummaryProps) {
         <span aria-hidden="true">⚠ </span>
         Le formulaire contient {plural(items.length, "erreur")}
       </h2>
-      <p className="type-body-m text-fg-secondary">
-        Corrige les champs suivants puis publie à nouveau :
-      </p>
+      <p className="type-body-m text-fg-secondary">Corrige les champs suivants pour continuer :</p>
       <ul className="flex list-disc flex-col gap-1 pl-5">
         {items.map((item) => (
           <li key={`${item.target}-${item.message}`} className="type-body-m text-alert-text">

@@ -7,7 +7,8 @@ import type { TournamentFormValues } from "@/lib/tournament-form/schema";
 import { defaultStage, defaultTournamentValues } from "@/lib/tournament-form/values";
 import { TournamentForm } from "./tournament-form";
 
-function setup(values: Partial<TournamentFormValues> = {}) {
+/** Rend le formulaire et ouvre l'étape « Étapes » (dernière étape de l'assistant). */
+async function setup(values: Partial<TournamentFormValues> = {}, step = /^3 Étapes/) {
   const onSubmit = vi
     .fn()
     .mockResolvedValue({ ok: true, tournament: { id: "t1", name: "Coupe d'hiver" } });
@@ -19,8 +20,18 @@ function setup(values: Partial<TournamentFormValues> = {}) {
       defaultValues={{ ...defaultTournamentValues(), ...values }}
     />,
   );
+  await user.click(screen.getByRole("button", { name: step }));
   return { user, onSubmit };
 }
+
+/** Informations et participants valides : seules les étapes peuvent être en erreur. */
+const validValues = {
+  name: "Coupe d'hiver",
+  gameId: "game-fps",
+  startsAt: "2026-12-13T18:00",
+  endsAt: "2026-12-15T18:00",
+  capacity: 16,
+};
 
 /** Deux étapes distinctes, comme dans la maquette. */
 const twoStages = {
@@ -36,7 +47,7 @@ const liveRegion = () => document.querySelector('[aria-live="polite"]');
 
 describe("Étapes : ajout et suppression", () => {
   it("ajoute une étape, l'annonce et place le focus sur son format", async () => {
-    const { user } = setup();
+    const { user } = await setup();
     expect(stageTitles()).toEqual(["Étape 1 · Élimination simple"]);
 
     await user.click(screen.getByRole("button", { name: /Ajouter une étape/ }));
@@ -47,7 +58,7 @@ describe("Étapes : ajout et suppression", () => {
   });
 
   it("supprime une étape au clavier, renumérote et annonce", async () => {
-    const { user } = setup(twoStages);
+    const { user } = await setup(twoStages);
     screen.getByRole("button", { name: "Supprimer l'étape 1" }).focus();
     await user.keyboard("{Enter}");
 
@@ -59,7 +70,10 @@ describe("Étapes : ajout et suppression", () => {
   });
 
   it("exige au moins une étape : erreur sous le bouton d'ajout et dans le récapitulatif", async () => {
-    const { user, onSubmit } = setup({ stages: [defaultStage("single_elimination")] });
+    const { user, onSubmit } = await setup({
+      ...validValues,
+      stages: [defaultStage("single_elimination")],
+    });
     await user.click(screen.getByRole("button", { name: "Supprimer l'étape 1" }));
     expect(liveRegion()).toHaveTextContent("Aucune étape");
     await waitFor(() =>
@@ -79,7 +93,7 @@ describe("Étapes : ajout et suppression", () => {
 
 describe("Étapes : réordonner sans souris", () => {
   it("Descendre (Entrée) déplace l'étape, met à jour les numéros et annonce la position", async () => {
-    const { user } = setup(twoStages);
+    const { user } = await setup(twoStages);
     expect(stageTitles()).toEqual([
       "Étape 1 · Poules (round robin)",
       "Étape 2 · Élimination double",
@@ -101,7 +115,7 @@ describe("Étapes : réordonner sans souris", () => {
   });
 
   it("Monter (Espace) annonce « Étape 2 déplacée en position 1 »", async () => {
-    const { user } = setup(twoStages);
+    const { user } = await setup(twoStages);
     screen.getByRole("button", { name: "Monter l'étape 2" }).focus();
     await user.keyboard(" ");
 
@@ -116,7 +130,7 @@ describe("Étapes : réordonner sans souris", () => {
   });
 
   it("réordonne plusieurs fois de suite au clavier, le focus suit l'étape", async () => {
-    const { user } = setup({
+    const { user } = await setup({
       stages: [
         defaultStage("swiss"),
         defaultStage("round_robin"),
@@ -138,14 +152,14 @@ describe("Étapes : réordonner sans souris", () => {
     expect(liveRegion()).toHaveTextContent("Étape 2 déplacée en position 3");
   });
 
-  it("la première étape ne peut pas monter, la dernière ne peut pas descendre", () => {
-    setup(twoStages);
+  it("la première étape ne peut pas monter, la dernière ne peut pas descendre", async () => {
+    await setup(twoStages);
     expect(screen.getByRole("button", { name: "Monter l'étape 1" })).toBeDisabled();
     expect(screen.getByRole("button", { name: "Descendre l'étape 2" })).toBeDisabled();
   });
 
   it("la qualification suit l'ordre des étapes", async () => {
-    const { user } = setup(twoStages);
+    const { user } = await setup(twoStages);
     expect(
       screen.getByText(
         "Qualification : les 2 premiers de chaque poule rejoignent l'étape 2 (1er de A contre 2e de B…)",
@@ -161,7 +175,7 @@ describe("Étapes : réordonner sans souris", () => {
 
 describe("Erreurs à l'envoi", () => {
   it("relie chaque erreur à son champ, et déplace le focus vers le récapitulatif", async () => {
-    const { user, onSubmit } = setup();
+    const { user, onSubmit } = await setup();
     await user.click(screen.getByRole("button", { name: "Publier le tournoi" }));
 
     const summary = await screen.findByRole("heading", {
@@ -186,7 +200,7 @@ describe("Erreurs à l'envoi", () => {
   });
 
   it("règle croisée : la fin avant le début, sous le champ Fin", async () => {
-    const { user } = setup({ startsAt: "2026-12-13T18:00", endsAt: "2026-12-12T18:00" });
+    const { user } = await setup({ startsAt: "2026-12-13T18:00", endsAt: "2026-12-12T18:00" });
     await user.click(screen.getByRole("button", { name: "Publier le tournoi" }));
     const end = screen.getByLabelText("Fin");
     expect(end).toHaveAttribute("aria-invalid", "true");
@@ -196,13 +210,7 @@ describe("Erreurs à l'envoi", () => {
   });
 
   it("envoie le tournoi converti quand tout est valide et annonce la publication", async () => {
-    const { user, onSubmit } = setup({
-      name: "Coupe d'hiver",
-      gameId: "game-fps",
-      startsAt: "2026-12-13T18:00",
-      endsAt: "2026-12-15T18:00",
-      capacity: 16,
-    });
+    const { user, onSubmit } = await setup(validValues);
     await user.click(screen.getByRole("button", { name: "Publier le tournoi" }));
 
     await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
@@ -216,5 +224,45 @@ describe("Erreurs à l'envoi", () => {
     const status = await screen.findByText(/Tournoi « Coupe d'hiver » publié\./);
     expect(status).toHaveAttribute("role", "status");
     await waitFor(() => expect(status).toHaveFocus());
+  });
+});
+
+describe("Assistant en étapes", () => {
+  it("Continuer valide l'étape : erreurs sur place, sinon passage à l'étape suivante", async () => {
+    const { user } = await setup({}, /^1 Informations/);
+    await user.click(screen.getByRole("button", { name: "Continuer · Participants" }));
+
+    const summary = await screen.findByRole("heading", {
+      name: /Le formulaire contient \d+ erreurs/,
+    });
+    await waitFor(() => expect(summary.parentElement).toHaveFocus());
+    expect(screen.getByRole("button", { name: /^1 Informations/ })).toHaveAttribute(
+      "aria-current",
+      "step",
+    );
+
+    await user.type(screen.getByRole("textbox", { name: "Nom du tournoi" }), "Coupe d'hiver");
+    await user.click(screen.getByRole("combobox", { name: "Jeu" }));
+    await user.click(screen.getByRole("option", { name: "FPS 5v5" }));
+    await user.type(screen.getByLabelText("Début"), "2026-12-13T18:00");
+    await user.type(screen.getByLabelText("Fin"), "2026-12-15T18:00");
+    await user.click(screen.getByRole("button", { name: "Continuer · Participants" }));
+
+    const heading = screen.getByRole("heading", { level: 2, name: "Participants et inscriptions" });
+    await waitFor(() => expect(heading).toHaveFocus());
+    expect(screen.getByRole("button", { name: /^1 Informations.*, terminée$/ })).toBeVisible();
+  });
+
+  it("les interrupteurs annoncent leur état et modifient l'envoi", async () => {
+    const { user, onSubmit } = await setup(validValues, /^2 Participants/);
+    const approval = screen.getByRole("switch", { name: "Inscriptions sur validation" });
+    expect(approval).toHaveAttribute("aria-checked", "false");
+    await user.click(approval);
+    expect(approval).toHaveAttribute("aria-checked", "true");
+
+    await user.click(screen.getByRole("button", { name: /^3 Étapes/ }));
+    await user.click(screen.getByRole("button", { name: "Publier le tournoi" }));
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+    expect(onSubmit.mock.calls[0]?.[0]).toMatchObject({ registrationMode: "approval" });
   });
 });

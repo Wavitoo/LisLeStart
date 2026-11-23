@@ -15,10 +15,20 @@ async function expectNoAxeViolations(page: Page) {
 
 async function openPage(page: Page) {
   await page.goto(URL);
-  await expect(page.getByRole("heading", { level: 1, name: "Créer un tournoi" })).toBeVisible();
-  // Attendre l'hydratation : le bouton d'ajout réagit
-  await expect(page.getByRole("button", { name: /Ajouter une étape/ })).toBeEnabled();
+  await expect(page.getByRole("heading", { level: 1, name: "Nouveau tournoi" })).toBeVisible();
 }
+
+/** Ouvre une étape de l'assistant ; réessaie tant que la page n'est pas hydratée. */
+async function goToStep(page: Page, name: RegExp) {
+  const step = page.getByRole("button", { name });
+  await expect(async () => {
+    await step.click();
+    await expect(step).toHaveAttribute("aria-current", "step", { timeout: 500 });
+  }).toPass();
+}
+
+const STAGES = /^3 Étapes/;
+const PARTICIPANTS = /^2 Participants/;
 
 test.describe("Créer un tournoi : accessibilité", () => {
   test("aucune violation axe sur la page par défaut", async ({ page }) => {
@@ -30,7 +40,8 @@ test.describe("Créer un tournoi : accessibilité", () => {
     await openPage(page);
     await page.getByLabel("Début", { exact: true }).fill("2026-12-13T18:00");
     await page.getByLabel("Fin", { exact: true }).fill("2026-12-12T18:00");
-    await page.getByRole("button", { name: "Publier le tournoi" }).click();
+    await goToStep(page, /^1 Informations/);
+    await page.getByRole("button", { name: "Continuer · Participants" }).click();
 
     const summary = page.getByRole("heading", { name: /Le formulaire contient \d+ erreurs/ });
     await expect(summary).toBeVisible();
@@ -44,8 +55,10 @@ test.describe("Créer un tournoi : accessibilité", () => {
     page,
   }) => {
     await openPage(page);
+    await goToStep(page, STAGES);
     await page.getByRole("button", { name: /Ajouter une étape/ }).click();
-    await page.getByRole("button", { name: "+ Ajouter un champ" }).click();
+    await goToStep(page, PARTICIPANTS);
+    await page.getByRole("button", { name: "Ajouter un champ" }).click();
     await page.getByRole("button", { name: "Ajouter le champ" }).click();
     await expect(page.getByRole("dialog").getByText(/Indique le nom du champ/)).toBeVisible();
     await expectNoAxeViolations(page);
@@ -55,7 +68,8 @@ test.describe("Créer un tournoi : accessibilité", () => {
     // 1280 px à 200 % = 640 px CSS
     await page.setViewportSize({ width: 640, height: 900 });
     await openPage(page);
-    await page.getByRole("button", { name: "Publier le tournoi" }).click();
+    await goToStep(page, /^1 Informations/);
+    await page.getByRole("button", { name: "Continuer · Participants" }).click();
     const overflow = await page.evaluate(
       () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
     );
@@ -65,6 +79,7 @@ test.describe("Créer un tournoi : accessibilité", () => {
   test("prefers-reduced-motion : aucune transition", async ({ page }) => {
     await page.emulateMedia({ reducedMotion: "reduce" });
     await openPage(page);
+    await goToStep(page, STAGES);
     const transition = await page
       .getByRole("listitem")
       .filter({ has: page.getByRole("heading", { level: 3 }) })
@@ -79,6 +94,7 @@ test.describe("Créer un tournoi : étapes", () => {
     page,
   }) => {
     await openPage(page);
+    await goToStep(page, STAGES);
     await page.getByRole("button", { name: /Ajouter une étape/ }).click();
     const stages = page.getByRole("list", { name: "Étapes du tournoi, dans l'ordre" });
     // Étape 2 en ronde suisse pour distinguer les cartes
@@ -109,6 +125,7 @@ test.describe("Créer un tournoi : étapes", () => {
 
   test("parcours au clavier seul : remplir, réordonner, publier", async ({ page }) => {
     await openPage(page);
+    await goToStep(page, /^1 Informations/);
     await page.getByLabel("Nom du tournoi").fill("Coupe d'hiver");
     // Jeu : liste Radix au clavier
     await page.locator("#field-gameId").focus();
@@ -117,7 +134,12 @@ test.describe("Créer un tournoi : étapes", () => {
     await expect(page.locator("#field-gameId")).toHaveText(/FPS 5v5/);
     await page.getByLabel("Début", { exact: true }).fill("2026-12-13T18:00");
     await page.getByLabel("Fin", { exact: true }).fill("2026-12-15T18:00");
+    await page.getByRole("button", { name: "Continuer · Participants" }).press("Enter");
+    await expect(page.getByRole("heading", { name: "Participants et inscriptions" })).toBeFocused();
     await page.getByLabel("Places").fill("16");
+    // Entrée dans un champ : passe à l'étape suivante sans publier
+    await page.getByLabel("Places").press("Enter");
+    await expect(page.getByRole("heading", { level: 2, name: "Étapes" })).toBeFocused();
 
     await page.getByRole("button", { name: /Ajouter une étape/ }).press("Enter");
     await expect(page.locator("#field-stages-1-format")).toBeFocused();
