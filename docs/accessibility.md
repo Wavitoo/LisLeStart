@@ -13,6 +13,19 @@ Cible : WCAG 2.2 niveau AA (RGAA en France), sur le web et le mobile.
 - Zoom à 200 % sans perte, respect de `prefers-reduced-motion`.
 - Mobile : TalkBack, tailles de texte dynamiques, zones tactiles de 48 dp.
 
+## Tests automatiques (CI)
+
+Le job `a11y` de `ci.yml` lance toute la suite Playwright (`test:e2e`, Next avec l'API simulée). `apps/web/e2e/a11y.spec.ts` y fait analyser chaque page par axe-core (règles WCAG 2.0/2.1/2.2 A et AA) : **la CI échoue sur toute violation d'impact `serious` ou `critical`** ; les autres specs vérifient aussi axe sur leurs parcours. Le rapport Playwright est publié en artefact en cas d'échec.
+
+En local :
+
+```bash
+pnpm --filter @lislestart/web exec playwright install chromium   # une fois
+pnpm --filter @lislestart/web test:e2e
+```
+
+Les pages sont découvertes automatiquement depuis `apps/web/app/**/page.tsx`. Une route dynamique (`[id]`) demande une URL d'exemple dans `dynamicExamples`, sinon le test échoue.
+
 ## Modèles appliqués sur le web
 
 Premier écran : création de tournoi (`/admin/tournois/nouveau`).
@@ -29,7 +42,7 @@ Tests automatisés : `pnpm --filter @lislestart/web test` (schéma et composants
 
 | Outil ou méthode             | Web | Mobile | Résultat |
 | ---------------------------- | --- | ------ | -------- |
-| axe-core (Playwright, en CI) |     |        |          |
+| axe-core (Playwright, en CI) | ✓   |        | Bloquant |
 | Lighthouse                   |     |        |          |
 | Parcours clavier complet     |     |        |          |
 | NVDA (Windows)               |     |        |          |
