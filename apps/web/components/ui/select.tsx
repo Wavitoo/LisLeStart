@@ -3,6 +3,7 @@
 import * as SelectPrimitive from "@radix-ui/react-select";
 import { cx } from "@/lib/cx";
 import { controlClass, type ControlA11y } from "./field";
+import { Icon } from "./icon";
 
 export interface SelectOption {
   value: string;
@@ -48,15 +49,15 @@ export function Select({
         <span className="truncate data-[placeholder]:text-fg-muted">
           <SelectPrimitive.Value placeholder={placeholder} />
         </span>
-        <SelectPrimitive.Icon aria-hidden="true" className="text-fg-muted">
-          ▾
+        <SelectPrimitive.Icon aria-hidden="true">
+          <Icon name="chevron-down" size={16} />
         </SelectPrimitive.Icon>
       </SelectPrimitive.Trigger>
       <SelectPrimitive.Portal>
         <SelectPrimitive.Content
           position="popper"
           sideOffset={4}
-          className="z-50 max-h-(--radix-select-content-available-height) min-w-(--radix-select-trigger-width) overflow-hidden rounded-field border border-line-strong bg-raised"
+          className="z-50 max-h-(--radix-select-content-available-height) min-w-(--radix-select-trigger-width) overflow-hidden rounded-control border border-line-strong bg-raised"
         >
           <SelectPrimitive.Viewport className="p-1">
             {options.map((option) => (

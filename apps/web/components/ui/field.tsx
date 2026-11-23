@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { cx } from "@/lib/cx";
+import { Icon } from "./icon";
 
 /** Identifiant DOM d'un champ à partir de son nom (« stages.0.format » → « field-stages-0-format »). */
 export function fieldId(name: string): string {
@@ -24,7 +25,7 @@ export function controlA11y(id: string, error?: string, hint?: ReactNode): Contr
 
 /** Bordure des champs : 1 px au repos, lime au focus, 2 px corail en erreur (maquette). */
 export const controlClass = cx(
-  "h-11 w-full min-w-0 rounded-field border border-line-control bg-night px-3 text-fg",
+  "h-11 w-full min-w-0 rounded-control border border-line-control bg-night px-3 text-fg",
   "placeholder:text-fg-muted focus:border-lime",
   "aria-[invalid=true]:border-2 aria-[invalid=true]:border-alert",
   "disabled:cursor-not-allowed disabled:border-dashed disabled:text-fg-muted",
@@ -33,9 +34,11 @@ export const controlClass = cx(
 export function FieldError({ id, message }: { id: string; message?: string }) {
   if (!message) return null;
   return (
-    <p id={`${id}-error`} className="type-body-s text-alert-text">
-      <span aria-hidden="true">⚠ </span>
-      <span className="sr-only">Erreur :</span> {message}
+    <p id={`${id}-error`} className="flex items-start gap-1.5 type-caption text-alert-text">
+      <Icon name="alert" size={16} />
+      <span>
+        <span className="sr-only">Erreur :</span> {message}
+      </span>
     </p>
   );
 }
@@ -43,7 +46,7 @@ export function FieldError({ id, message }: { id: string; message?: string }) {
 export function FieldHint({ id, children }: { id: string; children?: ReactNode }) {
   if (!children) return null;
   return (
-    <p id={`${id}-hint`} className="type-body-s text-fg-muted">
+    <p id={`${id}-hint`} className="type-caption text-fg-muted">
       {children}
     </p>
   );
@@ -74,7 +77,9 @@ export function Field({
     <div className={cx("flex min-w-0 flex-col gap-1.5", className)}>
       <label
         htmlFor={id}
-        className={size === "compact" ? "type-body-s text-fg-secondary" : "type-label text-fg"}
+        className={
+          size === "compact" ? "type-body-s text-fg-secondary" : "type-label text-fg-secondary"
+        }
       >
         {label}
       </label>

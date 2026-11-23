@@ -58,7 +58,7 @@ interface ErrorSummaryProps {
 export function ErrorSummary({
   errors,
   focusKey,
-  instruction = "Corrige les champs suivants puis publie à nouveau :",
+  instruction = "Corrige les champs suivants pour continuer :",
 }: ErrorSummaryProps) {
   const ref = useRef<HTMLDivElement>(null);
   const items = inDocumentOrder(flattenErrors(errors));

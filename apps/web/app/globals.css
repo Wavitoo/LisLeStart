@@ -6,6 +6,7 @@
  */
 @theme {
   --color-night: #0f1222;
+  --color-sidebar: #12162a;
   --color-surface: #181c30;
   --color-raised: #1f2440;
   --color-line: #2a3050;
@@ -22,6 +23,7 @@
   --color-lime: #c6f432;
   --color-lime-soft: #22301a;
   --color-lime-text: #d9f78a;
+  --color-violet: #8b7bff;
   --color-violet-soft: #2a2550;
   --color-violet-text: #c9c1ff;
   --color-alert: #ff8a65;
@@ -32,15 +34,16 @@
   --font-sans: var(--font-manrope), Manrope, system-ui, sans-serif;
   --font-mono: var(--font-jetbrains-mono), "JetBrains Mono", ui-monospace, monospace;
 
+  --radius-nav: 8px;
   --radius-field: 10px;
   --radius-control: 12px;
   --radius-panel: 16px;
-  --radius-card: 20px;
+  --radius-card: 22px;
 
   --breakpoint-xs: 30rem;
 }
 
-/* Styles de texte de la maquette (Display/XL, L, M, S, Overline, Body/M, Body/M Strong, Body/S, Label, Mono/S). */
+/* Styles de texte de la maquette (Display/XL, L, M, S, Overline, Caption, Body/M, Body/M Strong, Body/S, Label, Mono/S). */
 @utility type-display-xl {
   font-family: var(--font-display);
   font-weight: 700;
@@ -111,6 +114,12 @@
   font-weight: 400;
   font-size: 0.8125rem;
   line-height: 1.5;
+}
+@utility type-caption {
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 0.75rem;
+  line-height: 1.4;
 }
 @utility type-label {
   font-family: var(--font-sans);

@@ -2,7 +2,7 @@
 
 import type { ReactNode } from "react";
 import { Controller, get, useFormContext, type Path } from "react-hook-form";
-import { Checkbox, RadioGroup } from "@/components/ui/choice";
+import { RadioGroup, Segmented, SwitchRow } from "@/components/ui/choice";
 import { controlClass, Field, fieldId } from "@/components/ui/field";
 import { Select, type SelectOption } from "@/components/ui/select";
 import { cx } from "@/lib/cx";
@@ -158,18 +158,22 @@ export function RadioField<T extends string>({
   name,
   label,
   options,
+  segmented,
 }: {
   name: FormPath;
   label: string;
   options: { value: T; label: string }[];
+  /** Contrôle segmenté de la maquette au lieu de boutons radio. */
+  segmented?: boolean;
 }) {
   const { control } = useFormContext<TournamentFormValues>();
+  const Group = segmented ? Segmented<T> : RadioGroup<T>;
   return (
     <Controller
       control={control}
       name={name}
       render={({ field }) => (
-        <RadioGroup<T>
+        <Group
           id={fieldId(name)}
           label={label}
           name={field.name}
@@ -183,23 +187,35 @@ export function RadioField<T extends string>({
   );
 }
 
-export function CheckboxField({ name, children }: { name: FormPath; children: ReactNode }) {
+/** Interrupteur ; on/off donnent les valeurs enregistrées (booléen par défaut). */
+export function SwitchField({
+  name,
+  label,
+  description,
+  on = true,
+  off = false,
+}: {
+  name: FormPath;
+  label: string;
+  description: string;
+  on?: unknown;
+  off?: unknown;
+}) {
   const { control } = useFormContext<TournamentFormValues>();
   return (
     <Controller
       control={control}
       name={name}
       render={({ field }) => (
-        <Checkbox
+        <SwitchRow
           id={fieldId(name)}
-          name={field.name}
-          checked={field.value === true}
-          onCheckedChange={field.onChange}
+          label={label}
+          description={description}
+          checked={field.value === on}
+          onCheckedChange={(checked) => field.onChange(checked ? on : off)}
           onBlur={field.onBlur}
           disabled={field.disabled}
-        >
-          {children}
-        </Checkbox>
+        />
       )}
     />
   );

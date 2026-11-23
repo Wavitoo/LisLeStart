@@ -117,7 +117,7 @@ test.describe("Connexion et inscription : parcours", () => {
     await page.goto("/admin/tournois/nouveau");
     await expect(page.getByRole("heading", { level: 1, name: "Accès réservé" })).toBeVisible();
     await loginAsAdmin(page, "/admin/tournois/nouveau");
-    await expect(page.getByRole("heading", { level: 1, name: "Créer un tournoi" })).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1, name: "Nouveau tournoi" })).toBeVisible();
     // Une fois connecté, /connexion renvoie vers le back-office
     await page.goto("/connexion");
     await expect(page).toHaveURL(/\/admin\/tournois\/nouveau$/);

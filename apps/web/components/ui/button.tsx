@@ -3,16 +3,16 @@
 import type { ComponentProps, MouseEvent } from "react";
 import { cx } from "@/lib/cx";
 
-type Variant = "primary" | "secondary" | "add" | "link" | "small";
+type Variant = "primary" | "secondary" | "plain" | "add" | "small";
 
 const VARIANTS: Record<Variant, string> = {
   primary: "h-12 whitespace-nowrap px-5.5 rounded-control bg-lime text-on-accent type-label",
   secondary:
     "h-12 whitespace-nowrap px-5.5 rounded-control border-2 border-line-strong text-fg type-label",
+  // Action discrète de la maquette (« Partir d'un modèle », « Enregistrer comme modèle »)
+  plain: "h-12 whitespace-nowrap px-5.5 rounded-control text-lime-text type-label",
   // « + Ajouter une étape » : bordure pointillée de la maquette
   add: "min-h-11 py-2 text-left px-4 rounded-field border border-dashed border-line-strong text-lime-text type-body-m-strong",
-  // « + Ajouter un champ » : lien d'action en lime
-  link: "min-h-11 px-1 rounded-field text-lime type-body-m-strong",
   // Commandes des cartes d'étape (Monter, Descendre, Supprimer)
   small: "h-11 whitespace-nowrap px-3 rounded-field border border-line-strong text-fg type-label",
 };
