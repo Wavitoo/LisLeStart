@@ -6,7 +6,7 @@ import { expect, test } from "@playwright/test";
 // Exemple d'URL pour chaque route dynamique (l'id ne peut pas être deviné).
 // Une route dynamique sans exemple fait échouer le test ci-dessous.
 const dynamicExamples: Record<string, string> = {
-  // "/tournois/[id]": "/tournois/demo",
+  "/tournois/[id]": "/tournois/coupe-hiver", // tournoi de l'API simulée
 };
 
 // Routes découvertes depuis app/**/page.tsx : groupes « (x) » retirés, dossiers « _x » et « @x » ignorés.
