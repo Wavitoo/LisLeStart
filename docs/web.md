@@ -4,11 +4,20 @@ Next.js 15 (App Router), rendu côté serveur. Styles : Tailwind v4 avec les jet
 
 ## Pages
 
-| Route                     | Accès          | Contenu                                                       |
-| ------------------------- | -------------- | ------------------------------------------------------------- |
-| `/tournois`               | public         | Liste des tournois publics                                    |
-| `/tournois/[id]`          | public         | Page d'un tournoi : arbre, participants, planning, classement |
-| `/admin/tournois/nouveau` | administrateur | Création de tournoi                                           |
+| Route                        | Accès          | Contenu                                                       |
+| ---------------------------- | -------------- | ------------------------------------------------------------- |
+| `/tournois`                  | public         | Liste des tournois publics                                    |
+| `/tournois/[id]`             | public         | Page d'un tournoi : arbre, participants, planning, classement |
+| `/connexion`, `/inscription` | public         | Connexion et création de compte (joueur ou spectateur)        |
+| `/admin/tournois/nouveau`    | administrateur | Création de tournoi                                           |
+
+## Connexion et inscription
+
+- Formulaires react-hook-form + zod, mêmes règles que l'API (`lib/auth/schema.ts`). Erreurs sous le champ (`aria-describedby`, `aria-invalid`) et récapitulatif focalisé ; les refus de l'API sont rattachés au bon champ (email déjà utilisé, validation) ou affichés en alerte (identifiants incorrects, trop de tentatives).
+- Champs `autocomplete` (`email`, `username`, `current-password`, `new-password`) et bouton « Afficher le mot de passe ».
+- Les actions serveur (`lib/auth/actions.ts`) posent le cookie de session sur le domaine du site : voir [security.md](security.md#authentification-et-sessions).
+- `?suite=/chemin` ramène à la page demandée après connexion ; un compte déjà connecté est redirigé.
+- Avec `API_MOCK=true`, comptes et sessions sont simulés en mémoire, avec un administrateur fictif `admin@seedline.test` / `demo-seedline-admin` (développement et tests uniquement, jamais en production).
 
 ## Page publique d'un tournoi
 

@@ -30,6 +30,10 @@ Synthèse dans [SECURITY.md](../SECURITY.md). Ce document détaille les choix et
 
 En ligne, le web et l'API sont sur deux sous-domaines de `onrender.com`, que les navigateurs traitent comme deux sites distincts : un cookie `Lax` n'y est pas envoyé par `fetch`. Deux options : faire passer les appels du web par un proxy (réécriture `/api` vers l'API dans Next.js, recommandé), ou `COOKIE_SAME_SITE=none`.
 
+**Session côté web (choix retenu).** Le navigateur ne parle qu'au serveur Next. Les pages `/connexion` et `/inscription` appellent des actions serveur qui relaient la requête à l'API, lisent le `sid` dans sa réponse et posent elles-mêmes le cookie sur le domaine du site (`HttpOnly`, `SameSite=Lax`, `Secure` en production). Le serveur Next relaie ensuite ce cookie à l'API pour `GET /auth/me` et les routes d'administration. Le `?suite=` de la connexion n'accepte que des chemins internes (pas de redirection ouverte). Avant le chargement de JavaScript, les formulaires envoient en `POST` : le mot de passe ne passe jamais dans l'URL.
+
+**À vérifier côté API (limitation de débit).** Vue de l'API, toutes les connexions web viennent du serveur Next : sans précaution, la limite de 5 tentatives par minute serait partagée par tous les visiteurs. Le serveur Next transmet donc l'IP du visiteur dans `X-Forwarded-For`. Mais avec `TRUST_PROXY=true`, Fastify lit le premier élément de cet en-tête, qu'un client qui appelle l'API directement peut inventer pour contourner la limite. À trancher : nombre de proxys de confiance (`trustProxy` en nombre de sauts plutôt que `true`), ou en-tête signé partagé entre le web et l'API.
+
 ## Temps réel
 
 Socket.IO est en lecture seule pour le client : il ne peut que s'abonner à un tournoi ou à un match. Un tournoi privé est réservé aux administrateurs et répond comme un tournoi inexistant. Les identifiants sont validés et chaque connexion est limitée à 20 abonnements. La limitation de débit HTTP ne s'applique pas aux sockets. Détail dans [realtime.md](realtime.md).

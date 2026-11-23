@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import type { ReactNode } from "react";
 import { AdminShell } from "@/components/admin/admin-shell";
 import { getCurrentUser } from "@/lib/api/server";
@@ -27,9 +28,17 @@ export default async function AdminLayout({ children }: { children: ReactNode })
             ? "Ton compte n'a pas les droits d'administration. Demande à un administrateur de la plateforme si tu dois gérer des tournois."
             : "Connecte-toi avec un compte administrateur pour accéder au back-office."}
         </p>
+        {!user && (
+          <Link
+            href="/connexion?suite=/admin"
+            className="inline-flex h-12 items-center self-start rounded-control bg-lime px-5.5 type-label text-on-accent"
+          >
+            Se connecter
+          </Link>
+        )}
       </main>
     );
   }
 
-  return <AdminShell>{children}</AdminShell>;
+  return <AdminShell user={user}>{children}</AdminShell>;
 }

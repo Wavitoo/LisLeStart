@@ -228,7 +228,7 @@ describe("États vides et erreurs", () => {
 
 describe("Chargement", () => {
   it("une section en chargement garde son titre et l'annonce", () => {
-    render(<SectionLoading id="planning" title="Planning" what="du planning" />);
+    render(<SectionLoading section="schedule" />);
     expect(screen.getByRole("heading", { level: 2, name: "Planning" })).toBeInTheDocument();
     expect(screen.getByRole("status")).toHaveTextContent("Chargement du planning…");
   });

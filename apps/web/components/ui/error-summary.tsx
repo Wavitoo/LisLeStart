@@ -3,7 +3,7 @@
 import { useEffect, useRef, type MouseEvent } from "react";
 import type { FieldErrors } from "react-hook-form";
 import { fieldId } from "@/components/ui/field";
-import { plural } from "@/lib/tournament-form/labels";
+import { plural } from "@/lib/plural";
 
 export interface SummaryItem {
   /** Identifiant DOM du contrôle à focaliser. */
@@ -47,13 +47,19 @@ interface ErrorSummaryProps {
   errors: FieldErrors;
   /** Incrémenté à chaque envoi refusé : le récapitulatif reprend alors le focus. */
   focusKey: number;
+  /** Consigne sous le titre, selon le formulaire. */
+  instruction?: string;
 }
 
 /**
  * Récapitulatif en haut du formulaire après un envoi refusé : un lien par erreur, qui place le
  * focus sur le champ concerné. Il suit les corrections en direct et disparaît quand tout est bon.
  */
-export function ErrorSummary({ errors, focusKey }: ErrorSummaryProps) {
+export function ErrorSummary({
+  errors,
+  focusKey,
+  instruction = "Corrige les champs suivants puis publie à nouveau :",
+}: ErrorSummaryProps) {
   const ref = useRef<HTMLDivElement>(null);
   const items = inDocumentOrder(flattenErrors(errors));
 
@@ -90,9 +96,7 @@ export function ErrorSummary({ errors, focusKey }: ErrorSummaryProps) {
         <span aria-hidden="true">⚠ </span>
         Le formulaire contient {plural(items.length, "erreur")}
       </h2>
-      <p className="type-body-m text-fg-secondary">
-        Corrige les champs suivants puis publie à nouveau :
-      </p>
+      <p className="type-body-m text-fg-secondary">{instruction}</p>
       <ul className="flex list-disc flex-col gap-1 pl-5">
         {items.map((item) => (
           <li key={`${item.target}-${item.message}`} className="type-body-m text-alert-text">

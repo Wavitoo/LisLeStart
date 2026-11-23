@@ -1,17 +1,17 @@
 import type { ReactNode } from "react";
+import { TOURNAMENT_SECTIONS, type TournamentSectionKey } from "./section-nav";
 
 /** Données d'une section : chargées, ou en erreur (les autres sections restent affichées). */
 export type SectionData<T> = { ok: true; data: T } | { ok: false };
 
 export function TournamentSection({
-  id,
-  title,
+  section,
   children,
 }: {
-  id: string;
-  title: string;
+  section: TournamentSectionKey;
   children: ReactNode;
 }) {
+  const { id, title } = TOURNAMENT_SECTIONS[section];
   return (
     <section
       id={id}
@@ -62,11 +62,11 @@ export function ScrollRegion({ label, children }: { label: string; children: Rea
 }
 
 /** Section en cours de chargement : le titre reste en place, le contenu arrive en streaming. */
-export function SectionLoading({ id, title, what }: { id: string; title: string; what: string }) {
+export function SectionLoading({ section }: { section: TournamentSectionKey }) {
   return (
-    <TournamentSection id={id} title={title}>
+    <TournamentSection section={section}>
       <p role="status" className="type-body-m text-fg-secondary">
-        Chargement {what}…
+        Chargement {TOURNAMENT_SECTIONS[section].loading}…
       </p>
       <div
         aria-hidden="true"

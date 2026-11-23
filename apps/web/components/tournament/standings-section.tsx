@@ -148,9 +148,5 @@ export function StandingsSection({ result }: { result: SectionData<StageStanding
       );
   }
 
-  return (
-    <TournamentSection id="classement" title="Classement">
-      {content}
-    </TournamentSection>
-  );
+  return <TournamentSection section="standings">{content}</TournamentSection>;
 }

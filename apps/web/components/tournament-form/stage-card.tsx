@@ -7,10 +7,10 @@ import type { Ref } from "react";
 import { useFormContext } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { cx } from "@/lib/cx";
+import { plural } from "@/lib/plural";
 import {
   BEST_OF_OPTIONS,
   formatShortDay,
-  plural,
   SEEDING_LABELS,
   STAGE_FORMAT_LABELS,
   STAGE_FORMATS,

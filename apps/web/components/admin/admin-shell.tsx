@@ -2,7 +2,9 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import type { AuthUser } from "@lislestart/shared";
 import { useState, type ReactNode } from "react";
+import { logout } from "@/lib/auth/actions";
 import { cx } from "@/lib/cx";
 
 const NAV = [
@@ -30,7 +32,7 @@ function Brand() {
 }
 
 /** Menu latéral du back-office (maquette) ; sous 1024 px, il se replie derrière un bouton Menu. */
-export function AdminShell({ children }: { children: ReactNode }) {
+export function AdminShell({ children, user }: { children: ReactNode; user: AuthUser }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
 
@@ -59,6 +61,23 @@ export function AdminShell({ children }: { children: ReactNode }) {
     </ul>
   );
 
+  // Compte connecté et déconnexion (formulaire : marche aussi sans JavaScript)
+  const account = (
+    <div className="flex flex-col gap-2 px-2">
+      <p className="type-body-s text-fg-muted">
+        Connecté en tant que <span className="font-semibold text-fg">{user.displayName}</span>
+      </p>
+      <form action={logout}>
+        <button
+          type="submit"
+          className="h-11 rounded-field border border-line-strong px-4 type-label text-fg"
+        >
+          Se déconnecter
+        </button>
+      </form>
+    </div>
+  );
+
   return (
     <div className="min-h-screen lg:flex">
       <header className="flex flex-col border-b border-line px-4 py-3 lg:hidden">
@@ -74,9 +93,10 @@ export function AdminShell({ children }: { children: ReactNode }) {
             {open ? "Fermer le menu" : "Menu"}
           </button>
         </div>
-        <nav id="admin-nav-mobile" aria-label="Administration" hidden={!open} className="pt-3">
-          {nav}
-        </nav>
+        <div id="admin-nav-mobile" hidden={!open} className="flex flex-col gap-4 pt-3">
+          <nav aria-label="Administration">{nav}</nav>
+          {account}
+        </div>
       </header>
 
       <aside className="hidden w-68 shrink-0 flex-col gap-1.5 border-r border-line px-4 py-6 lg:flex">
@@ -84,6 +104,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
           <Brand />
         </div>
         <nav aria-label="Administration">{nav}</nav>
+        <div className="mt-auto pt-6">{account}</div>
       </aside>
 
       <main id="contenu" tabIndex={-1} className="min-w-0 flex-1 px-4 pt-8 pb-16 sm:px-10">

@@ -11,6 +11,7 @@ import type {
   StageFormat,
   TournamentDetail,
 } from "@lislestart/shared";
+import { plural } from "@/lib/plural";
 
 /** Les dates sont affichées à l'heure du tournoi, pas à celle du serveur ou du navigateur. */
 export const TOURNAMENT_TIME_ZONE = "Europe/Paris";
@@ -65,8 +66,7 @@ export function locationLabel(location: LocationType): string {
 }
 
 export function participantCountLabel(count: number, mode: ParticipantMode): string {
-  const unit = mode === "team" ? "équipe" : "joueur";
-  return `${count} ${unit}${count >= 2 ? "s" : ""}`;
+  return plural(count, mode === "team" ? "équipe" : "joueur");
 }
 
 /** « Élimination double, puis finale BO5 » ; « Poules, puis élimination double ». */
@@ -81,16 +81,29 @@ export function formatSummary(detail: Pick<TournamentDetail, "stages" | "finalBe
   return [first.charAt(0).toUpperCase() + first.slice(1), ...rest].join(", puis ");
 }
 
+// Formateurs créés une fois : chaque ligne du planning et de l'arbre en formate une date.
+const DATE_FORMAT = new Intl.DateTimeFormat("fr-FR", {
+  timeZone: TOURNAMENT_TIME_ZONE,
+  day: "numeric",
+  month: "long",
+  year: "numeric",
+});
+const TIME_FORMAT = new Intl.DateTimeFormat("fr-FR", {
+  timeZone: TOURNAMENT_TIME_ZONE,
+  hour: "2-digit",
+  minute: "2-digit",
+});
+const DAY_FORMAT = new Intl.DateTimeFormat("fr-FR", {
+  timeZone: TOURNAMENT_TIME_ZONE,
+  weekday: "long",
+  day: "numeric",
+  month: "long",
+});
+const DAY_KEY_FORMAT = new Intl.DateTimeFormat("en-CA", { timeZone: TOURNAMENT_TIME_ZONE });
+
 function parts(iso: string) {
   const values = Object.fromEntries(
-    new Intl.DateTimeFormat("fr-FR", {
-      timeZone: TOURNAMENT_TIME_ZONE,
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-    })
-      .formatToParts(new Date(iso))
-      .map((part) => [part.type, part.value]),
+    DATE_FORMAT.formatToParts(new Date(iso)).map((part) => [part.type, part.value]),
   );
   return { day: values.day ?? "", month: values.month ?? "", year: values.year ?? "" };
 }
@@ -117,27 +130,18 @@ export function formatDateRange(startIso: string, endIso: string): string {
 
 /** « 21:30 ». */
 export function formatTime(iso: string): string {
-  return new Intl.DateTimeFormat("fr-FR", {
-    timeZone: TOURNAMENT_TIME_ZONE,
-    hour: "2-digit",
-    minute: "2-digit",
-  }).format(new Date(iso));
+  return TIME_FORMAT.format(new Date(iso));
 }
 
 /** « Dimanche 13 décembre ». */
 export function formatDay(iso: string): string {
-  const label = new Intl.DateTimeFormat("fr-FR", {
-    timeZone: TOURNAMENT_TIME_ZONE,
-    weekday: "long",
-    day: "numeric",
-    month: "long",
-  }).format(new Date(iso));
+  const label = DAY_FORMAT.format(new Date(iso));
   return label.charAt(0).toUpperCase() + label.slice(1);
 }
 
 /** Clé de jour (AAAA-MM-JJ) à l'heure du tournoi, pour regrouper le planning. */
 export function dayKey(iso: string): string {
-  return new Intl.DateTimeFormat("en-CA", { timeZone: TOURNAMENT_TIME_ZONE }).format(new Date(iso));
+  return DAY_KEY_FORMAT.format(new Date(iso));
 }
 
 const SINGULAR_ROUNDS: Record<string, string> = {

@@ -21,7 +21,7 @@ const mono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "LisLeStart",
+  title: "Seedline",
   description: "Tournois et pronostics en direct",
 };
 

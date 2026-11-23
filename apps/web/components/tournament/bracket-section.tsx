@@ -5,6 +5,7 @@ import { Bracket } from "./bracket";
 import { BracketTable } from "./bracket-table";
 import { BracketViews } from "./bracket-views";
 import { EmptyState, SectionError, TournamentSection, type SectionData } from "./section";
+import { TOURNAMENT_SECTIONS } from "./section-nav";
 
 /** Les étapes en arbre ; plusieurs étapes à élimination ont chacune leur titre de niveau 3. */
 function Stages({
@@ -41,7 +42,10 @@ export function BracketSection({ result }: { result: SectionData<BracketStage[]>
           {result.data.length > 0 ? (
             <>
               Ce tournoi se joue sans arbre à élimination : les résultats sont dans le{" "}
-              <a href="#classement" className="text-lime-text underline underline-offset-2">
+              <a
+                href={`#${TOURNAMENT_SECTIONS.standings.id}`}
+                className="text-lime-text underline underline-offset-2"
+              >
                 classement
               </a>
               .
@@ -71,9 +75,5 @@ export function BracketSection({ result }: { result: SectionData<BracketStage[]>
     }
   }
 
-  return (
-    <TournamentSection id="arbre" title="Arbre">
-      {content}
-    </TournamentSection>
-  );
+  return <TournamentSection section="bracket">{content}</TournamentSection>;
 }

@@ -86,9 +86,5 @@ export function ParticipantsSection({
     );
   }
 
-  return (
-    <TournamentSection id="participants" title="Participants">
-      {content}
-    </TournamentSection>
-  );
+  return <TournamentSection section="participants">{content}</TournamentSection>;
 }

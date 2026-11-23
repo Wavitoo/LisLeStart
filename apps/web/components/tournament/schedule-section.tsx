@@ -51,18 +51,20 @@ export function ScheduleSection({ result }: { result: SectionData<ScheduledMatch
       a.scheduledAt.localeCompare(b.scheduledAt),
     )) {
       const key = dayKey(match.scheduledAt);
-      days.set(key, [...(days.get(key) ?? []), match]);
+      const matches = days.get(key);
+      if (matches) matches.push(match);
+      else days.set(key, [match]);
     }
     content = (
       <div className="flex flex-col gap-6">
-        {[...days.values()].map((matches) => {
+        {[...days].map(([key, matches]) => {
           const first = matches[0];
           if (!first) return null;
           const day = formatDay(first.scheduledAt);
           return (
-            <div key={dayKey(first.scheduledAt)} className="flex flex-col gap-2">
+            <div key={key} className="flex flex-col gap-2">
               <h3 className="type-heading text-fg">
-                <time dateTime={dayKey(first.scheduledAt)}>{day}</time>
+                <time dateTime={key}>{day}</time>
               </h3>
               <ScrollRegion label={`Matchs du ${day.toLowerCase()}, défilement horizontal`}>
                 <table className="w-full border-collapse">
@@ -104,9 +106,5 @@ export function ScheduleSection({ result }: { result: SectionData<ScheduledMatch
     );
   }
 
-  return (
-    <TournamentSection id="planning" title="Planning">
-      {content}
-    </TournamentSection>
-  );
+  return <TournamentSection section="schedule">{content}</TournamentSection>;
 }

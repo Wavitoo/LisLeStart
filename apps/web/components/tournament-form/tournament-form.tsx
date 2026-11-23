@@ -24,7 +24,7 @@ import {
   toCreateTournamentInput,
 } from "@/lib/tournament-form/values";
 import { CustomFields } from "./custom-fields";
-import { ErrorSummary } from "./error-summary";
+import { ErrorSummary } from "@/components/ui/error-summary";
 import {
   CheckboxField,
   NumberField,

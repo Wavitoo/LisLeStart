@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { PageMain } from "@/components/site/page-main";
 import { SiteHeader } from "@/components/site/site-header";
 import { SectionError } from "@/components/tournament/section";
 import { getPublicApi } from "@/lib/api/server";
+import { plural } from "@/lib/plural";
 import { dateRangeParts, locationLabel } from "@/lib/tournament/format";
 
 export const metadata: Metadata = { title: "Tournois · Seedline" };
@@ -17,11 +19,7 @@ export default async function TournamentsPage() {
   return (
     <>
       <SiteHeader current="tournois" />
-      <main
-        id="contenu"
-        tabIndex={-1}
-        className="mx-auto flex max-w-7xl flex-col gap-7 px-4 pt-8 pb-16 sm:px-10 xl:px-20"
-      >
+      <PageMain>
         <h1 className="type-display-l text-fg">Tournois</h1>
         {tournaments === null ? (
           <SectionError what="les tournois" />
@@ -53,15 +51,14 @@ export default async function TournamentsPage() {
                       </>
                     )}
                     {" · "}
-                    {tournament.participantCount} inscrit
-                    {tournament.participantCount >= 2 ? "s" : ""}
+                    {plural(tournament.participantCount, "inscrit")}
                   </p>
                 </li>
               );
             })}
           </ul>
         )}
-      </main>
+      </PageMain>
     </>
   );
 }

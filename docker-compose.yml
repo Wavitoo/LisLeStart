@@ -48,6 +48,9 @@ services:
       dockerfile: apps/web/Dockerfile
     environment:
       NEXT_PUBLIC_API_URL: http://localhost:4000
+      # Appels faits par le serveur Next (connexion, pages rendues côté serveur) : dans le réseau
+      # Docker, « localhost » désigne le conteneur web lui-même, l'API s'appelle « api »
+      API_URL: http://api:4000
     ports:
       - "3000:3000"
     depends_on:
