@@ -1,5 +1,6 @@
 import type { BracketMatch, BracketRound, BracketStage } from "@lislestart/shared";
 import { Heading, type HeadingLevel } from "@/components/ui/heading";
+import { plural } from "@/lib/plural";
 import {
   formatTime,
   MATCH_STATUS_LABELS,
@@ -11,7 +12,8 @@ import {
 } from "@/lib/tournament/format";
 import { ScrollRegion } from "./section";
 
-const th = "px-3 py-2 text-left type-overline text-fg-muted";
+const th =
+  "bg-raised px-3 py-2 text-left type-overline text-fg-muted first:rounded-l-field last:rounded-r-field";
 const td = "border-t border-line px-3 py-2.5 align-top type-body-m text-fg";
 
 function score(match: BracketMatch): string {
@@ -24,11 +26,20 @@ function score(match: BracketMatch): string {
 function RoundTable({ round }: { round: BracketRound }) {
   return (
     <table className="w-full min-w-xl border-collapse" data-round={round.label}>
-      <caption className="pb-2 text-left type-overline text-fg-muted">{round.label}</caption>
+      <caption className="pb-2 text-left">
+        <span className="type-body-m-strong text-fg">{round.label}</span>
+        <span className="type-caption text-fg-muted">
+          {" "}
+          · {plural(round.matches.length, "match")}
+        </span>
+      </caption>
       <thead>
         <tr>
           <th scope="col" className={th}>
             Match
+          </th>
+          <th scope="col" className={th}>
+            Horaire
           </th>
           <th scope="col" className={th}>
             Participant 1
@@ -43,6 +54,9 @@ function RoundTable({ round }: { round: BracketRound }) {
             Vainqueur
           </th>
           <th scope="col" className={th}>
+            Format
+          </th>
+          <th scope="col" className={th}>
             État
           </th>
         </tr>
@@ -55,6 +69,13 @@ function RoundTable({ round }: { round: BracketRound }) {
               <th scope="row" className={`${td} text-left font-semibold`}>
                 {matchName(round, match)}
               </th>
+              <td className={`${td} type-mono-s`}>
+                {match.scheduledAt ? (
+                  <time dateTime={match.scheduledAt}>{formatTime(match.scheduledAt)}</time>
+                ) : (
+                  "—"
+                )}
+              </td>
               {[0, 1].map((index) => {
                 const slot = match.slots[index];
                 return (
@@ -76,16 +97,8 @@ function RoundTable({ round }: { round: BracketRound }) {
                   "—"
                 )}
               </td>
-              <td className={td}>
-                {match.scheduledAt && match.status === "scheduled" ? (
-                  <>
-                    {MATCH_STATUS_LABELS.scheduled},{" "}
-                    <time dateTime={match.scheduledAt}>{formatTime(match.scheduledAt)}</time>
-                  </>
-                ) : (
-                  MATCH_STATUS_LABELS[match.status]
-                )}
-              </td>
+              <td className={td}>BO{match.bestOf}</td>
+              <td className={td}>{MATCH_STATUS_LABELS[match.status]}</td>
             </tr>
           );
         })}

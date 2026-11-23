@@ -4,7 +4,13 @@ import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 import { mockTournamentData, type MockTournament } from "@/lib/api/mock-tournaments";
-import { describeMatch, matchName, slotLabel, winnerName } from "@/lib/tournament/format";
+import {
+  describeMatch,
+  formatTime,
+  matchName,
+  slotLabel,
+  winnerName,
+} from "@/lib/tournament/format";
 import { Bracket } from "./bracket";
 import { BracketSection } from "./bracket-section";
 import { BracketTable } from "./bracket-table";
@@ -156,6 +162,9 @@ describe("Vue liste équivalente", () => {
           for (const slot of match.slots) expect(row).toHaveTextContent(slotLabel(slot));
           const winner = winnerName(match);
           if (winner) expect(row).toHaveTextContent(winner);
+          // Format et horaire, affichés sur la carte du match dans l'arbre
+          expect(row).toHaveTextContent(`BO${match.bestOf}`);
+          if (match.scheduledAt) expect(row).toHaveTextContent(formatTime(match.scheduledAt));
           // Toute l'information du nom accessible de l'arbre se retrouve dans la ligne
           expect(describeMatch(round, match)).toContain(matchName(round, match));
         }
@@ -167,16 +176,25 @@ describe("Vue liste équivalente", () => {
     render(<BracketTable stage={stageOf("open-echecs")} level={3} />);
     const tables = screen.getAllByRole("table");
     expect(tables.map((table) => table.querySelector("caption")?.textContent)).toEqual([
-      "Quarts de finale",
-      "Demi-finales",
-      "Finale",
+      "Quarts de finale · 4 matchs",
+      "Demi-finales · 2 matchs",
+      "Finale · 1 match",
     ]);
     for (const table of tables) {
       expect(
         within(table)
           .getAllByRole("columnheader")
           .map((th) => th.textContent),
-      ).toEqual(["Match", "Participant 1", "Participant 2", "Score", "Vainqueur", "État"]);
+      ).toEqual([
+        "Match",
+        "Horaire",
+        "Participant 1",
+        "Participant 2",
+        "Score",
+        "Vainqueur",
+        "Format",
+        "État",
+      ]);
     }
   });
 

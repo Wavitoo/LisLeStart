@@ -32,7 +32,7 @@ Next.js 15 (App Router), rendu côté serveur. Styles : Tailwind v4 avec les jet
 
 - L'en-tête du tournoi est chargé avant tout envoi : un tournoi inconnu ou privé répond **404**. Les quatre sections arrivent ensuite en streaming, chacune avec son état de chargement (`<Suspense>`), son état vide et son état d'erreur : une section en panne n'empêche pas d'afficher les autres.
 - Navigation interne par ancres (`#arbre`, `#participants`, `#planning`, `#classement`) : toutes les sections sont dans la page, l'adresse reflète la section.
-- Arbre : bascule « Graphique / Liste » en onglets Radix (contrôle segmenté de la maquette). La vue liste est un tableau par tour avec les mêmes informations (participants, score, vainqueur, état). Chaque match de l'arbre a un nom accessible complet, par exemple « Quart de finale 1 : Les Hiboux 2, Brise-Glace 0, Les Hiboux gagne ».
+- Arbre : bascule « Graphique / Liste » en onglets Radix (contrôle segmenté de la maquette). La vue liste est un tableau par tour (légende « Quarts de finale · 4 matchs », colonnes Match, Horaire, Participant 1, Participant 2, Score, Vainqueur, Format, État) : mêmes informations que les cartes de l'arbre. Chaque match de l'arbre a un nom accessible complet, par exemple « Quart de finale 1 : Les Hiboux 2, Brise-Glace 0, Les Hiboux gagne ».
 - Titres : un `h1` (le tournoi), un `h2` par section, puis `h3` par tour (élimination simple) ou par partie d'arbre (tableau principal, repêchage, grande finale) avec `h4` par tour.
 - La colonne latérale « Mon pronostic » et le Pick'em de la maquette sont prévus (`TournamentLayout`, prop `aside`) mais pas encore livrés.
 
