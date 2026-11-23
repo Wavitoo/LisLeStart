@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { cache, Suspense } from "react";
-import { PageMain } from "@/components/site/page-main";
-import { SiteHeader } from "@/components/site/site-header";
+import { SiteShell } from "@/components/site/site-shell";
 import { BracketSection } from "@/components/tournament/bracket-section";
 import { ParticipantsSection } from "@/components/tournament/participants-section";
 import { ScheduleSection } from "@/components/tournament/schedule-section";
@@ -57,33 +56,30 @@ export default async function TournamentPage({ params }: Props) {
 
   // Les sections arrivent ensuite en streaming, chacune avec son état de chargement.
   return (
-    <>
-      <SiteHeader current="tournois" />
-      <PageMain>
-        <TournamentView
-          detail={detail}
-          bracket={
-            <Suspense fallback={<SectionLoading section="bracket" />}>
-              <Bracket id={id} />
-            </Suspense>
-          }
-          participants={
-            <Suspense fallback={<SectionLoading section="participants" />}>
-              <Participants id={id} />
-            </Suspense>
-          }
-          schedule={
-            <Suspense fallback={<SectionLoading section="schedule" />}>
-              <Schedule id={id} />
-            </Suspense>
-          }
-          standings={
-            <Suspense fallback={<SectionLoading section="standings" />}>
-              <Standings id={id} />
-            </Suspense>
-          }
-        />
-      </PageMain>
-    </>
+    <SiteShell>
+      <TournamentView
+        detail={detail}
+        bracket={
+          <Suspense fallback={<SectionLoading section="bracket" />}>
+            <Bracket id={id} />
+          </Suspense>
+        }
+        participants={
+          <Suspense fallback={<SectionLoading section="participants" />}>
+            <Participants id={id} />
+          </Suspense>
+        }
+        schedule={
+          <Suspense fallback={<SectionLoading section="schedule" />}>
+            <Schedule id={id} />
+          </Suspense>
+        }
+        standings={
+          <Suspense fallback={<SectionLoading section="standings" />}>
+            <Standings id={id} />
+          </Suspense>
+        }
+      />
+    </SiteShell>
   );
 }

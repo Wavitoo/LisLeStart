@@ -231,3 +231,14 @@ export function roundsBySide(
 export function isEliminationFormat(format: StageFormat): boolean {
   return format === "single_elimination" || format === "double_elimination";
 }
+
+export type TournamentStatus = "live" | "upcoming" | "done";
+
+/** En direct entre le début et la fin, à venir avant, terminé après (heure du serveur Next). */
+export function tournamentStatus(
+  tournament: { startsAt: string; endsAt: string },
+  now: number,
+): TournamentStatus {
+  if (now < Date.parse(tournament.startsAt)) return "upcoming";
+  return now > Date.parse(tournament.endsAt) ? "done" : "live";
+}

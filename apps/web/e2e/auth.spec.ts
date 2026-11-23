@@ -91,14 +91,14 @@ test.describe("Connexion et inscription : parcours", () => {
     await page.keyboard.press("Enter");
 
     await expect(page).toHaveURL(/\/tournois$/);
-    const header = page.locator("body > header");
-    await expect(header).toContainText("renard_bleu");
-    await header.getByRole("button", { name: "Se déconnecter" }).click();
+    // Carte profil en bas de la barre latérale
+    const sidebar = page.locator("aside");
+    await expect(sidebar).toContainText("renard_bleu");
+    await sidebar.getByRole("button", { name: "Se déconnecter" }).click();
     await expect(page).toHaveURL(/\/$/);
-    // Retour à l'accueil déconnecté : l'en-tête propose de nouveau la connexion
-    const homeHeader = page.locator("body > header");
-    await expect(homeHeader.getByRole("link", { name: "Se connecter" })).toBeVisible();
-    await expect(homeHeader).not.toContainText("renard_bleu");
+    // Retour à l'accueil déconnecté : la barre latérale propose de nouveau la connexion
+    await expect(page.locator("aside").getByRole("link", { name: "Se connecter" })).toBeVisible();
+    await expect(page.locator("aside")).not.toContainText("renard_bleu");
   });
 
   test("email déjà utilisé : erreur sous le champ Email", async ({ page }) => {

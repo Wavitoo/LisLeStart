@@ -27,6 +27,8 @@
   --color-violet-soft: #2a2550;
   --color-violet-text: #c9c1ff;
   --color-alert: #ff8a65;
+  /* Point « En direct » des cartes de tournoi */
+  --color-live: #ff5d5d;
   --color-alert-soft: #3a2220;
   --color-alert-text: #ffb59e;
 
@@ -95,6 +97,20 @@
   font-family: var(--font-sans);
   font-weight: 600;
   font-size: 1.0625rem;
+  line-height: 1.4;
+}
+/* Body/Headline : nom d'un tournoi dans une carte. */
+@utility type-headline {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 1.0625rem;
+  line-height: 1.35;
+}
+/* Body/L */
+@utility type-body-l {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 1.125rem;
   line-height: 1.4;
 }
 @utility type-body-m {

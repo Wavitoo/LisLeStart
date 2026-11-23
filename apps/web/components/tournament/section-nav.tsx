@@ -16,14 +16,14 @@ export function SectionNav() {
   return (
     <nav
       aria-label="Sections du tournoi"
-      className="sticky top-0 z-10 -mx-4 border-b border-line bg-night px-4 py-2 sm:-mx-10 sm:px-10 xl:-mx-20 xl:px-20"
+      className="sticky top-0 z-10 -mx-4 bg-night px-4 py-2 sm:-mx-10 sm:px-10"
     >
-      <ul className="flex flex-wrap gap-2">
+      <ul className="flex w-fit flex-wrap gap-0.5 rounded-control bg-sidebar p-0.75">
         {Object.values(TOURNAMENT_SECTIONS).map((section) => (
           <li key={section.id}>
             <a
               href={`#${section.id}`}
-              className="flex h-11 items-center rounded-field px-4 type-body-m-strong text-fg-secondary hover:bg-raised hover:text-fg"
+              className="flex h-11 items-center rounded-nav px-4 type-body-m-strong text-fg-muted hover:bg-raised hover:text-fg"
             >
               {section.title}
             </a>

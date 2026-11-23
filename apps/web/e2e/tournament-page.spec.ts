@@ -16,7 +16,7 @@ async function openPage(page: Page, url = URL) {
   await page.goto(url);
   await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
   // Hydratation terminée : les onglets Radix réagissent
-  await expect(page.getByRole("tab", { name: "Vue arbre" })).toHaveAttribute(
+  await expect(page.getByRole("tab", { name: "Graphique" })).toHaveAttribute(
     "aria-selected",
     "true",
   );
@@ -30,7 +30,7 @@ test.describe("Page tournoi : accessibilité", () => {
 
   test("aucune violation axe en vue liste", async ({ page }) => {
     await openPage(page);
-    await page.getByRole("tab", { name: "Vue liste (équivalente)" }).click();
+    await page.getByRole("tab", { name: "Liste" }).click();
     await expect(page.getByRole("table", { name: "Quarts de finale" })).toBeVisible();
     await expectNoAxeViolations(page);
   });
@@ -98,7 +98,13 @@ test.describe("Page tournoi : clavier seul", () => {
     await page.keyboard.press("Enter");
     await expect(page.getByRole("main")).toBeFocused();
 
-    // 2. Navigation interne : les quatre ancres, dans l'ordre
+    // 2. Fil d'Ariane, puis navigation interne : les quatre ancres, dans l'ordre
+    await page.keyboard.press("Tab");
+    await expect(
+      page
+        .getByRole("navigation", { name: "Fil d'Ariane" })
+        .getByRole("link", { name: "Tournois" }),
+    ).toBeFocused();
     const nav = page.getByRole("navigation", { name: "Sections du tournoi" });
     for (const label of ["Arbre", "Participants", "Planning", "Classement"]) {
       await page.keyboard.press("Tab");
@@ -107,8 +113,8 @@ test.describe("Page tournoi : clavier seul", () => {
 
     // 3. Bascule de vue : onglets Radix, flèches gauche/droite
     await page.keyboard.press("Tab");
-    const treeTab = page.getByRole("tab", { name: "Vue arbre" });
-    const listTab = page.getByRole("tab", { name: "Vue liste (équivalente)" });
+    const treeTab = page.getByRole("tab", { name: "Graphique" });
+    const listTab = page.getByRole("tab", { name: "Liste" });
     await expect(treeTab).toBeFocused();
     await page.keyboard.press("ArrowRight");
     await expect(listTab).toBeFocused();

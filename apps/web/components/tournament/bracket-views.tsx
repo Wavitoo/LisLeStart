@@ -3,9 +3,10 @@
 import * as Tabs from "@radix-ui/react-tabs";
 import type { ReactNode } from "react";
 
+// Contrôle segmenté de la maquette : l'onglet actif est en relief (bordure, fond), pas que coloré.
 const trigger =
-  "flex h-11 items-center rounded-field border border-line-strong px-4.5 type-body-m-strong text-fg-secondary " +
-  "data-[state=active]:border-2 data-[state=active]:border-lime data-[state=active]:bg-lime-soft data-[state=active]:text-fg";
+  "flex h-11 items-center rounded-nav border border-transparent px-4 type-body-m-strong text-fg-muted " +
+  "data-[state=active]:border-line-strong data-[state=active]:bg-raised data-[state=active]:text-fg data-[state=active]:shadow-md";
 
 /**
  * Bascule « Vue arbre / Vue liste (équivalente) » de la maquette, en onglets Radix : flèches
@@ -15,12 +16,15 @@ const trigger =
 export function BracketViews({ tree, list }: { tree: ReactNode; list: ReactNode }) {
   return (
     <Tabs.Root defaultValue="arbre" className="flex flex-col gap-5">
-      <Tabs.List aria-label="Affichage de l'arbre" className="flex flex-wrap gap-2">
+      <Tabs.List
+        aria-label="Affichage de l'arbre"
+        className="flex w-fit gap-0.5 self-end rounded-control bg-sidebar p-0.75"
+      >
         <Tabs.Trigger value="arbre" className={trigger}>
-          Vue arbre
+          Graphique
         </Tabs.Trigger>
         <Tabs.Trigger value="liste" className={trigger}>
-          Vue liste (équivalente)
+          Liste
         </Tabs.Trigger>
       </Tabs.List>
       {/* Pas de tabindex sur les panneaux : leurs zones de défilement sont déjà focalisables */}

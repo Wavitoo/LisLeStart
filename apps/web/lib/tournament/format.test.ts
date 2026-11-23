@@ -1,5 +1,12 @@
 import { describe, expect, it } from "vitest";
-import { dateRangeParts, formatDay, formatSummary, formatTime, matchName } from "./format";
+import {
+  dateRangeParts,
+  formatDay,
+  formatSummary,
+  formatTime,
+  matchName,
+  tournamentStatus,
+} from "./format";
 
 describe("dates à l'heure du tournoi", () => {
   it("période sur un même mois, sur deux mois, sur deux années, sur un jour", () => {
@@ -57,5 +64,15 @@ describe("libellés", () => {
     expect(matchName(finale, finale.matches[0]!)).toBe("Finale");
     const losers = round("Repêchage tour 1", 2);
     expect(matchName(losers, losers.matches[1]!)).toBe("Repêchage tour 1 · match 2");
+  });
+});
+
+describe("statut d'un tournoi", () => {
+  it("à venir, en direct (bornes comprises), terminé", () => {
+    const t = { startsAt: "2026-12-13T18:00:00Z", endsAt: "2026-12-15T18:00:00Z" };
+    expect(tournamentStatus(t, Date.parse("2026-12-13T17:59:59Z"))).toBe("upcoming");
+    expect(tournamentStatus(t, Date.parse("2026-12-13T18:00:00Z"))).toBe("live");
+    expect(tournamentStatus(t, Date.parse("2026-12-15T18:00:00Z"))).toBe("live");
+    expect(tournamentStatus(t, Date.parse("2026-12-15T18:00:01Z"))).toBe("done");
   });
 });

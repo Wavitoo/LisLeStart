@@ -20,7 +20,7 @@ export default async function LoginPage({ searchParams }: Props) {
   if (user) redirect(safeDestination(next, user.role));
 
   return (
-    <AuthPage title="Se connecter" intro="Retrouve tes pronostics, tes groupes et tes points.">
+    <AuthPage title="Bon retour" intro="Connecte-toi pour pronostiquer et suivre tes groupes.">
       <LoginForm action={login} next={next} />
     </AuthPage>
   );

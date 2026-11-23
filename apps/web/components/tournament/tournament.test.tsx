@@ -183,11 +183,11 @@ describe("Vue liste équivalente", () => {
   it("la bascule Vue arbre / Vue liste fonctionne au clavier (flèches)", async () => {
     const user = userEvent.setup();
     renderView(get("open-echecs"));
-    const treeTab = screen.getByRole("tab", { name: "Vue arbre" });
+    const treeTab = screen.getByRole("tab", { name: "Graphique" });
     expect(treeTab).toHaveAttribute("aria-selected", "true");
     treeTab.focus();
     await user.keyboard("{ArrowRight}");
-    const listTab = screen.getByRole("tab", { name: "Vue liste (équivalente)" });
+    const listTab = screen.getByRole("tab", { name: "Liste" });
     expect(listTab).toHaveFocus();
     expect(listTab).toHaveAttribute("aria-selected", "true");
     expect(screen.getAllByRole("table", { name: /finale/i }).length).toBeGreaterThan(0);

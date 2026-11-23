@@ -17,7 +17,7 @@ export function TournamentSection({
       id={id}
       aria-labelledby={`${id}-title`}
       // scroll-mt : la cible d'une ancre n'est pas cachée par la navigation collante
-      className="flex min-w-0 scroll-mt-24 flex-col gap-5 rounded-card bg-surface p-4 sm:p-6"
+      className="flex min-w-0 scroll-mt-24 flex-col gap-5 rounded-card border border-line bg-surface p-4 sm:p-6"
     >
       <h2 id={`${id}-title`} className="type-display-m text-fg">
         {title}
