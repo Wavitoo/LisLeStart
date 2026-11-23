@@ -2,6 +2,8 @@
 const nextConfig = {
   output: "standalone",
   transpilePackages: ["@lislestart/shared"],
+  // Pastille « N » de Next en dev : elle masquait la carte profil de la barre latérale
+  devIndicators: false,
   async headers() {
     return [
       {

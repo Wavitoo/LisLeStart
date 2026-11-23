@@ -110,7 +110,7 @@ Crée ou remplace le pronostic. Corps et réponse : `{ "winnerId": "clx…", "sc
 
 ### `GET /tournaments/:id/bracket`
 
-Étapes d'un tournoi tour par tour (`TournamentBracketResponse`) : le tournoi (`TournamentSummary`), puis pour chaque étape son nom, son format et ses tours (`label` : « Quarts de finale », « Tour 1 »…). Chaque match donne son numéro, son BO, son statut, son vainqueur et ses emplacements : participant, tête de série, score, et `isBye` pour un exempt. Un participant à déterminer a `participantId` et `name` à `null`. 404 si le tournoi n'existe pas ou n'est pas public ; `stages` vide tant que l'arbre n'est pas publié.
+Étapes d'un tournoi tour par tour (`TournamentBracketResponse`) : le tournoi (`TournamentSummary`), puis pour chaque étape son nom, son format et ses tours (`label` : « Quarts de finale », « Tour 1 »…). Chaque match donne son numéro, son BO, son statut, son vainqueur et ses emplacements : participant, tête de série, score, et `isBye` pour un exempt. Un participant à déterminer a `participantId` et `name` à `null`. 404 si le tournoi n'existe pas ou n'est pas public ; `stages` vide tant que l'arbre n'est pas publié. Champs facultatifs ajoutés pour le web (élimination double, emplacements « Vainqueur demie 1 », poste) : voir [web.md](web.md#contrat-dapi-lecture-publique-sans-session).
 
 Sur mobile, l'arbre est affiché **en liste** (tours en titres, un bloc par match), plus lisible qu'un arbre graphique sur un téléphone et équivalent pour TalkBack. Les scores changent en direct (`match:updated`) ; à la fin d'un match, l'arbre est rechargé pour que le vainqueur apparaisse au tour suivant, puisque c'est le serveur qui fait avancer l'arbre. Le vainqueur porte une coche **et** « Qualifié ».
 

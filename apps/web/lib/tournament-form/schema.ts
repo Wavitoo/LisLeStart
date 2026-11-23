@@ -1,7 +1,7 @@
 import { z } from "zod";
+import { plural } from "@/lib/plural";
 import {
   formatLocalDate,
-  plural,
   STAGE_FORMAT_LABELS,
   TIEBREAK_PRESETS,
   TIEBREAK_PRESETS_BY_FORMAT,

@@ -23,6 +23,7 @@ La documentation fait partie du produit : elle s'écrit au fil du projet, dans l
 | Temps réel (Socket.IO)                    | [realtime.md](realtime.md)                     |
 | Sécurité                                  | [security.md](security.md)                     |
 | Accessibilité                             | [accessibility.md](accessibility.md)           |
+| Application web                           | [web.md](web.md)                               |
 | Application mobile                        | [mobile.md](mobile.md)                         |
 | Écrire un connecteur                      | [connectors/guide.md](connectors/guide.md)     |
 | Exploitation (déploiement, CI/CD, charge) | [operations.md](operations.md)                 |

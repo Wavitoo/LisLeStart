@@ -1,7 +1,7 @@
 "use server";
 
 import type { CreateTournamentInput } from "@lislestart/shared";
-import type { CreateTournamentResult } from "@/lib/api/admin-api";
+import { ADMIN_ONLY_MESSAGE, type CreateTournamentResult } from "@/lib/api/admin-api";
 import { getAdminApi, getCurrentUser } from "@/lib/api/server";
 
 /**
@@ -12,12 +12,6 @@ export async function createTournament(
   input: CreateTournamentInput,
 ): Promise<CreateTournamentResult> {
   const user = await getCurrentUser();
-  if (!user || user.role !== "admin") {
-    return {
-      ok: false,
-      message:
-        "Seul un administrateur peut créer un tournoi : connecte-toi avec un compte administrateur.",
-    };
-  }
+  if (!user || user.role !== "admin") return { ok: false, message: ADMIN_ONLY_MESSAGE };
   return (await getAdminApi()).createTournament(input);
 }

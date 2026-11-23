@@ -5,14 +5,15 @@ import type { CreatedTournament, CreateTournamentInput, GameSummary } from "@lis
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { FormProvider, useForm, useWatch, type FieldErrors } from "react-hook-form";
 import { Button } from "@/components/ui/button";
+import { ErrorSummary, flattenErrors } from "@/components/ui/error-summary";
 import { Icon } from "@/components/ui/icon";
 import type { CreateTournamentResult } from "@/lib/api/admin-api";
 import { cx } from "@/lib/cx";
+import { plural } from "@/lib/plural";
 import {
   formatLocalDate,
   LOCATION_LABELS,
   PARTICIPANT_MODE_LABELS,
-  plural,
   VISIBILITY_LABELS,
 } from "@/lib/tournament-form/labels";
 import {
@@ -27,7 +28,6 @@ import {
   toCreateTournamentInput,
 } from "@/lib/tournament-form/values";
 import { CustomFields } from "./custom-fields";
-import { ErrorSummary, flattenErrors } from "./error-summary";
 import {
   NumberField,
   RadioField,

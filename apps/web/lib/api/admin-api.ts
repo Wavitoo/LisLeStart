@@ -1,4 +1,5 @@
 import type { CreatedTournament, CreateTournamentInput, GameSummary } from "@lislestart/shared";
+import { MESSAGES } from "./auth-api";
 
 /** Résultat d'une création : le formulaire affiche `message` en haut de page en cas d'échec. */
 export type CreateTournamentResult =
@@ -14,14 +15,13 @@ export interface AdminApi {
   createTournament(input: CreateTournamentInput): Promise<CreateTournamentResult>;
 }
 
-const NETWORK_ERROR =
-  "Le serveur ne répond pas : vérifie ta connexion puis réessaie dans un instant.";
+/** Aussi renvoyé par l'action serveur avant tout appel, quand le compte n'est pas administrateur. */
+export const ADMIN_ONLY_MESSAGE =
+  "Seul un administrateur peut créer un tournoi : connecte-toi avec un compte administrateur.";
 
 function errorMessage(status: number, body: unknown): string {
   if (status === 401) return "Ta session a expiré : reconnecte-toi puis publie à nouveau.";
-  if (status === 403) {
-    return "Seul un administrateur peut créer un tournoi : connecte-toi avec un compte administrateur.";
-  }
+  if (status === 403) return ADMIN_ONLY_MESSAGE;
   if (status === 429) return "Trop de requêtes : patiente une minute puis réessaie.";
   const message = (body as { message?: unknown } | null)?.message;
   if (status === 400 && message) {
@@ -56,7 +56,7 @@ export function createHttpAdminApi(baseUrl: string, sessionCookie: string | null
           cache: "no-store",
         });
       } catch {
-        return { ok: false, message: NETWORK_ERROR };
+        return { ok: false, message: MESSAGES.network };
       }
       const body: unknown = await response.json().catch(() => null);
       if (!response.ok) return { ok: false, message: errorMessage(response.status, body) };
