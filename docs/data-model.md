@@ -61,6 +61,49 @@ erDiagram
 - **Index** sur les clés étrangères les plus utilisées : `Tournament.gameId`, `Team.tournamentId`, `TeamMember.userId`, `Prediction.matchId`, `PickemQuestion.tournamentId`, `ResultEvent` (match, date) et (acteur), `AuditLog` (acteur), (cible) et (date).
 - **Suppression** : les données d'un tournoi (étapes, équipes, matchs, questions) sont supprimées en cascade avec lui. Un utilisateur ayant des pronostics, réponses ou appartenances d'équipe ne peut pas être supprimé.
 
+## Jeux et statistiques
+
+L'administrateur déclare chaque jeu (e-sport, plateau, baby-foot, échecs…) puis les statistiques relevées à chaque manche. Toutes les routes sont réservées aux administrateurs (401 sans session, 403 pour un autre rôle) et documentées dans OpenAPI (`/docs`, tag « jeux ») :
+
+| Route                            | Effet                                                  | Erreurs                                                       |
+| -------------------------------- | ------------------------------------------------------ | ------------------------------------------------------------- |
+| `GET /games`                     | Jeux triés par nom, statistiques triées par clé        |                                                               |
+| `GET /games/:id`                 | Un jeu et ses statistiques                             | 404 jeu introuvable                                           |
+| `POST /games`                    | Crée un jeu `{ name }` (1 à 80 caractères)             | 400 nom invalide, 409 nom déjà pris                           |
+| `POST /games/:gameId/statistics` | Ajoute une statistique `{ key, label, kind, choices }` | 400 champs invalides, 404 jeu introuvable, 409 clé déjà prise |
+
+Règles (validées par zod, voir `apps/api/src/games/games.schemas.ts`) :
+
+- `key` : clé technique, 2 à 32 caractères, minuscules, chiffres et `_`, commence par une lettre ; **unique par jeu**.
+- `label` : libellé affiché, 1 à 80 caractères.
+- `kind` et `choices` :
+
+| `kind`   | Valeur relevée à chaque manche        | `choices`                                                |
+| -------- | ------------------------------------- | -------------------------------------------------------- |
+| `CHOICE` | Une valeur de la liste (carte, perso) | **Au moins 2** valeurs distinctes non vides (50 maximum) |
+| `NUMBER` | Un nombre (kills, buts)               | Vide (ou absent)                                         |
+| `PLAYER` | Un joueur du match (MVP)              | Vide (ou absent)                                         |
+
+Les champs inconnus sont refusés. Une erreur 400 renvoie une entrée par champ, comme le reste de l'API : `{ "message": "Certains champs sont invalides.", "errors": [{ "field": "choices", "message": "…" }] }`.
+
+Exemple, un baby-foot :
+
+```http
+POST /games
+{ "name": "Baby-foot" }
+
+POST /games/{gameId}/statistics
+{ "key": "buts", "label": "Buts marqués", "kind": "NUMBER" }
+
+POST /games/{gameId}/statistics
+{ "key": "mvp", "label": "Meilleur joueur de la manche", "kind": "PLAYER" }
+
+POST /games/{gameId}/statistics
+{ "key": "table", "label": "Table", "kind": "CHOICE", "choices": ["Table 1", "Table 2"] }
+```
+
+La validation des valeurs saisies pour une manche (`MatchGame.stats`) contre ces définitions arrive avec l'issue #36. Modifier ou supprimer un jeu ou une statistique n'est pas encore possible.
+
 ## Décisions de conception
 
 - Les résultats sont stockés comme `ResultEvent` ; l'état est recalculé depuis cet historique (ADR 0005).
