@@ -1,6 +1,8 @@
 import fastifyCookie from "@fastify/cookie";
 import { BadRequestException, ValidationPipe, type ValidationError } from "@nestjs/common";
 import type { NestFastifyApplication } from "@nestjs/platform-fastify";
+import { DocumentBuilder, SwaggerModule, type OpenAPIObject } from "@nestjs/swagger";
+import { SESSION_COOKIE } from "./auth/access";
 
 export interface FieldError {
   field: string;
@@ -35,4 +37,15 @@ export async function configureApp(app: NestFastifyApplication): Promise<void> {
         }),
     }),
   );
+}
+
+/** Document OpenAPI servi sur /docs ; construit ici pour que les tests vérifient le même. */
+export function createOpenApiDocument(app: NestFastifyApplication): OpenAPIObject {
+  const config = new DocumentBuilder()
+    .setTitle("LisLeStart API")
+    .setDescription("Tournois, pronostics et Pick'em")
+    .setVersion("0.1.0")
+    .addCookieAuth(SESSION_COOKIE)
+    .build();
+  return SwaggerModule.createDocument(app, config);
 }

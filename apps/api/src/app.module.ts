@@ -5,6 +5,7 @@ import { AccessGuard } from "./auth/access";
 import { AuditModule } from "./audit/audit.module";
 import { AuthModule } from "./auth/auth.module";
 import { APP_CONFIG, loadConfig } from "./config";
+import { GamesModule } from "./games/games.module";
 import { HealthController } from "./health/health.controller";
 import { PrismaModule } from "./prisma/prisma.service";
 import { RealtimeModule } from "./realtime/realtime.module";
@@ -33,6 +34,7 @@ class ConfigModule {}
     AuthModule,
     AuditModule,
     RealtimeModule,
+    GamesModule,
   ],
   controllers: [HealthController],
   providers: [

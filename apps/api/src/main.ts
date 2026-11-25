@@ -1,10 +1,9 @@
 import "reflect-metadata";
 import { NestFactory } from "@nestjs/core";
 import { FastifyAdapter, type NestFastifyApplication } from "@nestjs/platform-fastify";
-import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
-import { SESSION_COOKIE } from "./auth/access";
+import { SwaggerModule } from "@nestjs/swagger";
 import { AppModule } from "./app.module";
-import { configureApp } from "./app.setup";
+import { configureApp, createOpenApiDocument } from "./app.setup";
 import { APP_CONFIG, type AppConfig } from "./config";
 import { RedisIoAdapter } from "./realtime/realtime.adapter";
 
@@ -21,13 +20,7 @@ async function bootstrap(): Promise<void> {
   await realtime.connectToRedis(app.get<AppConfig>(APP_CONFIG).redisUrl);
   app.useWebSocketAdapter(realtime);
 
-  const config = new DocumentBuilder()
-    .setTitle("LisLeStart API")
-    .setDescription("Tournois, pronostics et Pick'em")
-    .setVersion("0.1.0")
-    .addCookieAuth(SESSION_COOKIE)
-    .build();
-  SwaggerModule.setup("docs", app, SwaggerModule.createDocument(app, config));
+  SwaggerModule.setup("docs", app, createOpenApiDocument(app));
 
   const port = Number(process.env.API_PORT ?? 4000);
   await app.listen(port, "0.0.0.0");
